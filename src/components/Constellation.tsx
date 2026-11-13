@@ -41,15 +41,14 @@ function makeDot() {
   return new THREE.CanvasTexture(c);
 }
 
-/* Four-point star: a diamond whose sides curve inward. */
-function starShape(R: number, k = 0.13) {
+/* A thin ray: a long, narrow diamond that fades to a point. */
+function spike(len: number, w: number) {
   const s = new THREE.Shape();
-  const c = R * k;
-  s.moveTo(0, R);
-  s.quadraticCurveTo(c, c, R, 0);
-  s.quadraticCurveTo(c, -c, 0, -R);
-  s.quadraticCurveTo(-c, -c, -R, 0);
-  s.quadraticCurveTo(-c, c, 0, R);
+  s.moveTo(0, len);
+  s.quadraticCurveTo(w, w * 0.6, w, 0);
+  s.quadraticCurveTo(w, -w * 0.6, 0, -len);
+  s.quadraticCurveTo(-w, -w * 0.6, -w, 0);
+  s.quadraticCurveTo(-w, w * 0.6, 0, len);
   return s;
 }
 
@@ -144,7 +143,8 @@ function Network({ count, reduced, p }: { count: number; reduced: boolean; p: Re
   );
 }
 
-/* One glowing white star. Flies from `from` to `to` as the page scrolls. */
+/* One glowing star: a bright core, long thin rays, a soft halo.
+   Flies from `from` to `to` as the page scrolls; brightens under the cursor. */
 function Star({
   from,
   to,
@@ -161,38 +161,88 @@ function Star({
   reduced: boolean;
 }) {
   const group = useRef<THREE.Group>(null);
+  const rays = useRef<THREE.Group>(null);
+  const halo = useRef<THREE.Sprite>(null);
+  const wide = useRef<THREE.Sprite>(null);
+  const core = useRef<THREE.Sprite>(null);
+  const hovered = useRef(false);
+  const hot = useRef(0);
   const glow = useMemo(makeGlow, []);
-  const geo = useMemo(() => new THREE.ShapeGeometry(starShape(1), 24), []);
+  const vertical = useMemo(() => new THREE.ShapeGeometry(spike(1, 0.045), 12), []);
+  const horizontal = useMemo(() => new THREE.ShapeGeometry(spike(0.72, 0.04), 12), []);
+  const diagonal = useMemo(() => new THREE.ShapeGeometry(spike(0.42, 0.022), 12), []);
   const perp = useMemo(() => {
     const d = new THREE.Vector3().subVectors(to, from);
     return new THREE.Vector3(-d.y, d.x, 0).normalize().multiplyScalar(d.length() * 0.18 * (idx % 2 ? -1 : 1));
   }, [from, to, idx]);
   const tmp = useMemo(() => new THREE.Vector3(), []);
 
-  useFrame((state) => {
+  useFrame((state, dt) => {
     const g = group.current;
     if (!g) return;
     const time = state.clock.elapsedTime;
     const t = smooth((p.current - HOLD) / (MERGE - HOLD));
     tmp.lerpVectors(from, to, t).addScaledVector(perp, Math.sin(t * Math.PI));
     g.position.copy(tmp);
-    const twinkle = reduced ? 1 : 1 + 0.04 * Math.sin(time * 1.6 + idx * 2.1);
-    const size = r * (1 - 0.6 * t) * twinkle;
-    g.scale.setScalar(size);
-    g.rotation.z = (reduced ? 0 : time * 0.12 * (idx % 2 ? -1 : 1)) + t * Math.PI * 0.5;
+
+    const k = 1 - Math.exp(-Math.min(dt, 0.1) * 8);
+    hot.current += ((hovered.current ? 1 : 0) - hot.current) * k;
+    const h = hot.current;
+
+    const twinkle = reduced ? 1 : 1 + 0.05 * Math.sin(time * 1.4 + idx * 2.1);
+    g.scale.setScalar(r * (1 - 0.6 * t) * twinkle * (1 + 0.18 * h));
+    if (rays.current) rays.current.rotation.z = (reduced ? 0 : time * 0.05 * (idx % 2 ? -1 : 1)) + t * Math.PI * 0.5;
+    if (halo.current) {
+      halo.current.scale.setScalar(3.2 + 1.4 * h);
+      (halo.current.material as THREE.SpriteMaterial).opacity = 0.55 + 0.4 * h;
+    }
+    if (wide.current) {
+      wide.current.scale.setScalar(8 + 3 * h);
+      (wide.current.material as THREE.SpriteMaterial).opacity = 0.38 + 0.35 * h;
+    }
+    if (core.current) core.current.scale.setScalar(1.1 + 0.3 * h);
   });
 
   return (
     <group ref={group}>
-      <sprite scale={[7, 7, 1]}>
-        <spriteMaterial map={glow} color="#1e5bd6" transparent opacity={0.5} depthWrite={false} blending={THREE.AdditiveBlending} />
+      {/* invisible hit area so the whole star responds to the cursor */}
+      <mesh
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          hovered.current = true;
+          document.body.style.cursor = "pointer";
+        }}
+        onPointerOut={() => {
+          hovered.current = false;
+          document.body.style.cursor = "";
+        }}
+      >
+        <circleGeometry args={[1.25, 24]} />
+        <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+      </mesh>
+      <sprite ref={wide} scale={[8, 8, 1]}>
+        <spriteMaterial map={glow} color="#1e5bd6" transparent opacity={0.38} depthWrite={false} blending={THREE.AdditiveBlending} />
       </sprite>
-      <sprite scale={[2.6, 2.6, 1]}>
+      <sprite ref={halo} scale={[3.2, 3.2, 1]}>
         <spriteMaterial map={glow} color="#bfd6ff" transparent opacity={0.55} depthWrite={false} blending={THREE.AdditiveBlending} />
       </sprite>
-      <mesh geometry={geo}>
-        <meshBasicMaterial color="#ffffff" fog={false} />
-      </mesh>
+      <group ref={rays}>
+        <mesh geometry={vertical}>
+          <meshBasicMaterial color="#ffffff" transparent opacity={0.95} depthWrite={false} blending={THREE.AdditiveBlending} fog={false} />
+        </mesh>
+        <mesh geometry={horizontal} rotation={[0, 0, Math.PI / 2]}>
+          <meshBasicMaterial color="#ffffff" transparent opacity={0.9} depthWrite={false} blending={THREE.AdditiveBlending} fog={false} />
+        </mesh>
+        <mesh geometry={diagonal} rotation={[0, 0, Math.PI / 4]}>
+          <meshBasicMaterial color="#bfd6ff" transparent opacity={0.6} depthWrite={false} blending={THREE.AdditiveBlending} fog={false} />
+        </mesh>
+        <mesh geometry={diagonal} rotation={[0, 0, -Math.PI / 4]}>
+          <meshBasicMaterial color="#bfd6ff" transparent opacity={0.6} depthWrite={false} blending={THREE.AdditiveBlending} fog={false} />
+        </mesh>
+      </group>
+      <sprite ref={core} scale={[1.1, 1.1, 1]}>
+        <spriteMaterial map={glow} color="#ffffff" transparent opacity={1} depthWrite={false} blending={THREE.AdditiveBlending} />
+      </sprite>
     </group>
   );
 }
@@ -277,20 +327,21 @@ function Scene({ progress, reduced, small }: SceneProps) {
   const u = Math.min(vw, vh * 1.4) / 10;
 
   const layout = useMemo(() => {
-    const target = new THREE.Vector3(small ? 0 : vw * 0.12, small ? vh * 0.12 : 0.1, 0.5);
+    const target = new THREE.Vector3(0, small ? vh * 0.12 : 0.3, 0.5);
+    /* Text sits in the middle, so the stars take the left, right and upper-right. */
     const stars = small
       ? [
-          { from: new THREE.Vector3(vw * 0.16, vh * 0.33, 0.4), r: u * 0.95 },
-          { from: new THREE.Vector3(-vw * 0.3, vh * 0.41, -0.6), r: u * 0.5 },
-          { from: new THREE.Vector3(vw * 0.4, vh * 0.44, -0.8), r: u * 0.42 },
+          { from: new THREE.Vector3(-vw * 0.3, vh * 0.36, 0.4), r: u * 0.8 },
+          { from: new THREE.Vector3(vw * 0.34, vh * 0.3, -0.6), r: u * 0.6 },
+          { from: new THREE.Vector3(vw * 0.2, vh * 0.44, -0.8), r: u * 0.42 },
         ]
       : [
-          { from: new THREE.Vector3(vw * 0.25, vh * 0.06, 0.4), r: u * 0.62 },
-          { from: new THREE.Vector3(vw * 0.43, -vh * 0.26, -0.8), r: u * 0.34 },
-          { from: new THREE.Vector3(vw * 0.38, vh * 0.36, -1.2), r: u * 0.27 },
+          { from: new THREE.Vector3(-vw * 0.37, vh * 0.04, 0.4), r: u * 0.62 },
+          { from: new THREE.Vector3(vw * 0.38, -vh * 0.1, -0.6), r: u * 0.5 },
+          { from: new THREE.Vector3(vw * 0.27, vh * 0.36, -1.0), r: u * 0.38 },
         ];
     const planet = {
-      pos: new THREE.Vector3(small ? vw * 0.5 : vw * 0.42, small ? -vh * 0.66 : -vh * 0.6, -3),
+      pos: new THREE.Vector3(small ? vw * 0.5 : vw * 0.44, small ? -vh * 0.66 : -vh * 0.62, -3),
       r: small ? u * 3 : u * 2.2,
     };
     return { target, stars, planet };

@@ -35,19 +35,21 @@ export function Hero() {
           <Suspense fallback={null}>
             <Constellation progress={scrollYProgress} />
           </Suspense>
+          {/* soft vignette behind the centered text; fades out with it */}
           <motion.div
             style={{ opacity: textOpacity }}
-            className="pointer-events-none absolute inset-0 bg-gradient-to-r from-ink via-ink/55 to-transparent md:via-ink/40"
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_55%_60%_at_50%_55%,rgba(5,6,8,0.85),transparent_70%)]"
           />
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-ink to-transparent" />
         </motion.div>
 
+        {/* pointer-events pass through to the canvas except on the text itself */}
         <motion.div
           style={{ opacity: textOpacity, y: textY }}
-          className="absolute inset-0 flex items-end md:items-center"
+          className="pointer-events-none absolute inset-0 flex items-end md:items-center"
         >
           <div className="mx-auto w-full max-w-[1240px] px-5 pb-20 pt-32 md:px-8 md:pb-0 md:pt-24">
-            <div className="max-w-[880px]">
+            <div className="pointer-events-auto mx-auto max-w-[880px] text-center">
               <h1 className="text-[clamp(38px,5.6vw,76px)] leading-[1.04]">
                 {words.map((w, i) => (
                   <span key={w} className="block overflow-hidden pb-[0.08em]">
@@ -58,7 +60,7 @@ export function Hero() {
                 ))}
               </h1>
               <motion.p
-                className="mt-7 max-w-[520px] text-[17px] leading-relaxed text-mist md:text-[18px]"
+                className="mx-auto mt-7 max-w-[560px] text-[17px] leading-relaxed text-mist md:text-[18px]"
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8, duration: 0.8 }}
@@ -68,7 +70,7 @@ export function Hero() {
                 who have already shipped under pressure.
               </motion.p>
               <motion.div
-                className="mt-9 flex flex-wrap gap-3"
+                className="mt-9 flex flex-wrap justify-center gap-3"
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.95, duration: 0.8 }}

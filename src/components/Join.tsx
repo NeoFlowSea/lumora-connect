@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 const sides = [
   {
@@ -15,6 +16,8 @@ const sides = [
   },
 ];
 
+const ease = [0.22, 1, 0.36, 1] as const;
+
 export function Join() {
   const [hover, setHover] = useState<string | null>(null);
   return (
@@ -22,33 +25,45 @@ export function Join() {
       <div className="flex flex-col gap-3 md:flex-row">
         {sides.map((s) => {
           const active = hover === s.key;
-          const dim = hover && !active;
+          const dim = hover !== null && !active;
           return (
-            <div
+            <motion.div
               key={s.key}
               onMouseEnter={() => setHover(s.key)}
               onMouseLeave={() => setHover(null)}
-              className={`relative overflow-hidden rounded-3xl border p-8 transition-[flex-grow,border-color,opacity] duration-500 ease-[cubic-bezier(.22,1,.36,1)] md:p-12 ${
-                active ? "border-royal/60" : "border-line"
-              } ${dim ? "opacity-70" : ""}`}
-              style={{ flexGrow: active ? 1.6 : 1, flexBasis: 0 }}
+              initial={false}
+              animate={{
+                flexGrow: active ? 1.5 : 1,
+                opacity: dim ? 0.6 : 1,
+                borderColor: active ? "rgba(30,91,214,0.7)" : "rgba(191,214,255,0.14)",
+              }}
+              transition={{ duration: 0.7, ease }}
+              style={{ flexBasis: 0 }}
+              className="relative min-w-0 overflow-hidden rounded-3xl border p-8 md:p-12"
             >
-              <div
-                className={`pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-royal blur-3xl transition-opacity duration-500 ${
-                  active ? "opacity-40" : "opacity-0"
-                }`}
+              <motion.div
+                aria-hidden
+                animate={{ opacity: active ? 0.45 : 0, scale: active ? 1 : 0.7 }}
+                transition={{ duration: 0.9, ease }}
+                className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-royal blur-3xl"
               />
-              <h2 className="relative text-[clamp(26px,3vw,40px)]">{s.title}</h2>
-              <p className="relative mt-4 max-w-[42ch] text-[15px] text-mist md:text-[16px]">{s.text}</p>
-              <a
-                href="#top"
-                className={`relative mt-8 inline-block rounded-full px-6 py-3 text-[15px] font-semibold transition-colors ${
-                  s.key === "talent" ? "bg-snow text-ink hover:bg-ice" : "bg-royal text-snow hover:bg-[#2b6cf0]"
-                }`}
+              <motion.div
+                animate={{ x: active ? 6 : 0 }}
+                transition={{ duration: 0.7, ease }}
+                className="relative"
               >
-                {s.cta}
-              </a>
-            </div>
+                <h2 className="text-[clamp(26px,3vw,40px)]">{s.title}</h2>
+                <p className="mt-4 max-w-[42ch] text-[15px] text-mist md:text-[16px]">{s.text}</p>
+                <a
+                  href="#top"
+                  className={`mt-8 inline-block rounded-full px-6 py-3 text-[15px] font-semibold transition-colors duration-300 ${
+                    s.key === "talent" ? "bg-snow text-ink hover:bg-ice" : "bg-royal text-snow hover:bg-[#2b6cf0]"
+                  }`}
+                >
+                  {s.cta}
+                </a>
+              </motion.div>
+            </motion.div>
           );
         })}
       </div>
