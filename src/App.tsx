@@ -1,44 +1,50 @@
-import { useEffect } from "react";
-import Lenis from "lenis";
-import { Nav } from "./components/Nav";
-import { Hero } from "./components/Hero";
-import { Stats } from "./components/Stats";
-import { HowItWorks } from "./components/HowItWorks";
-import { Categories } from "./components/Categories";
-import { Talent } from "./components/Talent";
-import { Opportunities } from "./components/Opportunities";
-import { Join } from "./components/Join";
-import { Footer } from "./components/Footer";
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Splash } from "./components/Splash";
+import { ToastProvider } from "./components/ui";
+import { RolePicker } from "./components/RolePicker";
+import { Landing } from "./landing/Landing";
+import { AppShell } from "./app/AppShell";
+import { Swipe } from "./app/Swipe";
+import { OpportunitiesTab } from "./app/OpportunitiesTab";
+import { HackathonsTab } from "./app/HackathonsTab";
+import { ProfileTab } from "./app/ProfileTab";
+import { useRoute, go } from "./lib/router";
+import { useStore } from "./lib/store";
 
 export default function App() {
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const lenis = new Lenis({ lerp: 0.1 });
-    let raf = 0;
-    const loop = (t: number) => {
-      lenis.raf(t);
-      raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
-    return () => {
-      cancelAnimationFrame(raf);
-      lenis.destroy();
-    };
-  }, []);
+  const [intro, setIntro] = useState(true);
+  const route = useRoute();
+  const { role } = useStore();
 
   return (
-    <div className="grain">
-      <Nav />
-      <main>
-        <Hero />
-        <Stats />
-        <HowItWorks />
-        <Categories />
-        <Talent />
-        <Opportunities />
-        <Join />
-      </main>
-      <Footer />
-    </div>
+    <ToastProvider>
+      {route.page === "landing" ? (
+        <Landing />
+      ) : role ? (
+        <AppShell tab={route.tab}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={route.tab}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {route.tab === "swipe" && <Swipe />}
+              {route.tab === "opportunities" && <OpportunitiesTab />}
+              {route.tab === "hackathons" && <HackathonsTab />}
+              {route.tab === "profile" && <ProfileTab />}
+            </motion.div>
+          </AnimatePresence>
+        </AppShell>
+      ) : (
+        <>
+          <Landing />
+          <RolePicker open onClose={() => go("#/")} />
+        </>
+      )}
+      {intro && <Splash onDone={() => setIntro(false)} />}
+    </ToastProvider>
   );
 }

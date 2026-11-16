@@ -1,21 +1,21 @@
 # Lumora Connect
 
-Landing page for Lumora Connect: a talent network (LinkedIn + hh.ru style) that links hackathon winners and young tech talent in Uzbekistan with companies offering internships, work programs, positions and events. Lumora runs IT case hackathons across Uzbek cities.
+Lumora Connect is a Tinder-style talent network for Uzbekistan: hackathon winners and young tech talent swipe companies, companies swipe verified talent, a mutual right swipe is a match. Lumora runs IT case hackathons across Uzbek cities. This repo is the front-end preview only: all data is mock, there is no backend yet.
 
-## Audience and tone
-Mostly students and junior developers, some teens. Business-like but stylish. English first; Russian and Uzbek later (fonts must support Cyrillic).
+## Structure
+- Intro splash (`src/components/Splash.tsx`): blue screen with the white shield, then vertical strips wipe right, like the Tinder iOS launch.
+- Public landing (`src/landing/*`): hero with a self-swiping deck, stats, how it works, tracks, winners, opportunities, hackathons, join, footer. Lenis smooth scroll, Framer Motion reveals.
+- App (`src/app/*`) behind a role choice (talent or company), four tabs: Swipe, Opportunities, Hackathons, Profile. Hash routes `#/app/<tab>` in `src/lib/router.ts`; state (role, likes, applications, registrations) in `src/lib/store.ts`, persisted to localStorage.
+- Mock data in `src/data.ts`.
 
 ## Stack
-Vite + React 18 + TypeScript, Tailwind v4 (`@import "tailwindcss"` in `src/index.css`), Framer Motion, React Three Fiber + drei for 3D, Lenis for smooth scroll, lucide-react icons.
+Vite + React 18 + TypeScript, Tailwind v4 (`@import "tailwindcss"` in `src/index.css`, tokens in `@theme`), Framer Motion, Lenis, lucide-react. `base: "./"` in vite.config so the build works on GitHub Pages. Deploy workflow in `.github/workflows/deploy.yml`.
 
 ## Design rules
-- Dark + blue only. Base black `#050608`, navy `#0B2A6B` (logo shield), royal `#1E5BD6`, ice `#BFD6FF`, white `#F2F5FA`. No other hues.
-- Display font Unbounded, body font Manrope. Sentence case everywhere, no all-caps labels, no arrows in button text, no middle-dot meta strings.
-- The hero constellation is the one bold element. Everything else stays quiet: generous space, hairline rules, few cards.
-- Respect `prefers-reduced-motion`. Keep the page usable at 375px.
-
-## Reference material
-`Lumora_Connect_prototype .html` is the earlier functional prototype (data model, categories, flows). `Logo.jpg` is the original logo; `public/logo.svg` is the vector redraw used on the site.
+- Light theme, white and blue like the original logo: blue `#1a4ba8`, sky `#4f8be0`, tint `#e9f1fc`, ink `#0b1f3a`, mist `#5b6b82`. No other hues except green/red for like/nope.
+- Logo: white shield with blue mark on a blue rounded tile, exactly like `Logo.jpg` (traced paths live in `src/components/Logo.tsx`).
+- Display font Unbounded, body font Manrope. Sentence case, no all-caps labels, no arrows in button text.
+- Respect `prefers-reduced-motion`. Keep everything usable at 375px (bottom tab bar on phones).
 
 ## Commands
-`npm run dev` starts the dev server on http://localhost:5173. `npm run build` type-checks and builds.
+`npm run dev` starts the dev server on http://localhost:5173. `npm run build` type-checks and builds into `dist`.

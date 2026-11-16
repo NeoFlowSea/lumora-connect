@@ -1,26 +1,32 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ink: #050608;
-  --color-navy: #0b2a6b;
-  --color-royal: #1e5bd6;
-  --color-ice: #bfd6ff;
-  --color-snow: #f2f5fa;
-  --color-mist: #8a97b3;
-  --color-line: rgba(191, 214, 255, 0.14);
+  --color-blue: #1a4ba8; /* logo blue */
+  --color-blue-deep: #123a86;
+  --color-sky: #4f8be0; /* light blue accent */
+  --color-sky-soft: #8fb6f0;
+  --color-tint: #e9f1fc;
+  --color-tint-2: #d6e5fa;
+  --color-paper: #ffffff;
+  --color-cloud: #f5f8fd;
+  --color-ink: #0b1f3a;
+  --color-mist: #5b6b82;
+  --color-line: #d9e3f2;
+  --color-good: #1b7f4c;
+  --color-bad: #c73b3b;
   --font-display: "Unbounded", "Manrope", sans-serif;
   --font-body: "Manrope", system-ui, sans-serif;
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
   scroll-behavior: auto;
 }
 
 body {
   margin: 0;
-  background: var(--color-ink);
-  color: var(--color-snow);
+  background: var(--color-paper);
+  color: var(--color-ink);
   font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.55;
@@ -29,14 +35,14 @@ body {
 }
 
 ::selection {
-  background: var(--color-royal);
-  color: var(--color-snow);
+  background: var(--color-blue);
+  color: #fff;
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-ice);
+  outline: 2px solid var(--color-blue);
   outline-offset: 3px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 h1,
@@ -45,20 +51,53 @@ h3 {
   font-family: var(--font-display);
   font-weight: 500;
   letter-spacing: -0.02em;
-  line-height: 1.05;
+  line-height: 1.08;
   margin: 0;
   text-wrap: balance;
 }
 
-/* Grain overlay so the black is not flat */
-.grain::after {
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+/* Light dotted grid for section backgrounds */
+.dots {
+  background-image: radial-gradient(rgba(26, 75, 168, 0.14) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Soft blue glows */
+.glow-blue {
+  background: radial-gradient(closest-side, rgba(79, 139, 224, 0.35), transparent);
+}
+
+/* Spotlight on tiles: follows the cursor via CSS variables */
+.spot {
+  position: relative;
+  overflow: hidden;
+}
+.spot::before {
   content: "";
-  position: fixed;
+  position: absolute;
   inset: 0;
+  opacity: 0;
+  transition: opacity 0.35s;
+  background: radial-gradient(
+    380px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(79, 139, 224, 0.22),
+    transparent 60%
+  );
   pointer-events: none;
-  z-index: 50;
-  opacity: 0.045;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.spot:hover::before {
+  opacity: 1;
 }
 
 /* Marquee */
@@ -71,28 +110,6 @@ h3 {
 }
 .marquee:hover .marquee-track {
   animation-play-state: paused;
-}
-
-/* Spotlight on category tiles: follows the cursor via CSS variables */
-.spot {
-  position: relative;
-  overflow: hidden;
-}
-.spot::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 0.35s;
-  background: radial-gradient(
-    420px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(30, 91, 214, 0.28),
-    transparent 60%
-  );
-  pointer-events: none;
-}
-.spot:hover::before {
-  opacity: 1;
 }
 
 .scrollbar-none::-webkit-scrollbar {
