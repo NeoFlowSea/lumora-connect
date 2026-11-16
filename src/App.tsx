@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { Splash } from "./components/Splash";
 import { ToastProvider } from "./components/ui";
 import { RolePicker } from "./components/RolePicker";
@@ -23,18 +22,13 @@ export default function App() {
         <Landing />
       ) : role ? (
         <AppShell tab={route.tab}>
-          {/* keyed fade-in only: no exit animation, so a tab can never wait on the previous one */}
-          <motion.div
-            key={route.tab}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-          >
+          {/* tabs switch instantly; the intro plays only on a page load */}
+          <div key={route.tab}>
             {route.tab === "swipe" && <Swipe />}
             {route.tab === "opportunities" && <OpportunitiesTab />}
             {route.tab === "hackathons" && <HackathonsTab />}
             {route.tab === "profile" && <ProfileTab />}
-          </motion.div>
+          </div>
         </AppShell>
       ) : (
         <>

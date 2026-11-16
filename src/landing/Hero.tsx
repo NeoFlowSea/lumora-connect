@@ -34,7 +34,8 @@ function SwipeDemo() {
   const stack = [0, 1, 2].map((k) => companies[(i + k) % companies.length]);
 
   return (
-    <div className="relative mx-auto h-[420px] w-[300px] md:h-[460px] md:w-[330px]">
+    <div className="mx-auto w-[300px] md:w-[330px]">
+    <div className="relative h-[420px] md:h-[460px]">
       <AnimatePresence initial={false}>
         {stack
           .slice()
@@ -98,8 +99,9 @@ function SwipeDemo() {
             );
           })}
       </AnimatePresence>
-      {/* action buttons under the deck */}
-      <div className="absolute -bottom-9 left-1/2 flex -translate-x-1/2 items-center gap-4">
+    </div>
+      {/* action buttons under the deck, in normal flow so cards never cover them */}
+      <div className="relative z-20 mt-6 flex items-center justify-center gap-4">
         <motion.span
           animate={{ scale: stamp === -1 ? 1.15 : 1 }}
           className="grid h-14 w-14 place-items-center rounded-full border border-line bg-white text-bad shadow-md"
