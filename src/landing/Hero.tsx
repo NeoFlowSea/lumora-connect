@@ -130,7 +130,6 @@ export function Hero({ onOpenApp }: { onOpenApp: () => void }) {
   const words = ["Swipe right on", "your next", "internship."];
   return (
     <section id="top" className="relative overflow-hidden pt-28 md:pt-36">
-      <div className="dots pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_70%_60%_at_50%_30%,black,transparent)]" />
       <div className="glow-blue pointer-events-none absolute -right-40 top-10 h-[520px] w-[520px] rounded-full" />
       <div className="glow-blue pointer-events-none absolute -left-60 top-80 h-[420px] w-[420px] rounded-full opacity-60" />
 

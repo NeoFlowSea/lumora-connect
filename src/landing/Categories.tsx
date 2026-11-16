@@ -10,7 +10,7 @@ function track(e: MouseEvent<HTMLAnchorElement>) {
 
 export function Categories() {
   return (
-    <section className="bg-cloud py-24 md:py-36">
+    <section className="bg-cloud/60 py-24 md:py-36">
       <div className="mx-auto max-w-[1240px] px-5 md:px-8">
         <Reveal className="mb-12 flex flex-wrap items-end justify-between gap-6">
           <h2 className="max-w-[18ch] text-[clamp(28px,3.6vw,46px)]">Pick your track, see who is hiring in it</h2>

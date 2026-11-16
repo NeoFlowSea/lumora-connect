@@ -30,7 +30,7 @@ const stats = [
 export function Stats() {
   const list = [...partners, ...partners];
   return (
-    <section className="border-y border-line bg-cloud">
+    <section className="border-y border-line bg-cloud/75 backdrop-blur-[2px]">
       <div className="mx-auto grid max-w-[1240px] grid-cols-2 divide-line md:grid-cols-4 md:divide-x">
         {stats.map((s) => (
           <div key={s.label} className="px-5 py-8 md:px-8 md:py-10">

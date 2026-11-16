@@ -11,6 +11,7 @@ import { Hackathons } from "./Hackathons";
 import { Join } from "./Join";
 import { Footer } from "./Footer";
 import { RolePicker } from "../components/RolePicker";
+import { GridBackground } from "../components/GridBackground";
 
 export function Landing() {
   const [picker, setPicker] = useState(false);
@@ -33,6 +34,7 @@ export function Landing() {
 
   return (
     <>
+      <GridBackground />
       <Nav onOpenApp={open} />
       <main>
         <Hero onOpenApp={open} />

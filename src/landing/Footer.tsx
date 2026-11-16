@@ -2,7 +2,7 @@ import { Wordmark } from "../components/Logo";
 
 export function Footer() {
   return (
-    <footer className="border-t border-line bg-cloud">
+    <footer className="border-t border-line bg-cloud/80">
       <div className="mx-auto grid max-w-[1240px] gap-10 px-5 py-14 md:grid-cols-[1.4fr_1fr_1fr_1fr] md:px-8">
         <div>
           <Wordmark />
