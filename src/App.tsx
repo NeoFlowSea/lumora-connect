@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Splash } from "./components/Splash";
 import { ToastProvider } from "./components/ui";
 import { RolePicker } from "./components/RolePicker";
@@ -23,20 +23,18 @@ export default function App() {
         <Landing />
       ) : role ? (
         <AppShell tab={route.tab}>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={route.tab}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            >
-              {route.tab === "swipe" && <Swipe />}
-              {route.tab === "opportunities" && <OpportunitiesTab />}
-              {route.tab === "hackathons" && <HackathonsTab />}
-              {route.tab === "profile" && <ProfileTab />}
-            </motion.div>
-          </AnimatePresence>
+          {/* keyed fade-in only: no exit animation, so a tab can never wait on the previous one */}
+          <motion.div
+            key={route.tab}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {route.tab === "swipe" && <Swipe />}
+            {route.tab === "opportunities" && <OpportunitiesTab />}
+            {route.tab === "hackathons" && <HackathonsTab />}
+            {route.tab === "profile" && <ProfileTab />}
+          </motion.div>
         </AppShell>
       ) : (
         <>

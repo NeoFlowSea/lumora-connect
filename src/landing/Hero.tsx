@@ -45,7 +45,7 @@ function SwipeDemo() {
             return (
               <motion.div
                 key={c.id}
-                layout
+
                 className="absolute inset-0 overflow-hidden rounded-[28px] border border-line bg-white shadow-[0_30px_60px_-30px_rgba(11,31,58,0.35)]"
                 initial={{ scale: 0.9, y: 36, opacity: 0 }}
                 animate={{ scale: 1 - depth * 0.05, y: depth * 14, opacity: 1, rotate: 0 }}

@@ -12,13 +12,18 @@ import { Join } from "./Join";
 import { Footer } from "./Footer";
 import { RolePicker } from "../components/RolePicker";
 import { GridBackground } from "../components/GridBackground";
+import { TouchGlow } from "../components/TouchGlow";
+
+const isTouch = () => window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768;
 
 export function Landing() {
   const [picker, setPicker] = useState(false);
+  const [touch] = useState(isTouch);
   const open = () => setPicker(true);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // smooth scroll only on desktop; phones keep native scrolling
+    if (touch || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const lenis = new Lenis({ lerp: 0.1 });
     let raf = 0;
     const loop = (t: number) => {
@@ -30,11 +35,11 @@ export function Landing() {
       cancelAnimationFrame(raf);
       lenis.destroy();
     };
-  }, []);
+  }, [touch]);
 
   return (
     <>
-      <GridBackground />
+      {touch ? <TouchGlow /> : <GridBackground />}
       <Nav onOpenApp={open} />
       <main>
         <Hero onOpenApp={open} />

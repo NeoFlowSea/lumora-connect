@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useAnimation, useMotionValue, useTransform, type PanInfo } from "framer-motion";
 import { Heart, Info, MapPin, RotateCcw, Trophy, X } from "lucide-react";
 import { companies, talents, type Company, type Talent } from "../data";
@@ -29,6 +29,11 @@ const Card = forwardRef<Handle, { item: Item; top: boolean; depth: number; onDon
     }
     useImperativeHandle(ref, () => ({ fly }));
 
+    // entrance and stack position go through the same controller as the fly-out
+    useEffect(() => {
+      controls.start({ scale: 1 - depth * 0.04, y: depth * 18, opacity: 1, transition: { duration: 0.45, ease } });
+    }, [controls, depth]);
+
     function onDragEnd(_: unknown, info: PanInfo) {
       if (info.offset.x > 110 || info.velocity.x > 700) fly(1);
       else if (info.offset.x < -110 || info.velocity.x < -700) fly(-1);
@@ -50,7 +55,6 @@ const Card = forwardRef<Handle, { item: Item; top: boolean; depth: number; onDon
         animate={controls}
         style={{ x, rotate, zIndex: 10 - depth }}
         initial={{ scale: 0.92, y: 30, opacity: 0 }}
-        whileInView={{ scale: 1 - depth * 0.04, y: depth * 18, opacity: 1 }}
         transition={{ duration: 0.45, ease }}
         className={`absolute inset-0 select-none overflow-hidden rounded-[28px] border border-line bg-white shadow-[0_30px_60px_-30px_rgba(11,31,58,0.4)] ${
           top ? "cursor-grab active:cursor-grabbing" : ""

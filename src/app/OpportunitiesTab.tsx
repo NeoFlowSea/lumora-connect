@@ -52,12 +52,12 @@ export function OpportunitiesTab() {
           <Search size={16} className="text-mist" />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search title, company, city" className="w-full bg-transparent outline-none placeholder:text-mist" />
         </label>
-        <div className="flex gap-1 rounded-full border border-line bg-white p-1">
+        <div className="scrollbar-none flex max-w-full gap-1 overflow-x-auto rounded-full border border-line bg-white p-1">
           {types.map((t) => (
             <button
               key={t}
               onClick={() => setType(t)}
-              className={`relative rounded-full px-3 py-1.5 text-[13px] font-semibold ${type === t ? "text-white" : "text-mist hover:text-ink"}`}
+              className={`relative shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-[13px] font-semibold ${type === t ? "text-white" : "text-mist hover:text-ink"}`}
             >
               {type === t && <motion.span layoutId="type-pill" className="absolute inset-0 rounded-full bg-blue" transition={{ type: "spring", stiffness: 400, damping: 32 }} />}
               <span className="relative">{t}</span>
