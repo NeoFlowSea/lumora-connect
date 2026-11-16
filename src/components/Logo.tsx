@@ -11,8 +11,9 @@ const MARK =
 export function Shield({ size = 28, mono }: { size?: number; mono?: string }) {
   return (
     <svg viewBox="154 145 322 392" width={size} height={size * 1.217} aria-hidden="true">
-      <path d={SHIELD} fill={mono ?? "#ffffff"} />
-      <path d={MARK} fill={mono ? "transparent" : "#1a4ba8"} fillRule="evenodd" />
+      {/* silhouette underneath gives the mark its color; the traced white area sits on top */}
+      {!mono && <path d={SHIELD} fill="#1a4ba8" />}
+      <path d={MARK} fill={mono ?? "#ffffff"} fillRule="evenodd" />
     </svg>
   );
 }
