@@ -64,7 +64,7 @@ export function GridBackground() {
         x: Math.floor(Math.random() * cols),
         y: Math.floor(Math.random() * rows),
         dir,
-        speed: 4.5 + Math.random() * 4,
+        speed: (reduced ? 0.5 : 1) * (4.5 + Math.random() * 4),
         trail: 4 + Math.random() * 5,
         life: 2.5 + Math.random() * 3.5,
         age: 0,
@@ -140,10 +140,8 @@ export function GridBackground() {
         }
       }
 
-      if (reduced) return;
-
-      // pulses
-      const target = Math.round(9 * fade);
+      // pulses: fewer and slower when the OS asks for reduced motion
+      const target = Math.round((reduced ? 4 : 9) * fade);
       while (pulses.length < target) spawn();
       ctx!.lineCap = "round";
       for (let i = pulses.length - 1; i >= 0; i--) {
@@ -198,16 +196,6 @@ export function GridBackground() {
     if (!coarse) {
       window.addEventListener("pointermove", onMove, { passive: true });
       document.addEventListener("pointerleave", onLeave);
-    }
-    if (reduced) {
-      // static lattice only, redrawn on scroll
-      draw(performance.now());
-      const onScroll = () => draw(performance.now());
-      window.addEventListener("scroll", onScroll, { passive: true });
-      return () => {
-        window.removeEventListener("resize", resize);
-        window.removeEventListener("scroll", onScroll);
-      };
     }
     raf = requestAnimationFrame(loop);
     return () => {
