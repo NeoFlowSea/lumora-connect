@@ -1,5 +1,8 @@
 name: Deploy to GitHub Pages
 
+# main is published at the site root. Every design/<name> branch is built too
+# and published next to it at /<name>/, so variants can be compared side by side.
+
 on:
   push:
     branches: [main]
@@ -19,12 +22,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
       - run: npm ci
       - run: npm run build
+      - name: Build design branches into subfolders
+        run: |
+          for ref in $(git for-each-ref --format='%(refname:short)' refs/remotes/origin/design/); do
+            name="${ref#origin/design/}"
+            echo "Building $ref into /$name/"
+            git worktree add "../preview-$name" "$ref"
+            (cd "../preview-$name" && npm ci && npm run build)
+            mkdir -p "dist/$name"
+            cp -r "../preview-$name/dist/." "dist/$name/"
+          done
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
