@@ -48,11 +48,11 @@ export function OpportunitiesTab() {
       </div>
 
       <div className="mt-6 flex flex-wrap gap-3">
-        <label className="flex min-w-[240px] flex-1 items-center gap-2 rounded-full border border-line bg-white px-4 py-2.5 text-[14px] focus-within:border-sky">
+        <label className="flex min-w-[240px] flex-1 items-center gap-2 rounded-full border border-line bg-surface px-4 py-2.5 text-[14px] focus-within:border-sky">
           <Search size={16} className="text-mist" />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search title, company, city" className="w-full bg-transparent outline-none placeholder:text-mist" />
         </label>
-        <div className="scrollbar-none flex max-w-full gap-1 overflow-x-auto rounded-full border border-line bg-white p-1">
+        <div className="scrollbar-none flex max-w-full gap-1 overflow-x-auto rounded-full border border-line bg-surface p-1">
           {types.map((t) => (
             <button
               key={t}
@@ -66,14 +66,14 @@ export function OpportunitiesTab() {
         </div>
       </div>
       <div className="scrollbar-none mt-3 flex gap-2 overflow-x-auto pb-1">
-        <button onClick={() => setCat("")} className={`shrink-0 rounded-full border px-3 py-1.5 text-[13px] font-semibold ${!cat ? "border-blue bg-tint text-blue" : "border-line bg-white text-mist"}`}>
+        <button onClick={() => setCat("")} className={`shrink-0 rounded-full border px-3 py-1.5 text-[13px] font-semibold ${!cat ? "border-blue bg-tint text-sky" : "border-line bg-surface text-mist"}`}>
           All tracks
         </button>
         {categories.map((c) => (
           <button
             key={c.name}
             onClick={() => setCat(cat === c.name ? "" : c.name)}
-            className={`shrink-0 rounded-full border px-3 py-1.5 text-[13px] font-semibold ${cat === c.name ? "border-blue bg-tint text-blue" : "border-line bg-white text-mist"}`}
+            className={`shrink-0 rounded-full border px-3 py-1.5 text-[13px] font-semibold ${cat === c.name ? "border-blue bg-tint text-sky" : "border-line bg-surface text-mist"}`}
           >
             {c.name}
           </button>
@@ -90,7 +90,7 @@ export function OpportunitiesTab() {
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, ease, delay: i * 0.03 }}
-              className="flex flex-col rounded-3xl border border-line bg-white p-5 text-left transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-sky hover:shadow-[0_20px_40px_-28px_rgba(26,75,168,0.5)]"
+              className="flex flex-col rounded-3xl border border-line bg-surface p-5 text-left transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-sky hover:shadow-[0_20px_40px_-28px_rgba(26,75,168,0.5)]"
             >
               <div className="flex items-center gap-3">
                 <span className="grid h-10 w-10 place-items-center rounded-xl bg-blue font-display text-[13px] text-white">{o.co[0]}</span>
@@ -108,7 +108,7 @@ export function OpportunitiesTab() {
               <p className="mt-2 line-clamp-2 text-[14px] text-mist">{o.desc}</p>
               <div className="mt-4 flex flex-wrap gap-1.5">
                 {o.cats.map((c) => (
-                  <span key={c} className="rounded-md bg-tint px-2 py-0.5 text-[12px] font-semibold text-blue">
+                  <span key={c} className="rounded-md bg-tint px-2 py-0.5 text-[12px] font-semibold text-sky">
                     {c}
                   </span>
                 ))}

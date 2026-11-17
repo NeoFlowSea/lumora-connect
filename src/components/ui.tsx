@@ -34,7 +34,7 @@ export function Highlight({ children, delay = 0.2 }: { children: ReactNode; dela
     <span className="relative inline-block">
       <motion.span
         aria-hidden
-        className="absolute inset-x-[-0.1em] bottom-[0.05em] top-[0.15em] -z-10 rounded-md bg-tint-2"
+        className="absolute inset-x-0 bottom-[-0.02em] h-[0.14em] rounded-full bg-accent"
         initial={{ scaleX: 0 }}
         whileInView={{ scaleX: 1 }}
         viewport={{ once: true, margin: "-10% 0px" }}
@@ -48,9 +48,9 @@ export function Highlight({ children, delay = 0.2 }: { children: ReactNode; dela
 
 export const btn = {
   primary:
-    "inline-flex items-center justify-center gap-2 rounded-full bg-blue px-6 py-3 text-[15px] font-semibold text-white shadow-[0_10px_30px_-12px_rgba(26,75,168,0.7)] transition-[background-color,transform,box-shadow] hover:bg-blue-deep hover:shadow-[0_14px_34px_-12px_rgba(26,75,168,0.8)] active:scale-[0.98]",
+    "inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-[15px] font-semibold text-paper shadow-[0_10px_30px_-12px_rgba(255,201,60,0.55)] transition-[background-color,transform,box-shadow] hover:bg-accent-deep hover:shadow-[0_14px_34px_-12px_rgba(255,201,60,0.7)] active:scale-[0.98]",
   ghost:
-    "inline-flex items-center justify-center gap-2 rounded-full border border-line bg-white px-6 py-3 text-[15px] font-semibold text-ink transition-colors hover:border-sky hover:bg-tint",
+    "inline-flex items-center justify-center gap-2 rounded-full border border-line bg-transparent px-6 py-3 text-[15px] font-semibold text-ink transition-colors hover:border-sky hover:bg-tint",
   sm: "inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-semibold",
 };
 
@@ -78,7 +78,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.96 }}
               transition={{ duration: 0.3, ease }}
-              className="rounded-full bg-ink px-4 py-2.5 text-[14px] font-semibold text-white shadow-lg"
+              className="rounded-full bg-accent px-4 py-2.5 text-[14px] font-semibold text-paper shadow-lg"
             >
               {t.text}
             </motion.div>
@@ -95,7 +95,7 @@ export function Modal({ open, onClose, children, wide }: { open: boolean; onClos
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[80] grid place-items-end bg-ink/40 p-0 backdrop-blur-sm md:place-items-center md:p-6"
+          className="fixed inset-0 z-[80] grid place-items-end bg-[#050d24]/70 p-0 backdrop-blur-sm md:place-items-center md:p-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -107,7 +107,7 @@ export function Modal({ open, onClose, children, wide }: { open: boolean; onClos
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 30, opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.4, ease }}
-            className={`max-h-[92vh] w-full overflow-y-auto rounded-t-3xl bg-white p-6 shadow-2xl md:rounded-3xl md:p-8 ${wide ? "md:max-w-[760px]" : "md:max-w-[560px]"}`}
+            className={`max-h-[92vh] w-full overflow-y-auto rounded-t-3xl bg-surface p-6 shadow-2xl md:rounded-3xl md:p-8 ${wide ? "md:max-w-[760px]" : "md:max-w-[560px]"}`}
           >
             {children}
           </motion.div>
@@ -119,10 +119,10 @@ export function Modal({ open, onClose, children, wide }: { open: boolean; onClos
 
 export function Pill({ children, tone = "tint" }: { children: ReactNode; tone?: "tint" | "blue" | "line" | "good" }) {
   const cls = {
-    tint: "bg-tint text-blue",
+    tint: "bg-tint text-sky",
     blue: "bg-blue text-white",
     line: "border border-line text-mist",
-    good: "bg-[#E3F4EA] text-good",
+    good: "bg-good/15 text-good",
   }[tone];
   return <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[12px] font-semibold ${cls}`}>{children}</span>;
 }

@@ -44,22 +44,22 @@ export function ProfileTab() {
     <div className="grid gap-6 md:grid-cols-[360px_1fr]">
       {/* card */}
       <div>
-        <div className="overflow-hidden rounded-3xl border border-line bg-white">
+        <div className="overflow-hidden rounded-3xl border border-line bg-surface">
           <div className="h-28 bg-gradient-to-br from-blue to-sky" />
           <div className="-mt-10 px-6 pb-6">
-            <div className="grid h-20 w-20 place-items-center rounded-full border-4 border-white bg-ink font-display text-[22px] text-white">
+            <div className="grid h-20 w-20 place-items-center rounded-full border-4 border-surface bg-blue font-display text-[22px] text-white">
               {isCo ? <Building2 size={30} /> : initials(t.name)}
             </div>
             <h1 className="mt-4 text-[24px]">{isCo ? c.name : t.name}</h1>
             <p className="text-[14px] text-mist">{isCo ? `${c.industry}, ${c.city}, ${c.size}` : `${t.cat}, ${t.city}, ${t.age}`}</p>
             {!isCo && (
               <div className="mt-4 flex items-center gap-2.5 rounded-xl bg-tint px-3 py-2.5 text-[13px]">
-                <Trophy size={16} className="shrink-0 text-blue" />
+                <Trophy size={16} className="shrink-0 text-sky" />
                 <span className="min-w-0 truncate">
                   <b>{t.place}</b>, {t.event}
                 </span>
                 <span className="ml-auto flex shrink-0 items-center gap-1 text-[11px] text-mist">
-                  <Shield size={9} mono="#1a4ba8" /> verified
+                  <Shield size={9} mono="#8db0ff" /> verified
                 </span>
               </div>
             )}
@@ -70,7 +70,7 @@ export function ProfileTab() {
                 [regs.length, "hackathons"],
               ].map(([n, l]) => (
                 <div key={l} className="rounded-xl bg-cloud py-2">
-                  <div className="font-display text-[20px] text-blue">{n}</div>
+                  <div className="font-display text-[20px] text-sky">{n}</div>
                   <div className="text-[11px] text-mist">{l}</div>
                 </div>
               ))}
@@ -92,7 +92,7 @@ export function ProfileTab() {
 
       {/* details */}
       <div className="grid gap-6">
-        <section className="rounded-3xl border border-line bg-white p-6">
+        <section className="rounded-3xl border border-line bg-surface p-6">
           <h2 className="text-[18px]">{isCo ? "Company" : "About"}</h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             {isCo ? (
@@ -120,7 +120,7 @@ export function ProfileTab() {
               <div className="text-[12px] font-semibold text-mist">Skills</div>
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {t.skills.map((s) => (
-                  <span key={s} className="rounded-md bg-tint px-2 py-1 text-[12px] font-semibold text-blue">
+                  <span key={s} className="rounded-md bg-tint px-2 py-1 text-[12px] font-semibold text-sky">
                     {s}
                   </span>
                 ))}
@@ -140,7 +140,7 @@ export function ProfileTab() {
           )}
         </section>
 
-        <section className="rounded-3xl border border-line bg-white p-6">
+        <section className="rounded-3xl border border-line bg-surface p-6">
           <h2 className="text-[18px]">{isCo ? "Talent you liked" : "Companies you liked"}</h2>
           {likedNames.length === 0 ? (
             <p className="mt-2 text-[14px] text-mist">Nothing yet. Swipe right to save someone here.</p>
@@ -165,7 +165,7 @@ export function ProfileTab() {
         </section>
 
         {!isCo && (
-          <section className="rounded-3xl border border-line bg-white p-6">
+          <section className="rounded-3xl border border-line bg-surface p-6">
             <h2 className="text-[18px]">Applications</h2>
             {apps.length === 0 ? (
               <p className="mt-2 text-[14px] text-mist">No applications yet. Open Opportunities and apply with one click.</p>
@@ -185,7 +185,7 @@ export function ProfileTab() {
           </section>
         )}
 
-        <section className="rounded-3xl border border-line bg-white p-6">
+        <section className="rounded-3xl border border-line bg-surface p-6">
           <h2 className="text-[18px]">{isCo ? "Sponsored hackathons" : "Hackathons"}</h2>
           {regs.length === 0 ? (
             <p className="mt-2 text-[14px] text-mist">{isCo ? "No sponsorships yet." : "Not registered for anything upcoming. Your past results stay on the profile."}</p>

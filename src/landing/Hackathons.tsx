@@ -13,7 +13,7 @@ export function Hackathons({ onOpenApp }: { onOpenApp: () => void }) {
           <h2 className="max-w-[18ch] text-[clamp(28px,3.6vw,46px)]">Next Lumora hackathon</h2>
         </Reveal>
         <div className="mt-12 grid gap-6 md:grid-cols-[1.3fr_1fr]">
-          <Reveal className="rounded-3xl bg-white p-7 text-ink shadow-2xl md:p-9">
+          <Reveal className="rounded-3xl bg-surface p-7 text-ink shadow-2xl md:p-9">
             <div className="flex flex-wrap items-center gap-2">
               <Pill tone="blue">{next.org}</Pill>
               <Pill tone="tint">{next.format}</Pill>

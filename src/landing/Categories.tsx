@@ -24,11 +24,11 @@ export function Categories() {
               <a
                 href="#opportunities"
                 onMouseMove={track}
-                className="spot group flex min-h-[120px] flex-col justify-between gap-4 rounded-2xl border border-line bg-white p-5 transition-[border-color,box-shadow] hover:border-sky hover:shadow-[0_20px_40px_-28px_rgba(26,75,168,0.5)] md:min-h-[190px] md:p-6"
+                className="spot group flex min-h-[120px] flex-col justify-between gap-4 rounded-2xl border border-line bg-surface p-5 transition-[border-color,box-shadow] hover:border-sky hover:shadow-[0_20px_40px_-28px_rgba(26,75,168,0.5)] md:min-h-[190px] md:p-6"
               >
                 <div className="relative flex items-start justify-between gap-3">
                   <h3 className="text-[18px] md:text-[21px]">{c.name}</h3>
-                  <span className="shrink-0 rounded-full bg-tint px-2.5 py-1 text-[12px] font-semibold text-blue">{c.open} open</span>
+                  <span className="shrink-0 rounded-full bg-tint px-2.5 py-1 text-[12px] font-semibold text-sky">{c.open} open</span>
                 </div>
                 <p className="relative text-[14px] text-mist">{c.desc}</p>
               </a>

@@ -36,10 +36,10 @@ export function HowItWorks() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10% 0px" }}
             transition={{ duration: 0.7, ease, delay: i * 0.12 }}
-            className="group relative rounded-3xl border border-line bg-white p-7 transition-[box-shadow,border-color,transform] hover:-translate-y-1 hover:border-sky hover:shadow-[0_24px_50px_-30px_rgba(26,75,168,0.45)]"
+            className="group relative rounded-3xl border border-line bg-surface p-7 transition-[box-shadow,border-color,transform] hover:-translate-y-1 hover:border-sky hover:shadow-[0_24px_50px_-30px_rgba(26,75,168,0.45)]"
           >
             <span className="absolute right-6 top-6 font-display text-[13px] text-sky">0{i + 1}</span>
-            <span className="grid h-12 w-12 place-items-center rounded-2xl bg-tint text-blue transition-colors group-hover:bg-blue group-hover:text-white">
+            <span className="grid h-12 w-12 place-items-center rounded-2xl bg-tint text-sky transition-colors group-hover:bg-blue group-hover:text-white">
               <s.icon size={22} />
             </span>
             <h3 className="mt-6 text-[20px]">{s.t}</h3>

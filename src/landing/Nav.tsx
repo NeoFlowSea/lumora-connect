@@ -20,7 +20,7 @@ export function Nav({ onOpenApp }: { onOpenApp: () => void }) {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-40 transition-[background-color,border-color,box-shadow] duration-500 ${
-        scrolled ? "border-b border-line bg-white/80 shadow-[0_8px_30px_-20px_rgba(11,31,58,0.3)] backdrop-blur-xl" : "border-b border-transparent"
+        scrolled ? "border-b border-line bg-paper/80 shadow-[0_8px_30px_-20px_rgba(11,31,58,0.3)] backdrop-blur-xl" : "border-b border-transparent"
       }`}
     >
       <div className="mx-auto flex h-18 max-w-[1240px] items-center gap-8 px-5 md:px-8">
@@ -48,7 +48,7 @@ export function Nav({ onOpenApp }: { onOpenApp: () => void }) {
           </button>
           <button
             onClick={onOpenApp}
-            className="whitespace-nowrap rounded-full bg-blue px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-blue-deep md:text-[14px]"
+            className="whitespace-nowrap rounded-full bg-accent px-4 py-2 text-[13px] font-semibold text-paper transition-colors hover:bg-accent-deep md:text-[14px]"
           >
             Open the app
           </button>

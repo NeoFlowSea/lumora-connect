@@ -56,11 +56,11 @@ const Card = forwardRef<Handle, { item: Item; top: boolean; depth: number; onDon
         style={{ x, rotate, zIndex: 10 - depth }}
         initial={{ scale: 0.92, y: 30, opacity: 0 }}
         transition={{ duration: 0.45, ease }}
-        className={`absolute inset-0 select-none overflow-hidden rounded-[28px] border border-line bg-white shadow-[0_30px_60px_-30px_rgba(11,31,58,0.4)] ${
+        className={`absolute inset-0 select-none overflow-hidden rounded-[28px] border border-line bg-surface shadow-[0_30px_60px_-30px_rgba(11,31,58,0.4)] ${
           top ? "cursor-grab active:cursor-grabbing" : ""
         }`}
       >
-        <div className="h-[42%] p-5 text-white" style={{ background: `linear-gradient(135deg, ${hue}, #4f8be0)` }}>
+        <div className="h-[42%] p-5 text-white" style={{ background: `linear-gradient(135deg, #3d7bfa, ${hue})` }}>
           <div className="flex items-start justify-between">
             <div className="grid h-12 w-12 place-items-center rounded-2xl bg-white/90 font-display text-[15px] text-blue">{initials(title)}</div>
             {item.kind === "company" ? (
@@ -79,7 +79,7 @@ const Card = forwardRef<Handle, { item: Item; top: boolean; depth: number; onDon
         <div className="flex h-[58%] flex-col p-5">
           {item.kind === "talent" && (
             <div className="mb-3 flex items-center gap-2 rounded-xl bg-tint px-3 py-2 text-[13px]">
-              <Trophy size={15} className="shrink-0 text-blue" />
+              <Trophy size={15} className="shrink-0 text-sky" />
               <span className="truncate">
                 <b>{(d as Talent).place}</b>, {(d as Talent).event}
               </span>
@@ -88,7 +88,7 @@ const Card = forwardRef<Handle, { item: Item; top: boolean; depth: number; onDon
           <p className="text-[15px] leading-relaxed text-ink">{item.kind === "company" ? (d as Company).tagline : (d as Talent).bio}</p>
           <div className="mt-3 flex flex-wrap gap-1.5">
             {tags.map((t) => (
-              <span key={t} className="rounded-md bg-tint px-2 py-1 text-[12px] font-semibold text-blue">
+              <span key={t} className="rounded-md bg-tint px-2 py-1 text-[12px] font-semibold text-sky">
                 {t}
               </span>
             ))}
@@ -168,10 +168,10 @@ export function Swipe() {
                 key="empty"
                 initial={{ opacity: 0, scale: 0.96 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="absolute inset-0 grid place-items-center rounded-[28px] border border-dashed border-line bg-white p-8 text-center"
+                className="absolute inset-0 grid place-items-center rounded-[28px] border border-dashed border-line bg-surface p-8 text-center"
               >
                 <div>
-                  <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-tint text-blue">
+                  <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-tint text-sky">
                     <Heart size={24} />
                   </div>
                   <h2 className="mt-5 text-[20px]">That's everyone for today</h2>
@@ -204,7 +204,7 @@ export function Swipe() {
           <button
             onClick={() => topRef.current?.fly(-1)}
             disabled={!deck.length}
-            className="grid h-16 w-16 place-items-center rounded-full border border-line bg-white text-bad shadow-md transition-transform hover:scale-105 active:scale-95 disabled:opacity-40"
+            className="grid h-16 w-16 place-items-center rounded-full border border-line bg-surface text-bad shadow-md transition-transform hover:scale-105 active:scale-95 disabled:opacity-40"
             aria-label="Not interested"
           >
             <X size={28} />
@@ -212,7 +212,7 @@ export function Swipe() {
           <button
             onClick={() => deck[0] && setInfo(deck[0])}
             disabled={!deck.length}
-            className="grid h-12 w-12 place-items-center rounded-full border border-line bg-white text-mist shadow-sm transition-transform hover:scale-105 disabled:opacity-40"
+            className="grid h-12 w-12 place-items-center rounded-full border border-line bg-surface text-mist shadow-sm transition-transform hover:scale-105 disabled:opacity-40"
             aria-label="Details"
           >
             <Info size={20} />
@@ -220,7 +220,7 @@ export function Swipe() {
           <button
             onClick={() => topRef.current?.fly(1)}
             disabled={!deck.length}
-            className="grid h-16 w-16 place-items-center rounded-full bg-blue text-white shadow-[0_14px_30px_-10px_rgba(26,75,168,0.8)] transition-transform hover:scale-105 active:scale-95 disabled:opacity-40"
+            className="grid h-16 w-16 place-items-center rounded-full bg-accent text-paper shadow-[0_14px_30px_-10px_rgba(255,201,60,0.7)] transition-transform hover:scale-105 active:scale-95 disabled:opacity-40"
             aria-label="Interested"
           >
             <Heart size={28} />
@@ -230,7 +230,7 @@ export function Swipe() {
 
       {/* liked list */}
       <aside className="hidden md:block">
-        <div className="rounded-3xl border border-line bg-white p-5">
+        <div className="rounded-3xl border border-line bg-surface p-5">
           <div className="flex items-center justify-between">
             <h2 className="text-[17px]">Interested</h2>
             <Pill tone="tint">{likedItems.length}</Pill>
@@ -279,7 +279,7 @@ export function Swipe() {
             ) : (
               <>
                 <div className="mt-5 flex items-center gap-2 rounded-xl bg-tint px-3 py-2 text-[13px]">
-                  <Trophy size={15} className="text-blue" />
+                  <Trophy size={15} className="text-sky" />
                   <b>{info.data.place}</b>, {info.data.event}
                 </div>
                 <p className="mt-3 text-[14px] text-mist">Built {info.data.project}. Available {info.data.avail.toLowerCase()}.</p>
@@ -306,7 +306,7 @@ export function Swipe() {
             >
               <Heart size={36} fill="currentColor" />
             </motion.div>
-            <h2 className="mt-6 text-[28px] text-blue">It's a match</h2>
+            <h2 className="mt-6 text-[28px] text-accent">It's a match</h2>
             <p className="mt-2 text-[15px] text-mist">
               {name(match)} swiped right on you too. In the full version, a chat opens here.
             </p>

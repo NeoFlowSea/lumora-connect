@@ -28,7 +28,7 @@ export function RolePicker({ open, onClose }: { open: boolean; onClose: () => vo
           onClick={() => choose("company")}
           className="group rounded-2xl border border-line p-5 text-left transition-[border-color,background-color,transform] hover:-translate-y-0.5 hover:border-sky hover:bg-tint"
         >
-          <span className="grid h-11 w-11 place-items-center rounded-xl bg-ink text-white">
+          <span className="grid h-11 w-11 place-items-center rounded-xl bg-accent text-paper">
             <Building2 size={20} />
           </span>
           <span className="mt-4 block font-display text-[17px]">Company</span>

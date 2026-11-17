@@ -34,7 +34,7 @@ export function Stats() {
       <div className="mx-auto grid max-w-[1240px] grid-cols-2 divide-line md:grid-cols-4 md:divide-x">
         {stats.map((s) => (
           <div key={s.label} className="px-5 py-8 md:px-8 md:py-10">
-            <div className="font-display text-[34px] font-medium leading-none text-blue md:text-[44px]">
+            <div className="font-display text-[34px] font-medium leading-none text-accent md:text-[44px]">
               <Counter to={s.n} />
             </div>
             <div className="mt-2 text-[14px] text-mist">{s.label}</div>

@@ -12,7 +12,7 @@ export function Shield({ size = 28, mono }: { size?: number; mono?: string }) {
   return (
     <svg viewBox="154 145 322 392" width={size} height={size * 1.217} aria-hidden="true">
       {/* silhouette underneath gives the mark its color; the traced white area sits on top */}
-      {!mono && <path d={SHIELD} fill="#1a4ba8" />}
+      {!mono && <path d={SHIELD} fill="#3d7bfa" />}
       <path d={MARK} fill={mono ?? "#ffffff"} fillRule="evenodd" />
     </svg>
   );
@@ -36,7 +36,7 @@ export function Wordmark({ size = 32 }: { size?: number }) {
     <span className="flex items-center gap-2.5">
       <LogoTile size={size} />
       <span className="whitespace-nowrap font-display text-[15px] font-medium tracking-tight text-ink">
-        Lumora <span className="text-blue">Connect</span>
+        Lumora <span className="text-sky">Connect</span>
       </span>
     </span>
   );

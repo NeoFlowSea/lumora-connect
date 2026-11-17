@@ -14,7 +14,7 @@ export function Opportunities({ onOpenApp }: { onOpenApp: () => void }) {
       <div className="mx-auto max-w-[1240px] px-5 pb-24 pt-20 md:px-8 md:pb-36 md:pt-28">
         <Reveal className="mb-10 flex flex-wrap items-end justify-between gap-6">
           <h2 className="max-w-[16ch] text-[clamp(28px,3.6vw,46px)]">Open this week</h2>
-          <button onClick={onOpenApp} className="text-[15px] font-semibold text-blue underline-offset-4 hover:underline">
+          <button onClick={onOpenApp} className="text-[15px] font-semibold text-sky underline-offset-4 hover:underline">
             See all 38 opportunities
           </button>
         </Reveal>

@@ -25,7 +25,7 @@ function Card({ t }: { t: (typeof talents)[number] }) {
         y.set(0);
       }}
       style={{ rotateX: rx, rotateY: ry, transformPerspective: 900 }}
-      className="flex w-[300px] shrink-0 snap-start flex-col rounded-3xl border border-line bg-white p-6 shadow-[0_20px_40px_-30px_rgba(11,31,58,0.3)] md:w-[340px]"
+      className="flex w-[300px] shrink-0 snap-start flex-col rounded-3xl border border-line bg-surface p-6 shadow-[0_20px_40px_-30px_rgba(11,31,58,0.3)] md:w-[340px]"
     >
       <div className="flex items-center gap-4">
         <div className="grid h-12 w-12 place-items-center rounded-full bg-blue font-display text-[14px] text-white">{initials(t.name)}</div>
@@ -37,13 +37,13 @@ function Card({ t }: { t: (typeof talents)[number] }) {
         </div>
       </div>
       <div className="mt-6 flex items-center gap-2.5 rounded-xl bg-tint px-3 py-2.5">
-        <Trophy size={16} className="shrink-0 text-blue" />
+        <Trophy size={16} className="shrink-0 text-sky" />
         <div className="min-w-0 truncate text-[13px]">
           <span className="font-semibold">{t.place}</span>
           <span className="text-mist">, {t.event}</span>
         </div>
         <span className="ml-auto flex shrink-0 items-center gap-1 text-[11px] text-mist" title="Confirmed by Lumora">
-          <Shield size={9} mono="#1a4ba8" /> verified
+          <Shield size={9} mono="#8db0ff" /> verified
         </span>
       </div>
       <p className="mt-5 text-[14px] text-mist">Built {t.project}</p>
@@ -64,7 +64,7 @@ export function Talent({ onOpenApp }: { onOpenApp: () => void }) {
       <div className="mx-auto max-w-[1240px] px-5 md:px-8">
         <Reveal className="mb-12 flex flex-wrap items-end justify-between gap-6">
           <h2 className="max-w-[16ch] text-[clamp(28px,3.6vw,46px)]">Winners from this season</h2>
-          <button onClick={onOpenApp} className="text-[15px] font-semibold text-blue underline-offset-4 hover:underline">
+          <button onClick={onOpenApp} className="text-[15px] font-semibold text-sky underline-offset-4 hover:underline">
             Swipe all 214 profiles
           </button>
         </Reveal>

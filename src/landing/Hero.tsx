@@ -47,14 +47,14 @@ function SwipeDemo() {
               <motion.div
                 key={c.id}
 
-                className="absolute inset-0 overflow-hidden rounded-[28px] border border-line bg-white shadow-[0_30px_60px_-30px_rgba(11,31,58,0.35)]"
+                className="absolute inset-0 overflow-hidden rounded-[28px] border border-line bg-surface shadow-[0_30px_60px_-30px_rgba(11,31,58,0.35)]"
                 initial={{ scale: 0.9, y: 36, opacity: 0 }}
                 animate={{ scale: 1 - depth * 0.05, y: depth * 14, opacity: 1, rotate: 0 }}
                 exit={{ x: dir * 420, rotate: dir * 18, opacity: 0, transition: { duration: 0.55, ease } }}
                 transition={{ duration: 0.5, ease }}
                 style={{ zIndex: 10 - depth }}
               >
-                <div className="h-[44%] p-5" style={{ background: `linear-gradient(135deg, ${c.hue}, #4f8be0)` }}>
+                <div className="h-[44%] p-5" style={{ background: `linear-gradient(135deg, #3d7bfa, ${c.hue})` }}>
                   <div className="flex items-start justify-between">
                     <div className="grid h-12 w-12 place-items-center rounded-2xl bg-white/90 font-display text-[15px] text-blue">
                       {initials(c.name)}
@@ -70,7 +70,7 @@ function SwipeDemo() {
                   <p className="text-[14px] text-ink">{c.tagline}</p>
                   <div className="mt-3 flex flex-wrap gap-1.5">
                     {c.tags.map((t) => (
-                      <span key={t} className="rounded-md bg-tint px-2 py-1 text-[12px] font-semibold text-blue">
+                      <span key={t} className="rounded-md bg-tint px-2 py-1 text-[12px] font-semibold text-sky">
                         {t}
                       </span>
                     ))}
@@ -104,13 +104,13 @@ function SwipeDemo() {
       <div className="relative z-20 mt-6 flex items-center justify-center gap-4">
         <motion.span
           animate={{ scale: stamp === -1 ? 1.15 : 1 }}
-          className="grid h-14 w-14 place-items-center rounded-full border border-line bg-white text-bad shadow-md"
+          className="grid h-14 w-14 place-items-center rounded-full border border-line bg-surface text-bad shadow-md"
         >
           <X size={24} />
         </motion.span>
         <motion.span
           animate={{ scale: stamp === 1 ? 1.15 : 1 }}
-          className="grid h-14 w-14 place-items-center rounded-full bg-blue text-white shadow-[0_12px_30px_-10px_rgba(26,75,168,0.8)]"
+          className="grid h-14 w-14 place-items-center rounded-full bg-accent text-paper shadow-[0_12px_30px_-10px_rgba(255,201,60,0.7)]"
         >
           <Heart size={24} />
         </motion.span>
@@ -176,7 +176,7 @@ export function Hero({ onOpenApp }: { onOpenApp: () => void }) {
           >
             <span className="flex -space-x-2">
               {["DK", "JR", "MY", "ST"].map((x) => (
-                <span key={x} className="grid h-8 w-8 place-items-center rounded-full border-2 border-white bg-tint-2 text-[11px] font-bold text-blue">
+                <span key={x} className="grid h-8 w-8 place-items-center rounded-full border-2 border-paper bg-blue text-[11px] font-bold text-white">
                   {x}
                 </span>
               ))}

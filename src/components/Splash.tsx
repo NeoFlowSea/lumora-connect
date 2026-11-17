@@ -47,7 +47,7 @@ export function Splash({ onDone }: { onDone: () => void }) {
             left: `calc(${(100 / STRIPS) * i}% - 2px)`,
             width: `calc(${100 / STRIPS}% + 4px)`,
             transformOrigin: "bottom left",
-            boxShadow: "0 0 0 1px #1a4ba8",
+            boxShadow: "0 0 0 1px #3d7bfa",
           }}
           initial={{ x: 0, skewX: 0 }}
           animate={wiping ? { x: "120vw", skewX: -18 } : { x: 0, skewX: 0 }}
@@ -86,8 +86,8 @@ export function Splash({ onDone }: { onDone: () => void }) {
           phase === "logo"
             ? { x: 0, y: 0, scale: 0, opacity: 0, filter: "blur(0px)", color: "#ffffff" }
             : phase === "fade"
-              ? { x: px * 1.3, y: py * 1.3 - 24, scale: 1.5, opacity: 0, filter: "blur(6px)", color: "#1a4ba8" }
-              : { x: px, y: py, scale: 1, opacity: 0.9, filter: "blur(0px)", color: wiping ? "#1a4ba8" : "#ffffff" };
+              ? { x: px * 1.3, y: py * 1.3 - 24, scale: 1.5, opacity: 0, filter: "blur(6px)", color: "#ffc93c" }
+              : { x: px, y: py, scale: 1, opacity: 0.9, filter: "blur(0px)", color: wiping ? "#ffc93c" : "#ffffff" };
         return (
           <motion.span
             key={i}

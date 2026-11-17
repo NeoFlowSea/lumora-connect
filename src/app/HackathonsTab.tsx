@@ -34,7 +34,7 @@ export function HackathonsTab() {
         <div className="grid gap-8 md:grid-cols-[1.3fr_1fr] md:items-end">
           <div>
             <div className="flex flex-wrap gap-2">
-              <span className="rounded-full bg-white px-2.5 py-1 text-[12px] font-semibold text-blue">Next up</span>
+              <span className="rounded-full bg-accent px-2.5 py-1 text-[12px] font-semibold text-paper">Next up</span>
               <span className="rounded-full bg-white/15 px-2.5 py-1 text-[12px] font-semibold">{next.format}</span>
             </div>
             <h2 className="mt-4 text-[clamp(24px,3vw,36px)]">{next.name}</h2>
@@ -62,15 +62,15 @@ export function HackathonsTab() {
             <Countdown to={next.date} dark />
             <div className="mt-5 flex flex-wrap gap-3">
               {role === "company" ? (
-                <button onClick={() => toast("Thanks. The Lumora team will contact you about a case.")} className="rounded-full bg-white px-6 py-3 text-[15px] font-semibold text-blue hover:bg-tint">
+                <button onClick={() => toast("Thanks. The Lumora team will contact you about a case.")} className="rounded-full bg-accent px-6 py-3 text-[15px] font-semibold text-paper hover:bg-accent-deep">
                   Sponsor a case
                 </button>
               ) : registered.includes(next.id) ? (
-                <span className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-[15px] font-semibold text-good">
+                <span className="inline-flex items-center gap-2 rounded-full bg-paper px-5 py-3 text-[15px] font-semibold text-good">
                   <Check size={16} /> You're registered
                 </span>
               ) : (
-                <button onClick={() => openForm(next)} className="rounded-full bg-white px-6 py-3 text-[15px] font-semibold text-blue hover:bg-tint">
+                <button onClick={() => openForm(next)} className="rounded-full bg-accent px-6 py-3 text-[15px] font-semibold text-paper hover:bg-accent-deep">
                   Register a team
                 </button>
               )}
@@ -91,7 +91,7 @@ export function HackathonsTab() {
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, ease, delay: 0.1 + i * 0.06 }}
-              className="flex flex-col rounded-3xl border border-line bg-white p-5"
+              className="flex flex-col rounded-3xl border border-line bg-surface p-5"
             >
               <div className="flex items-center gap-2">
                 <Pill tone={h.partner ? "line" : "blue"}>{h.org}</Pill>
@@ -125,10 +125,10 @@ export function HackathonsTab() {
 
       {/* past */}
       <h2 className="mt-12 text-[20px]">This season so far</h2>
-      <ul className="mt-4 divide-y divide-line rounded-3xl border border-line bg-white">
+      <ul className="mt-4 divide-y divide-line rounded-3xl border border-line bg-surface">
         {pastHackathons.map((p) => (
           <li key={p.name} className="grid grid-cols-[40px_1fr_auto] items-center gap-4 px-5 py-4 md:grid-cols-[40px_1.2fr_1fr_auto]">
-            <span className="grid h-10 w-10 place-items-center rounded-xl bg-tint text-blue">
+            <span className="grid h-10 w-10 place-items-center rounded-xl bg-tint text-sky">
               <Trophy size={18} />
             </span>
             <span>
@@ -162,7 +162,7 @@ export function HackathonsTab() {
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="grid gap-1 text-[13px] font-semibold text-mist">
                 Track
-                <select className="rounded-xl border border-line bg-white px-3 py-2.5 text-[15px] font-normal text-ink outline-none focus:border-sky">
+                <select className="rounded-xl border border-line bg-surface px-3 py-2.5 text-[15px] font-normal text-ink outline-none focus:border-sky">
                   {form.tracks.map((t) => (
                     <option key={t}>{t}</option>
                   ))}
@@ -189,7 +189,7 @@ export function HackathonsTab() {
         )}
         {form && sent && (
           <div className="text-center">
-            <motion.div initial={{ scale: 0.6 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 260, damping: 16 }} className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-[#E3F4EA] text-good">
+            <motion.div initial={{ scale: 0.6 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 260, damping: 16 }} className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-good/15 text-good">
               <Check size={36} />
             </motion.div>
             <h2 className="mt-6 text-[26px]">You're in</h2>

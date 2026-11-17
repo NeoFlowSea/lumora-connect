@@ -17,7 +17,7 @@ export function AppShell({ tab, children }: { tab: Tab; children: ReactNode }) {
   return (
     <div className="min-h-[100svh] bg-cloud">
       {/* top bar: tabs on desktop */}
-      <header className="fixed inset-x-0 top-0 z-40 border-b border-line bg-white/85 backdrop-blur-xl">
+      <header className="fixed inset-x-0 top-0 z-40 border-b border-line bg-paper/85 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-[1240px] items-center gap-6 px-5 md:px-8">
           <button onClick={() => go("#/")} aria-label="Back to site">
             <Wordmark size={30} />
@@ -30,7 +30,7 @@ export function AppShell({ tab, children }: { tab: Tab; children: ReactNode }) {
                   key={t.key}
                   onClick={() => go(`#/app/${t.key}`)}
                   className={`relative flex items-center gap-2 rounded-full px-4 py-2 text-[14px] font-semibold transition-colors ${
-                    on ? "text-blue" : "text-mist hover:text-ink"
+                    on ? "text-accent" : "text-mist hover:text-ink"
                   }`}
                 >
                   {on && (
@@ -56,7 +56,7 @@ export function AppShell({ tab, children }: { tab: Tab; children: ReactNode }) {
       <main className="mx-auto max-w-[1240px] px-5 pb-28 pt-24 md:px-8 md:pb-16">{children}</main>
 
       {/* bottom bar: phones */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden">
         <div className="grid grid-cols-4">
           {tabs.map((t) => {
             const on = t.key === tab;
@@ -64,7 +64,7 @@ export function AppShell({ tab, children }: { tab: Tab; children: ReactNode }) {
               <button
                 key={t.key}
                 onClick={() => go(`#/app/${t.key}`)}
-                className={`flex flex-col items-center gap-1 py-3 text-[10px] font-semibold tracking-tight ${on ? "text-blue" : "text-mist"}`}
+                className={`flex flex-col items-center gap-1 py-3 text-[10px] font-semibold tracking-tight ${on ? "text-accent" : "text-mist"}`}
               >
                 <motion.span animate={{ scale: on ? 1.15 : 1 }} transition={{ type: "spring", stiffness: 400, damping: 20 }}>
                   <t.icon size={22} fill={on && t.key === "swipe" ? "currentColor" : "none"} />

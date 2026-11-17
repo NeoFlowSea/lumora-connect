@@ -6,8 +6,8 @@ import { useEffect, useRef } from "react";
 
 const SP = 28; // grid spacing in px
 const R = 170; // cursor influence radius
-const BLUE = "26,75,168";
-const SKY = "79,139,224";
+const BLUE = "141,176,255";
+const SKY = "255,201,60";
 
 type Dir = 0 | 1 | 2 | 3; // right, down, left, up
 const DX = [1, 0, -1, 0];
@@ -69,7 +69,7 @@ export function GridBackground() {
         life: 2.5 + Math.random() * 3.5,
         age: 0,
         hist: [],
-        sky: Math.random() < 0.35,
+        sky: Math.random() < 0.18,
       });
     }
 
@@ -115,7 +115,7 @@ export function GridBackground() {
       mouse.y += (mouse.ty - mouse.y) * 0.12;
 
       // dots
-      const base = 0.2 * fade;
+      const base = 0.18 * fade;
       ctx!.fillStyle = `rgba(${BLUE},${base})`;
       for (let gy = 0; gy < rows; gy++) {
         const y = gy * SP + oy;

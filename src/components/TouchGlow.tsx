@@ -85,7 +85,7 @@ export function TouchGlow() {
       className="pointer-events-none fixed left-0 top-0 -z-10 h-[440px] w-[440px] rounded-full opacity-0 will-change-transform"
       style={{
         background:
-          "radial-gradient(closest-side, rgba(79,139,224,0.34), rgba(79,139,224,0.14) 45%, rgba(79,139,224,0) 72%)",
+          "radial-gradient(closest-side, rgba(61,123,250,0.45), rgba(61,123,250,0.18) 45%, rgba(61,123,250,0) 72%)",
       }}
     />
   );
