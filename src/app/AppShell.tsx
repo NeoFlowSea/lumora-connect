@@ -64,7 +64,7 @@ export function AppShell({ tab, children }: { tab: Tab; children: ReactNode }) {
               <button
                 key={t.key}
                 onClick={() => go(`#/app/${t.key}`)}
-                className={`flex flex-col items-center gap-1 py-3 text-[10px] font-semibold tracking-tight ${on ? "text-accent" : "text-mist"}`}
+                className={`flex min-w-0 flex-col items-center gap-1 py-3 text-[9px] font-semibold tracking-[-0.04em] ${on ? "text-accent" : "text-mist"}`}
               >
                 <motion.span animate={{ scale: on ? 1.15 : 1 }} transition={{ type: "spring", stiffness: 400, damping: 20 }}>
                   <t.icon size={22} fill={on && t.key === "swipe" ? "currentColor" : "none"} />

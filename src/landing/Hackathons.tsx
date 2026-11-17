@@ -10,7 +10,7 @@ export function Hackathons({ onOpenApp }: { onOpenApp: () => void }) {
       <div className="dots pointer-events-none absolute inset-0 opacity-30 [mask-image:linear-gradient(to_bottom,black,transparent)]" style={{ filter: "invert(1)" }} />
       <div className="relative mx-auto max-w-[1240px] px-5 py-24 md:px-8 md:py-36">
         <Reveal>
-          <h2 className="max-w-[18ch] text-[clamp(28px,3.6vw,46px)]">Next Lumora hackathon</h2>
+          <h2 className="max-w-[18ch] font-glitch text-[clamp(32px,4.4vw,58px)] font-normal tracking-normal">Next Lumora hackathon</h2>
         </Reveal>
         <div className="mt-12 grid gap-6 md:grid-cols-[1.3fr_1fr]">
           <Reveal className="rounded-3xl bg-surface p-7 text-ink shadow-2xl md:p-9">

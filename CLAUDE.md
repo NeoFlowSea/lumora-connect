@@ -14,7 +14,7 @@ Vite + React 18 + TypeScript, Tailwind v4 (`@import "tailwindcss"` in `src/index
 ## Design rules
 - Palette 60/30/10: navy `#0F2557` page background (60), blue `#3D7BFA` sections, cards, icons (30), yellow `#FFC93C` only for main buttons, active tab, stats and highlights (10). Tokens live in `@theme` in `src/index.css`; text is `ink` `#F4F7FF` and `mist` `#A9B7D8`.
 - Logo: white shield with a `#3D7BFA` mark on a `#3D7BFA` rounded tile, exactly like `Logo.jpg` (traced paths live in `src/components/Logo.tsx`).
-- Display font Unbounded, body font Manrope. Sentence case, no all-caps labels, no arrows in button text.
+- Fonts: IBM Plex Mono for all text and most headings (`font-display`, `font-body`). Rubik Glitch (`font-glitch`) only on the hero title and the landing "Next Lumora hackathon" heading. Press Start 2P (`font-pixel`) only for countdown digits. Heading base styles sit in `@layer base` so these utilities win. Sentence case, no all-caps labels, no arrows in button text.
 - Respect `prefers-reduced-motion`. Keep everything usable at 375px (bottom tab bar on phones).
 
 ## Commands

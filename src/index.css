@@ -18,8 +18,10 @@
   --color-line: rgba(255, 255, 255, 0.1);
   --color-good: #5dd08f;
   --color-bad: #ff6b6b;
-  --font-display: "Unbounded", "Manrope", sans-serif;
-  --font-body: "Manrope", system-ui, sans-serif;
+  --font-display: "IBM Plex Mono", ui-monospace, monospace; /* headings */
+  --font-body: "IBM Plex Mono", ui-monospace, monospace; /* all text */
+  --font-glitch: "Rubik Glitch", "IBM Plex Mono", sans-serif; /* one or two hero headings only */
+  --font-pixel: "Press Start 2P", ui-monospace, monospace; /* countdown digits only */
 }
 
 html {
@@ -32,8 +34,8 @@ body {
   background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-body);
-  font-size: 16px;
-  line-height: 1.55;
+  font-size: 15px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
@@ -49,15 +51,18 @@ body {
   border-radius: 6px;
 }
 
-h1,
-h2,
-h3 {
-  font-family: var(--font-display);
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  line-height: 1.08;
-  margin: 0;
-  text-wrap: balance;
+/* in the base layer so utilities like font-glitch can override it */
+@layer base {
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+    margin: 0;
+    text-wrap: balance;
+  }
 }
 
 button {
