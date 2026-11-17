@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 function parts(to: string) {
   const diff = Math.max(0, new Date(to).getTime() - Date.now());
@@ -14,6 +15,27 @@ function parts(to: string) {
   ];
 }
 
+/* When a value changes, the old number drops out through the bottom
+   and the new one falls in from the top. */
+function DropNumber({ value }: { value: string }) {
+  return (
+    <div className="relative h-[17px] overflow-hidden">
+      <AnimatePresence initial={false} mode="popLayout">
+        <motion.div
+          key={value}
+          className="font-pixel text-[17px] leading-none"
+          initial={{ y: "-110%", opacity: 0 }}
+          animate={{ y: "0%", opacity: 1 }}
+          exit={{ y: "110%", opacity: 0 }}
+          transition={{ type: "spring", stiffness: 420, damping: 26, mass: 0.6 }}
+        >
+          {value}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export function Countdown({ to, dark }: { to: string; dark?: boolean }) {
   const [p, setP] = useState(() => parts(to));
   useEffect(() => {
@@ -27,7 +49,7 @@ export function Countdown({ to, dark }: { to: string; dark?: boolean }) {
           key={x.l}
           className={`min-w-[64px] rounded-xl px-3 py-2 text-center ${dark ? "bg-white/10 text-white" : "bg-tint text-sky"}`}
         >
-          <div className="font-pixel text-[17px] leading-none">{String(x.v).padStart(2, "0")}</div>
+          <DropNumber value={String(x.v).padStart(2, "0")} />
           <div className={`mt-1 text-[11px] ${dark ? "text-white/70" : "text-mist"}`}>{x.l}</div>
         </div>
       ))}

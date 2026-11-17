@@ -121,6 +121,35 @@ textarea {
   animation-play-state: paused;
 }
 
+/* Looping glitch for the Rubik Glitch headings: about 1.3 s of glitching,
+   then about 2.3 s still so the words can be read. Colors stay in the palette:
+   yellow accent and light blue split, never green. */
+.glitch-loop {
+  animation: glitch 3.6s steps(1, end) infinite;
+  will-change: transform;
+}
+@keyframes glitch {
+  0%, 36%, 100% { transform: none; text-shadow: none; clip-path: none; color: inherit; }
+  2%  { transform: translate(-2px, 0) skewX(-3deg); text-shadow: 3px 0 #ffc93c, -3px 0 #3d7bfa; }
+  5%  { transform: translate(2px, 1px); text-shadow: -2px 0 #ffc93c, 2px 0 #8db0ff; clip-path: inset(8% 0 52% 0); }
+  8%  { transform: none; text-shadow: 2px 1px #3d7bfa, -2px -1px #ffc93c; clip-path: none; }
+  11% { transform: translate(-1px, 0); text-shadow: 4px 0 #ffc93c, -4px 0 #3d7bfa; color: #8db0ff; }
+  14% { transform: translate(3px, -1px) skewX(2deg); text-shadow: -3px 0 #ffc93c, 3px 0 #3d7bfa; clip-path: inset(48% 0 14% 0); color: inherit; }
+  17% { transform: none; text-shadow: 1px 0 #8db0ff, -1px 0 #ffc93c; clip-path: none; }
+  21% { transform: translate(-2px, 1px); text-shadow: 2px 0 #ffc93c, -2px 0 #3d7bfa; color: #ffc93c; }
+  24% { transform: none; text-shadow: -1px 0 #3d7bfa; color: inherit; }
+  28% { transform: translate(1px, 0) skewX(-1deg); text-shadow: 3px 0 #3d7bfa, -3px 0 #ffc93c; clip-path: inset(70% 0 4% 0); }
+  31% { transform: none; text-shadow: 1px 0 #ffc93c, -1px 0 #8db0ff; clip-path: none; }
+}
+/* Softer version for people who ask the OS to reduce motion: colors only, no movement. */
+@keyframes glitch-soft {
+  0%, 36%, 100% { text-shadow: none; color: inherit; }
+  4%  { text-shadow: 2px 0 #ffc93c, -2px 0 #3d7bfa; }
+  12% { text-shadow: -2px 0 #ffc93c, 2px 0 #8db0ff; color: #8db0ff; }
+  20% { text-shadow: 1px 0 #3d7bfa, -1px 0 #ffc93c; color: inherit; }
+  28% { text-shadow: 2px 0 #ffc93c, -2px 0 #3d7bfa; }
+}
+
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
@@ -137,5 +166,8 @@ textarea {
   *::after {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
+  }
+  .glitch-loop {
+    animation: glitch-soft 3.6s steps(1, end) infinite !important;
   }
 }
