@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
 
-export type Tab = "swipe" | "opportunities" | "hackathons" | "profile";
-export type Route = { page: "landing" } | { page: "app"; tab: Tab };
+/* Hash router. "#/app/inbox/t1__c1?x=1" -> { path: ["app","inbox","t1__c1"], query: { x: "1" } }.
+   Plain anchors like "#how" count as the landing page. */
 
-const TABS: Tab[] = ["swipe", "opportunities", "hackathons", "profile"];
+export type Route = { path: string[]; query: Record<string, string> };
 
 function parse(hash: string): Route {
-  const m = hash.match(/^#\/app\/?([a-z]+)?/);
-  if (m) {
-    const tab = TABS.includes(m[1] as Tab) ? (m[1] as Tab) : "swipe";
-    return { page: "app", tab };
-  }
-  return { page: "landing" };
+  if (!hash.startsWith("#/")) return { path: [], query: {} };
+  const [p, q = ""] = hash.slice(2).split("?");
+  const path = p.split("/").filter(Boolean).map(decodeURIComponent);
+  const query = Object.fromEntries(new URLSearchParams(q));
+  return { path, query };
 }
 
 export function useRoute(): Route {
@@ -25,6 +24,12 @@ export function useRoute(): Route {
 }
 
 export function go(hash: string) {
+  if (window.location.hash === hash) return;
   window.location.hash = hash;
   window.scrollTo({ top: 0 });
+}
+
+/** current hash, used to send people back where they were after signing in */
+export function here() {
+  return window.location.hash || "#/";
 }

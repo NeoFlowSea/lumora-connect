@@ -6,7 +6,7 @@ import { actions, useStore } from "../lib/store";
 import { Countdown } from "../components/Countdown";
 import { Modal, Pill, btn, ease, useToast } from "../components/ui";
 
-export function HackathonsTab() {
+export function HackathonsTab(_props: { focusId?: string } = {}) {
   const { role, registered } = useStore();
   const toast = useToast();
   const [form, setForm] = useState<Hackathon | null>(null);
