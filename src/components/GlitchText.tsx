@@ -1,39 +1,50 @@
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /* Glitch text that keeps time like a clock.
    - Only transform and opacity animate, on stacked copies of the text. Browsers
      run those on the compositor, so scrolling (Lenis, the canvas grid, iOS touch
      scrolling) cannot freeze or drift them.
-   - The phase comes from the wall clock (negative animation-delay), so every
-     glitch heading on the page fires together on the same 3.6 s beat.
-   - Off screen the layers stop animating; when they come back they rejoin the
-     beat in phase. */
+   - Every layer's position in the 3.6 s cycle is set from the wall clock with the
+     Web Animations API, so all glitch headings on the page fire on the same beat.
+   - Off screen the layers stop animating; when they come back they are re-synced
+     to the clock, so they rejoin the beat in phase. */
 
 export const GLITCH_PERIOD = 3600;
 
-const phase = () => -(Date.now() % GLITCH_PERIOD);
+function syncToClock(el: HTMLElement) {
+  // a large whole number of periods keeps currentTime positive and the phase exact
+  const t = (Date.now() % GLITCH_PERIOD) + GLITCH_PERIOD * 1000;
+  for (const a of el.getAnimations({ subtree: true })) {
+    try {
+      a.currentTime = t;
+    } catch {
+      /* older engines: the CSS animation still runs, just not phase-locked */
+    }
+  }
+}
 
 export function GlitchText({ text, className = "" }: { text: string; className?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const [state, setState] = useState(() => ({ on: true, delay: phase() }));
+  const [on, setOn] = useState(true);
 
   useEffect(() => {
     const el = ref.current;
     if (!el || typeof IntersectionObserver === "undefined") return;
-    const io = new IntersectionObserver(
-      ([e]) => {
-        // restarting the animation with a fresh negative delay puts it back on the beat
-        setState(e.isIntersecting ? { on: true, delay: phase() } : (s) => ({ ...s, on: false }));
-      },
-      { rootMargin: "120px 0px" },
-    );
+    const io = new IntersectionObserver(([e]) => setOn(e.isIntersecting), { rootMargin: "120px 0px" });
     io.observe(el);
     return () => io.disconnect();
   }, []);
 
-  const style = { "--g-delay": `${state.delay}ms` } as CSSProperties;
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !on || typeof el.getAnimations !== "function") return;
+    // wait a frame so the browser has created the CSS animations, then lock them to the clock
+    const id = requestAnimationFrame(() => syncToClock(el));
+    return () => cancelAnimationFrame(id);
+  }, [on]);
+
   return (
-    <span ref={ref} className={`glitch ${state.on ? "" : "glitch-off"} ${className}`} style={style}>
+    <span ref={ref} className={`glitch ${on ? "" : "glitch-off"} ${className}`}>
       <span className="glitch-main">{text}</span>
       <span aria-hidden className="glitch-layer glitch-y">{text}</span>
       <span aria-hidden className="glitch-layer glitch-b">{text}</span>

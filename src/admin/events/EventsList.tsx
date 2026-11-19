@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { CalendarPlus, Copy, Globe, MapPin, Pencil, Trash2, Trophy, Users } from "lucide-react";
-import { api, statusLabel } from "../../api";
+import { api, localNow, statusLabel } from "../../api";
 import { useAction, useApi, useSession } from "../../api/hooks";
 import type { Hackathon } from "../../api/types";
 import { Empty, ErrorNote, Skeleton, Spinner, when } from "../../components/form";
@@ -49,7 +49,7 @@ export function EventsList() {
     return true;
   });
 
-  const nowLocal = new Date().toISOString().slice(0, 16);
+  const nowLocal = localNow();
   const list = useMemo(() => {
     const all = events.data ?? [];
     // newest first for finished ones, soonest first for the rest

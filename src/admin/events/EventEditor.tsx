@@ -460,22 +460,22 @@ export function EventEditor({ id }: { id?: string }) {
         </aside>
       </div>
 
-      <div className="sticky bottom-24 z-20 mt-6 flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-paper/90 p-3 shadow-[0_20px_40px_-20px_rgba(0,0,0,0.6)] backdrop-blur md:bottom-4">
-        <span className={`flex items-center gap-2 text-[12px] ${dirty ? "text-accent" : "text-mist"}`}>
+      <div className="sticky bottom-3 z-20 mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-2xl border border-line bg-paper/95 p-2.5 shadow-[0_20px_40px_-20px_rgba(0,0,0,0.6)] backdrop-blur md:bottom-4 md:p-3">
+        <span className={`flex items-center gap-2 text-[12px] ${dirty ? "text-accent" : "text-mist"}`} title={dirty ? "Unsaved changes" : "All changes saved"}>
           <span className={`h-2 w-2 rounded-full ${dirty ? "bg-accent" : "bg-good"}`} />
-          {dirty ? "Unsaved changes" : "All changes saved"}
+          <span className="hidden sm:inline">{dirty ? "Unsaved changes" : "All changes saved"}</span>
         </span>
         {save.error && <span className="w-full text-[12px] text-[#ffb3b3] sm:order-none sm:w-auto">{save.error}</span>}
-        <div className="ml-auto flex flex-wrap gap-2">
-          <button type="button" onClick={() => go("#/admin/events")} className={`${btn.sm} text-mist hover:text-ink`}>
+        <div className="ml-auto flex flex-nowrap gap-1.5 sm:gap-2">
+          <button type="button" onClick={() => go("#/admin/events")} className={`${btn.sm} px-3 text-mist hover:text-ink`}>
             Cancel
           </button>
           {isDraft && (
-            <button type="button" disabled={save.pending} onClick={() => onSave("draft")} className={`${btn.sm} border border-line hover:border-sky hover:bg-tint disabled:opacity-60`}>
+            <button type="button" disabled={save.pending} onClick={() => onSave("draft")} className={`${btn.sm} whitespace-nowrap border border-line px-3 hover:border-sky hover:bg-tint disabled:opacity-60`}>
               Save draft
             </button>
           )}
-          <button type="button" disabled={save.pending} onClick={() => onSave(isDraft ? "published" : undefined)} className={`${btn.primary} px-5 py-2 text-[13px] disabled:opacity-60`}>
+          <button type="button" disabled={save.pending} onClick={() => onSave(isDraft ? "published" : undefined)} className={`${btn.primary} px-4 py-2 text-[13px] disabled:opacity-60 sm:px-5`}>
             {save.pending && <Spinner />}
             {isDraft ? "Publish" : "Save"}
           </button>

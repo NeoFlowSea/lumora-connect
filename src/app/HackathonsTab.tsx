@@ -1,7 +1,7 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { motion } from "framer-motion";
 import { Calendar, Check, Clock, Globe, MapPin, Plus, Trophy, Users, X } from "lucide-react";
-import { api, statusLabel } from "../api";
+import { api, localNow, statusLabel } from "../api";
 import { useAction, useApi, useSession } from "../api/hooks";
 import type { Hackathon, TeamRegistration } from "../api/types";
 import { Countdown } from "../components/Countdown";
@@ -23,7 +23,7 @@ const typeLabel: Record<Hackathon["eventType"], string> = {
   workshop: "Workshop",
 };
 
-const nowLocal = () => new Date().toISOString().slice(0, 16);
+const nowLocal = localNow;
 
 export function HackathonsTab({ focusId }: { focusId?: string } = {}) {
   const user = useSession();
@@ -224,7 +224,7 @@ function RegisterButton({ h, team, onRegister, onLight, small }: { h: Hackathon;
   if (!open) {
     return (
       <span className={`${base} ${onLight ? "bg-white/15" : "border border-line text-mist"}`}>
-        <Clock size={14} /> {h.status === "published" || (h.regOpen && nowLocal() < h.regOpen) ? `Opens ${when(h.regOpen, false)}` : "Registration closed"}
+        <Clock size={14} /> {h.status === "published" || (h.regOpen && nowLocal() < h.regOpen) ? `Opens ${when(h.regOpen)}` : "Registration closed"}
       </span>
     );
   }
@@ -281,9 +281,11 @@ function EventDetail({ h, team, teams, onRegister }: { h: Hackathon; team?: Team
 
       <div className="mt-6 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
         <div className="grid content-start gap-4">
-          <Section title="About">
-            <p className="whitespace-pre-line text-[14px] leading-relaxed">{h.description}</p>
-          </Section>
+          {h.description.trim() && (
+            <Section title="About">
+              <p className="whitespace-pre-line text-[14px] leading-relaxed">{h.description}</p>
+            </Section>
+          )}
           {h.caseBrief && (
             <Section title="Case brief">
               <p className="text-[14px] leading-relaxed">{h.caseBrief}</p>

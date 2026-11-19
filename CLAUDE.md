@@ -1,12 +1,14 @@
 # Lumora Connect
 
-Lumora Connect is a Tinder-style talent network for Uzbekistan: hackathon winners and young tech talent swipe companies, companies swipe verified talent, a mutual right swipe is a match. Lumora runs IT case hackathons across Uzbek cities. This repo is the front-end preview only: all data is mock, there is no backend yet.
+Lumora Connect is a Tinder-style talent network for Uzbekistan: hackathon winners and young tech talent swipe companies, companies swipe verified talent, a mutual right swipe is a match. Lumora runs IT case hackathons across Uzbek cities. This repo is the front-end preview: the backend is a mock API that runs in the browser (`src/api`, localStorage), with seeded demo accounts. Each visitor has their own data.
 
 ## Structure
 - Intro splash (`src/components/Splash.tsx`): blue screen with the white shield, then vertical strips wipe right, like the Tinder iOS launch.
 - Public landing (`src/landing/*`): hero with a self-swiping deck, stats, how it works, tracks, winners, opportunities, hackathons, join, footer. Lenis smooth scroll, Framer Motion reveals.
-- App (`src/app/*`) behind a role choice (talent or company), four tabs: Swipe, Opportunities, Hackathons, Profile. Hash routes `#/app/<tab>` in `src/lib/router.ts`; state (role, likes, applications, registrations) in `src/lib/store.ts`, persisted to localStorage.
-- Mock data in `src/data.ts`.
+- Auth (`src/auth/AuthScreen.tsx`): login, two-step register (account type first), demo accounts panel. App (`src/app/*`): talent tabs Swipe, Opportunities, Hackathons, Profile; company tabs Swipe, Dashboard, Hackathons, Profile; plus Inbox (matches and chat) and notifications. Admin (`src/admin/*`): overview, companies, users, events (editor, teams, results), opportunities, audit. Hash routes in `src/lib/router.ts`, guards in `src/App.tsx`.
+- Mock backend (`src/api`): `types.ts` domain model, `seed.ts` demo data and `DEMO_ACCOUNTS`, `db.ts` localStorage store with change events, `index.ts` async API with permission checks, `hooks.ts` (`useApi`, `useAction`, `useSession`). Shared form and state primitives in `src/components/form.tsx`.
+- `src/data.ts` holds the static source lists the seed is built from (categories, companies, talents, opportunities).
+- Glitch headings use `src/components/GlitchText.tsx`: only transform and opacity animate (compositor), phase locked to the wall clock via the Web Animations API.
 
 ## Stack
 Vite + React 18 + TypeScript, Tailwind v4 (`@import "tailwindcss"` in `src/index.css`, tokens in `@theme`), Framer Motion, Lenis, lucide-react. `base: "./"` in vite.config so the build works on GitHub Pages. Deploy workflow in `.github/workflows/deploy.yml`: `main` goes to the site root, every `design/<name>` branch to `/<name>/`.

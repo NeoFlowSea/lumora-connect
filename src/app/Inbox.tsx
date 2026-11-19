@@ -32,7 +32,7 @@ export function Inbox({ matchId }: { matchId?: string }) {
 
   if (matches.loading) {
     return (
-      <div className="grid gap-4 md:grid-cols-[320px_1fr]">
+      <div className="grid gap-4 md:grid-cols-[320px_minmax(0,1fr)]">
         <Skeleton rows={4} className="h-16" />
         <div className="hidden h-[420px] animate-pulse rounded-3xl bg-surface/70 md:block" />
       </div>
@@ -65,9 +65,9 @@ export function Inbox({ matchId }: { matchId?: string }) {
   return (
     <div>
       <h1 className={`mb-5 text-[clamp(26px,3vw,36px)] ${matchId ? "hidden md:block" : ""}`}>Messages</h1>
-      <div className="grid gap-4 md:grid-cols-[320px_1fr]">
+      <div className="grid gap-4 md:grid-cols-[320px_minmax(0,1fr)]">
         <aside className={`${matchId ? "hidden md:block" : ""}`}>
-          <ul className="grid gap-1 rounded-3xl border border-line bg-surface p-2 md:max-h-[calc(100svh-13rem)] md:overflow-y-auto">
+          <ul className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-1 overflow-x-hidden rounded-3xl border border-line bg-surface p-2 md:max-h-[calc(100svh-13rem)] md:overflow-y-auto">
             {list.map((m) => {
               const on = m.id === matchId;
               const mine = m.last?.fromId === me.id;

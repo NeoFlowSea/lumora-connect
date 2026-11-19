@@ -7,7 +7,7 @@ import { useApi } from "../api/hooks";
 import { Shield } from "../components/Logo";
 import { Reveal, initials } from "../components/ui";
 
-function Card({ t }: { t: TalentCardData }) {
+function Card({ t }: { t: TalentCardData & { verified: boolean } }) {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const rx = useSpring(useTransform(y, [-0.5, 0.5], [6, -6]), { stiffness: 200, damping: 20 });
@@ -44,9 +44,11 @@ function Card({ t }: { t: TalentCardData }) {
           <span className="font-semibold">{t.place}</span>
           <span className="text-mist">, {t.event}</span>
         </div>
-        <span className="ml-auto flex shrink-0 items-center gap-1 text-[11px] text-mist" title="Confirmed by Lumora">
-          <Shield size={9} mono="#8db0ff" /> verified
-        </span>
+        {t.verified && (
+          <span className="ml-auto flex shrink-0 items-center gap-1 text-[11px] text-mist" title="Confirmed by Lumora">
+            <Shield size={9} mono="#8db0ff" /> verified
+          </span>
+        )}
       </div>
       <p className="mt-5 text-[14px] text-mist">Built {t.project}</p>
       <div className="mt-auto flex flex-wrap gap-1.5 pt-6">
@@ -62,9 +64,9 @@ function Card({ t }: { t: TalentCardData }) {
 
 export function Talent({ onOpenApp }: { onOpenApp: () => void }) {
   const winners = useApi(() => api.users.winners(8), []);
-  const cards: TalentCardData[] = (winners.data ?? []).map((t) => {
+  const cards: (TalentCardData & { verified: boolean })[] = (winners.data ?? []).map((t) => {
     const b = t.badges.slice().sort((x, y) => (x.place ?? 99) - (y.place ?? 99))[0];
-    return { id: t.id, name: t.name, cat: t.cat, city: t.city, age: t.age ?? 0, place: b.title, event: b.hackathonName, skills: t.skills, project: t.project, bio: t.bio, avail: t.avail };
+    return { id: t.id, name: t.name, cat: t.cat, city: t.city, age: t.age ?? 0, place: b.title, event: b.hackathonName, skills: t.skills, project: t.project, bio: t.bio, avail: t.avail, verified: t.verified };
   });
   return (
     <section id="talent" className="pb-16 pt-24 md:pb-24 md:pt-36">

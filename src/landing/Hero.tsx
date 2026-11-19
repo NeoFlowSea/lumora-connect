@@ -4,6 +4,8 @@ import { Heart, MapPin, X } from "lucide-react";
 import { companies } from "../data";
 import { btn, ease, initials } from "../components/ui";
 import { GlitchText } from "../components/GlitchText";
+import { api } from "../api";
+import { useApi } from "../api/hooks";
 
 /* A deck that swipes itself: right, left, right... so the idea lands in two seconds. */
 function SwipeDemo() {
@@ -130,6 +132,7 @@ const line = {
 };
 
 export function Hero({ onOpenApp }: { onOpenApp: () => void }) {
+  const stats = useApi(() => api.users.stats(), []).data;
   const words = ["Swipe right on", "your next", "internship."];
   return (
     <section id="top" className="relative overflow-hidden pt-28 md:pt-36">
@@ -182,7 +185,7 @@ export function Hero({ onOpenApp }: { onOpenApp: () => void }) {
                 </span>
               ))}
             </span>
-            214 verified hackathon participants already here
+            {stats ? `${stats.verifiedTalents} verified hackathon participants already here` : "Verified hackathon participants already here"}
           </motion.div>
         </div>
         <motion.div

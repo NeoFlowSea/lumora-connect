@@ -62,7 +62,7 @@ export function defaultEvent(): HackathonInput {
   const end = new Date(start);
   end.setHours(18, 0, 0, 0);
   const regOpen = new Date();
-  regOpen.setHours(9, 0, 0, 0);
+  regOpen.setMinutes(0, 0, 0); // open from the current hour, so "registration open" works right away
   const regClose = new Date(start);
   regClose.setDate(regClose.getDate() - 3);
   regClose.setHours(23, 59, 0, 0);

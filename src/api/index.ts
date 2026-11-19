@@ -40,6 +40,13 @@ const fail = (msg: string): never => {
 
 export const matchId = (talentId: string, companyId: string) => `${talentId}__${companyId}`;
 
+/** "2026-11-19T14:05" in the visitor's local time, comparable with event date-time fields */
+export function localNow(): string {
+  const d = new Date();
+  const p = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
 /* ---------- session helpers (sync, for rendering) ---------- */
 
 export function currentUser(): User | null {
@@ -590,7 +597,7 @@ const hackathons = {
     const d0 = getDb();
     const h = d0.hackathons.find((x) => x.id === hackathonId) ?? fail("Event not found.");
     if (h.status !== "registration_open") fail("Registration for this event is not open.");
-    const nowLocal = new Date().toISOString().slice(0, 16);
+    const nowLocal = localNow();
     if (h.regOpen && nowLocal < h.regOpen) fail(`Registration opens on ${h.regOpen.replace("T", " at ")}.`);
     if (h.regClose && nowLocal > h.regClose) fail("Registration has closed.");
     const teamsHere = d0.teams.filter((x) => x.hackathonId === hackathonId);

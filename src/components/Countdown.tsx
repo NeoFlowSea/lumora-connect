@@ -47,10 +47,10 @@ export function Countdown({ to, dark }: { to: string; dark?: boolean }) {
       {p.map((x) => (
         <div
           key={x.l}
-          className={`min-w-[64px] rounded-xl px-3 py-2 text-center ${dark ? "bg-white/10 text-white" : "bg-tint text-sky"}`}
+          className={`min-w-[64px] rounded-xl px-3 py-2 text-center ${dark ? "bg-white/15 text-current" : "bg-tint text-sky"}`}
         >
           <DropNumber value={String(x.v).padStart(2, "0")} />
-          <div className={`mt-1 text-[11px] ${dark ? "text-white/70" : "text-mist"}`}>{x.l}</div>
+          <div className={`mt-1 text-[11px] ${dark ? "opacity-75" : "text-mist"}`}>{x.l}</div>
         </div>
       ))}
     </div>
