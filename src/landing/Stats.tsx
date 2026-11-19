@@ -1,6 +1,8 @@
 import { useEffect, useRef } from "react";
 import { animate, useInView } from "framer-motion";
 import { partners } from "../data";
+import { api } from "../api";
+import { useApi } from "../api/hooks";
 
 function Counter({ to }: { to: number }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -20,15 +22,16 @@ function Counter({ to }: { to: number }) {
   return <span ref={ref}>0</span>;
 }
 
-const stats = [
-  { n: 214, label: "verified talents" },
-  { n: 38, label: "open opportunities" },
-  { n: 26, label: "companies swiping" },
-  { n: 7, label: "cities across Uzbekistan" },
-];
 
 export function Stats() {
   const list = [...partners, ...partners];
+  const s = useApi(() => api.users.stats(), []).data;
+  const stats = [
+    { n: s?.talents ?? 0, label: "registered talents" },
+    { n: s?.openOpportunities ?? 0, label: "open opportunities" },
+    { n: s?.companies ?? 0, label: "companies swiping" },
+    { n: s?.cities ?? 0, label: "cities with events" },
+  ];
   return (
     <section className="border-y border-line bg-cloud/75 backdrop-blur-[2px]">
       <div className="mx-auto grid max-w-[1240px] grid-cols-2 divide-line md:grid-cols-4 md:divide-x">

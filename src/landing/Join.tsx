@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { actions, type Role } from "../lib/store";
+type Role = "talent" | "company";
 import { go } from "../lib/router";
 import { ease } from "../components/ui";
 
@@ -22,8 +22,7 @@ const sides: { key: Role; title: string; text: string; cta: string }[] = [
 export function Join() {
   const [hover, setHover] = useState<string | null>(null);
   function start(role: Role) {
-    actions.setRole(role);
-    go("#/app/swipe");
+    go(`#/register?type=${role}`);
   }
   return (
     <section className="mx-auto max-w-[1240px] px-5 py-24 md:px-8 md:py-36">

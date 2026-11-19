@@ -10,16 +10,23 @@ import { Opportunities } from "./Opportunities";
 import { Hackathons } from "./Hackathons";
 import { Join } from "./Join";
 import { Footer } from "./Footer";
-import { RolePicker } from "../components/RolePicker";
+import { currentUser } from "../api";
+import { defaultTab } from "../app/AppShell";
+import { go } from "../lib/router";
 import { GridBackground } from "../components/GridBackground";
 import { TouchGlow } from "../components/TouchGlow";
 
 const isTouch = () => window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768;
 
 export function Landing() {
-  const [picker, setPicker] = useState(false);
   const [touch] = useState(isTouch);
-  const open = () => setPicker(true);
+  // signed in: straight into the app; otherwise to sign in, and back here after
+  const open = (target?: string) => {
+    const u = currentUser();
+    if (u) go(u.kind === "admin" ? "#/admin" : target ?? `#/app/${defaultTab(u)}`);
+    else go(`#/login${target ? `?next=${encodeURIComponent(target)}` : ""}`);
+  };
+  const openEvent = (id?: string) => open(id ? `#/app/hackathons/${id}` : "#/app/hackathons");
 
   useEffect(() => {
     // smooth scroll only on desktop; phones keep native scrolling
@@ -40,19 +47,18 @@ export function Landing() {
   return (
     <>
       {touch ? <TouchGlow /> : <GridBackground />}
-      <Nav onOpenApp={open} />
+      <Nav onOpenApp={() => open()} />
       <main>
-        <Hero onOpenApp={open} />
+        <Hero onOpenApp={() => open()} />
         <Stats />
         <HowItWorks />
         <Categories />
-        <Talent onOpenApp={open} />
-        <Opportunities onOpenApp={open} />
-        <Hackathons onOpenApp={open} />
+        <Talent onOpenApp={() => open("#/app/swipe")} />
+        <Opportunities onOpenApp={() => open("#/app/opportunities")} />
+        <Hackathons onOpen={openEvent} />
         <Join />
       </main>
       <Footer />
-      <RolePicker open={picker} onClose={() => setPicker(false)} />
     </>
   );
 }

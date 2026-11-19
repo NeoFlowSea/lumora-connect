@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Heart, MapPin, X } from "lucide-react";
 import { companies } from "../data";
 import { btn, ease, initials } from "../components/ui";
+import { GlitchText } from "../components/GlitchText";
 
 /* A deck that swipes itself: right, left, right... so the idea lands in two seconds. */
 function SwipeDemo() {
@@ -137,11 +138,11 @@ export function Hero({ onOpenApp }: { onOpenApp: () => void }) {
 
       <div className="relative mx-auto grid max-w-[1240px] items-center gap-14 px-5 pb-28 md:grid-cols-[1.1fr_0.9fr] md:px-8 md:pb-36">
         <div>
-          <h1 className="glitch-loop font-glitch text-[clamp(40px,5.8vw,80px)] font-normal leading-[1.02] tracking-normal" style={{ animationDelay: "3s" }}>
+          <h1 className="font-glitch text-[clamp(40px,5.8vw,80px)] font-normal leading-[1.02] tracking-normal">
             {words.map((w, i) => (
               <span key={w} className="block overflow-hidden pb-[0.08em]">
                 <motion.span className="block" variants={line} custom={i} initial="hidden" animate="show">
-                  {w}
+                  <GlitchText text={w} />
                 </motion.span>
               </span>
             ))}

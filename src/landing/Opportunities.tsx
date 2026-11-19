@@ -1,4 +1,5 @@
-import { opportunities } from "../data";
+import { api } from "../api";
+import { useApi } from "../api/hooks";
 import { Pill, Reveal } from "../components/ui";
 
 const tone: Record<string, "blue" | "tint" | "line" | "good"> = {
@@ -9,13 +10,15 @@ const tone: Record<string, "blue" | "tint" | "line" | "good"> = {
 };
 
 export function Opportunities({ onOpenApp }: { onOpenApp: () => void }) {
+  const list = useApi(() => api.opportunities.list(), []);
+  const opportunities = (list.data ?? []).map((o) => ({ ...o, co: o.company.name }));
   return (
     <section id="opportunities" className="border-t border-line">
       <div className="mx-auto max-w-[1240px] px-5 pb-24 pt-20 md:px-8 md:pb-36 md:pt-28">
         <Reveal className="mb-10 flex flex-wrap items-end justify-between gap-6">
           <h2 className="max-w-[16ch] text-[clamp(28px,3.6vw,46px)]">Open this week</h2>
           <button onClick={onOpenApp} className="text-[15px] font-semibold text-sky underline-offset-4 hover:underline">
-            See all 38 opportunities
+            See all {opportunities.length} opportunities
           </button>
         </Reveal>
         <ul className="divide-y divide-line border-y border-line">

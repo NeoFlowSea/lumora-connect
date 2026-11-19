@@ -1,4 +1,46 @@
-/* STUB: owned by the admin-panel subagent. Renders the admin area for #/admin/<section>. */
+import { AdminShell, type AdminSection } from "./AdminShell";
+import { Overview } from "./Overview";
+import { Companies } from "./Companies";
+import { Users } from "./Users";
+import { Opportunities } from "./Opportunities";
+import { Audit } from "./Audit";
+import { EventsList } from "./events/EventsList";
+import { EventEditor } from "./events/EventEditor";
+import { EventTeams } from "./events/EventTeams";
+
+/* Admin area for #/admin/<section>. path is the hash path after "admin". */
 export function AdminApp({ path }: { path: string[] }) {
-  return <div className="p-10 text-mist">Admin area is being built. Section: {path.join("/") || "overview"}</div>;
+  const [first, second, third] = path;
+  const known: AdminSection[] = ["overview", "companies", "users", "events", "opportunities", "audit"];
+  const section: AdminSection = known.includes(first as AdminSection) ? (first as AdminSection) : "overview";
+
+  let page;
+  switch (section) {
+    case "companies":
+      page = <Companies />;
+      break;
+    case "users":
+      page = <Users />;
+      break;
+    case "opportunities":
+      page = <Opportunities />;
+      break;
+    case "audit":
+      page = <Audit />;
+      break;
+    case "events":
+      if (!second) page = <EventsList />;
+      else if (second === "new") page = <EventEditor />;
+      else if (third === "teams") page = <EventTeams id={second} />;
+      else page = <EventEditor id={second} />;
+      break;
+    default:
+      page = <Overview />;
+  }
+
+  return (
+    <AdminShell section={section}>
+      <div key={path.join("/")}>{page}</div>
+    </AdminShell>
+  );
 }
