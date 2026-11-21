@@ -9,7 +9,7 @@ export const landing = {
     "hero.text": "Lumora runs one-day IT case competitions across Uzbekistan. Connect is where those students meet companies: swipe, match, and talk about an internship or a first job.",
     "hero.student": "I'm a student",
     "hero.studentSub": "Find internships and first jobs",
-    "hero.company": "I'm hiring",
+    "hero.company": "I'm an employer",
     "hero.companySub": "Meet students who already shipped",
 
     "deck.label": "Preview of the app: sample company and student cards",
@@ -147,7 +147,7 @@ export const landing = {
     "hero.text": "Lumora проводит однодневные IT-кейс-чемпионаты по всему Узбекистану. Connect — место, где эти студенты встречаются с компаниями: свайп, мэтч и разговор о стажировке или первой работе.",
     "hero.student": "Я студент",
     "hero.studentSub": "Стажировки и первая работа",
-    "hero.company": "Я нанимаю",
+    "hero.company": "Я работодатель",
     "hero.companySub": "Студенты, которые уже делали продукты",
 
     "deck.label": "Превью приложения: карточки компаний и студентов из примеров",
@@ -289,7 +289,7 @@ export const landing = {
     "hero.text": "Lumora butun O'zbekiston bo'ylab bir kunlik IT keys musobaqalarini o'tkazadi. Connect o'sha talabalar kompaniyalar bilan uchrashadigan joy: svayp, moslik va amaliyot yoki birinchi ish haqida suhbat.",
     "hero.student": "Men talabaman",
     "hero.studentSub": "Amaliyot va birinchi ish",
-    "hero.company": "Men xodim izlayapman",
+    "hero.company": "Men ish beruvchiman",
     "hero.companySub": "Mahsulot yaratgan talabalar bilan tanishing",
 
     "deck.label": "Ilova ko'rinishi: namuna kompaniya va talaba kartalari",
