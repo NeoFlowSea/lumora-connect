@@ -18,9 +18,9 @@
   --color-line: rgba(255, 255, 255, 0.1);
   --color-good: #5dd08f;
   --color-bad: #ff6b6b;
-  --font-display: "IBM Plex Mono", ui-monospace, monospace; /* headings */
-  --font-body: "IBM Plex Mono", ui-monospace, monospace; /* all text */
-  --font-glitch: "Rubik Glitch", "IBM Plex Mono", sans-serif; /* one or two hero headings only */
+  --font-display: "Onest", system-ui, sans-serif; /* headings */
+  --font-body: "Onest", system-ui, sans-serif; /* all text */
+  --font-glitch: "Rubik Glitch", "Onest", sans-serif; /* the landing hackathon heading only */
   --font-pixel: "Press Start 2P", ui-monospace, monospace; /* countdown digits only */
 }
 
@@ -34,8 +34,8 @@ body {
   background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-body);
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: 16px;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
@@ -58,8 +58,8 @@ body {
   h3 {
     font-family: var(--font-display);
     font-weight: 600;
-    letter-spacing: -0.035em;
-    line-height: 1.1;
+    letter-spacing: -0.02em;
+    line-height: 1.12;
     margin: 0;
     text-wrap: balance;
   }

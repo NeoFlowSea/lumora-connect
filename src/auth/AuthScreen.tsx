@@ -183,12 +183,7 @@ function TalentForm() {
       name: f.name,
       cat: f.cat,
       city: f.city,
-      age: f.age ? Number(f.age) : null,
-      skills: f.skills
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean),
-      contact: f.contact,
+      consent: true,
     });
   }
 
@@ -230,7 +225,7 @@ function CompanyForm() {
 
   function submit(e: FormEvent) {
     e.preventDefault();
-    reg.run({ type: "company", ...f });
+    reg.run({ type: "company", email: f.email, password: f.password, name: f.name, orgKind: f.orgKind, city: f.city, consent: true });
   }
 
   return (

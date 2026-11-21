@@ -18,6 +18,51 @@ export interface Badge {
   awardedAt: string;
 }
 
+export type WorkFormat = "onsite" | "remote" | "hybrid";
+export type VerificationLevel = "unverified" | "pending" | "verified";
+export type VerificationProof = "event" | "university_email" | "github" | "company_email" | "admin" | "";
+
+/** Two account levels: a short sign-up gives an unverified account; a full profile plus one proof makes it verified. */
+export interface Verification {
+  level: VerificationLevel;
+  proof: VerificationProof;
+  proofValue: string;
+  requestedAt: string;
+  reviewedAt: string;
+  note: string;
+}
+
+export interface EducationEntry {
+  institution: string;
+  level: "school" | "lyceum" | "college" | "university" | "course" | "";
+  program: string;
+  year: string;
+}
+
+export interface ExperienceEntry {
+  id: string;
+  title: string;
+  org: string;
+  period: string;
+  desc: string;
+}
+
+export interface ProjectEntry {
+  id: string;
+  name: string;
+  url: string;
+  role: string;
+  desc: string;
+  event: string;
+}
+
+export interface FileRef {
+  name: string;
+  size: number;
+  /** data URL, kept in the browser for this preview */
+  dataUrl: string;
+}
+
 export interface TalentProfile {
   kind: "talent";
   id: string;
@@ -35,6 +80,26 @@ export interface TalentProfile {
   verified: boolean;
   badges: Badge[];
   createdAt: string;
+  /* richer profile */
+  photo: string;
+  headline: string;
+  region: string;
+  education: EducationEntry;
+  languages: string[];
+  experience: ExperienceEntry[];
+  projects: ProjectEntry[];
+  cv: FileRef | null;
+  roles: string[];
+  workFormats: WorkFormat[];
+  expectedStipend: string;
+  github: string;
+  linkedin: string;
+  verification: Verification;
+  onboarded: boolean;
+  emailConfirmed: boolean;
+  consentAt: string;
+  /** seeded sample person, shown with a "Demo profile" tag */
+  demo: boolean;
 }
 
 export interface CompanyProfile {
@@ -57,6 +122,16 @@ export interface CompanyProfile {
   partner: boolean;
   hue: string;
   createdAt: string;
+  logo: string;
+  foundedYear: string;
+  benefits: string[];
+  linkedin: string;
+  telegram: string;
+  verification: Verification;
+  onboarded: boolean;
+  emailConfirmed: boolean;
+  consentAt: string;
+  demo: boolean;
 }
 
 export interface AdminProfile {
@@ -72,12 +147,33 @@ export type User = TalentProfile | CompanyProfile | AdminProfile;
 
 export interface Credential {
   email: string;
-  /** Mock only: stored in plain text in the visitor's own browser. Never do this with a real backend. */
-  password: string;
+  /** salted SHA-256, see src/api/crypto.ts. Still a browser mock, not production security. */
+  hash: string;
+  salt: string;
   userId: string;
 }
 
+/** tokens for password reset and email confirmation */
+export interface Token {
+  token: string;
+  userId: string;
+  kind: "reset" | "confirm";
+  expires: string;
+}
+
+/** emails the preview would have sent; shown in the interface instead of a real mailbox */
+export interface OutboxMail {
+  id: string;
+  to: string;
+  subject: string;
+  body: string;
+  link: string;
+  at: string;
+}
+
 export type OpportunityType = "Internship" | "Work program" | "Position" | "Event";
+export type OpportunityLevel = "intern" | "junior" | "middle" | "any";
+export type Schedule = "full-time" | "part-time" | "project" | "event";
 
 export interface Opportunity {
   id: string;
@@ -93,6 +189,20 @@ export interface Opportunity {
   postedAt: string;
   hidden: boolean;
   hiddenReason: string;
+  responsibilities: string[];
+  niceToHave: string[];
+  /** monthly, in UZS; null when unpaid or not disclosed */
+  salaryMin: number | null;
+  salaryMax: number | null;
+  level: OpportunityLevel;
+  format: WorkFormat;
+  schedule: Schedule;
+  deadline: string;
+  openings: number;
+  perks: string[];
+  questions: string[];
+  closed: boolean;
+  demo: boolean;
 }
 
 export type ApplicationStatus = "pending" | "shortlisted" | "accepted" | "rejected";
@@ -105,6 +215,9 @@ export interface Application {
   note: string;
   createdAt: string;
   updatedAt: string;
+  cover: string;
+  answers: string[];
+  withCv: boolean;
 }
 
 export interface Swipe {
@@ -234,6 +347,11 @@ export interface Hackathon {
   status: EventStatus;
   registrationFields: RegistrationFields;
   results: Result[];
+  /** past rounds imported from Lumora history: podium team names and turnout */
+  podium: string[];
+  participants: number;
+  photo: string;
+  demo: boolean;
 
   createdAt: string;
   updatedAt: string;
@@ -277,38 +395,20 @@ export interface DB {
   hackathons: Hackathon[];
   teams: TeamRegistration[];
   audit: AuditEntry[];
+  tokens: Token[];
+  outbox: OutboxMail[];
 }
 
 /* ---------- inputs ---------- */
 
+/** short sign-up: only what is needed to start. The rest comes later in onboarding. */
 export type RegisterInput =
-  | {
-      type: "talent";
-      email: string;
-      password: string;
-      name: string;
-      cat: string;
-      city: string;
-      age: number | null;
-      skills: string[];
-      contact: string;
-    }
-  | {
-      type: "company";
-      email: string;
-      password: string;
-      name: string;
-      orgKind: OrgKind;
-      industry: string;
-      city: string;
-      size: string;
-      website: string;
-      contact: string;
-      about: string;
-    };
+  | { type: "talent"; email: string; password: string; name: string; cat: string; city: string; consent: boolean }
+  | { type: "company"; email: string; password: string; name: string; orgKind: OrgKind; city: string; consent: boolean };
 
-export type HackathonInput = Omit<Hackathon, "id" | "createdAt" | "updatedAt" | "results">;
+export type HackathonInput = Omit<Hackathon, "id" | "createdAt" | "updatedAt" | "results" | "podium" | "participants" | "photo" | "demo"> &
+  Partial<Pick<Hackathon, "podium" | "participants" | "photo" | "demo">>;
 
-export type OpportunityInput = Omit<Opportunity, "id" | "companyId" | "postedAt" | "hidden" | "hiddenReason">;
+export type OpportunityInput = Omit<Opportunity, "id" | "companyId" | "postedAt" | "hidden" | "hiddenReason" | "demo">;
 
 export type TeamInput = Omit<TeamRegistration, "id" | "hackathonId" | "leadId" | "createdAt">;

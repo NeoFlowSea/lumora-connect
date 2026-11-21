@@ -386,6 +386,18 @@ function PostingForm({ initial, onDone }: { initial: OpportunityWithCompany | nu
         .split("\n")
         .map((s) => s.trim())
         .filter(Boolean),
+      responsibilities: initial?.responsibilities ?? [],
+      niceToHave: initial?.niceToHave ?? [],
+      salaryMin: initial?.salaryMin ?? null,
+      salaryMax: initial?.salaryMax ?? null,
+      level: initial?.level ?? "intern",
+      format: initial?.format ?? "onsite",
+      schedule: initial?.schedule ?? "part-time",
+      deadline: initial?.deadline ?? "",
+      openings: initial?.openings ?? 1,
+      perks: initial?.perks ?? [],
+      questions: initial?.questions ?? [],
+      closed: initial?.closed ?? false,
     };
     if (initial) {
       const ok = await update.run(initial.id, input);

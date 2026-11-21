@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Braces, Code2, Cpu, Database, GitBranch, Laptop, Rocket, Terminal } from "lucide-react";
 import { Shield } from "./Logo";
@@ -22,16 +22,37 @@ export function Splash({ onDone }: { onDone: () => void }) {
   const small = window.innerWidth < 640;
   const radius = small ? 112 : 160;
 
+  // onDone lives in a ref, so a parent re-render never restarts the timers (that froze the
+  // icons on screen before). The last timer is a hard stop; if the tab was in the background
+  // when the intro should have ended, it ends as soon as the tab is visible again.
+  const done = useRef(onDone);
+  done.current = onDone;
   useEffect(() => {
-    const t = reduced ? [500, 650, 1200, 1600] : [900, 1150, 1950, 2450];
+    const start = Date.now();
+    const t = reduced ? [300, 400, 800, 1100] : [900, 1150, 1950, 2450];
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      done.current();
+    };
     const ids = [
       setTimeout(() => setPhase("pop"), t[0]),
       setTimeout(() => setPhase("wipe"), t[1]),
       setTimeout(() => setPhase("fade"), t[2]),
-      setTimeout(onDone, t[3]),
+      setTimeout(finish, t[3]),
+      setTimeout(finish, t[3] + 1500),
     ];
-    return () => ids.forEach(clearTimeout);
-  }, [onDone, reduced]);
+    const onVisible = () => {
+      if (document.visibilityState === "visible" && Date.now() - start > t[3]) finish();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      ids.forEach(clearTimeout);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const popped = phase !== "logo";
   const wiping = phase === "wipe" || phase === "fade";
