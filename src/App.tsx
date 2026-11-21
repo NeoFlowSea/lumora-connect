@@ -61,7 +61,7 @@ export default function App() {
   useEffect(() => {
     if (section === "app" || section === "admin" || section === "onboarding") {
       if (!user) go(`#/login?next=${encodeURIComponent(window.location.hash)}`);
-      else if ((section === "app" || section === "onboarding") && user.kind === "admin") go("#/admin");
+      else if ((section === "app" || section === "onboarding") && user.kind === "admin" && !(sub === "talent" && extra)) go("#/admin");
       else if (section === "admin" && user.kind !== "admin") go(`#/app/${defaultTab(user)}`);
       else if (section === "app" && user.kind !== "admin" && !user.onboarded) go("#/onboarding");
       else if (section === "app" && sub && !tabsFor(user).some((t) => t.key === sub) && !APP_EXTRA.includes(sub)) go(`#/app/${defaultTab(user)}`);
@@ -109,6 +109,14 @@ export default function App() {
       <Suspense fallback={<div className="grid min-h-[100svh] place-items-center bg-paper"><Loading /></div>}>
         <AdminApp path={path.slice(1)} />
       </Suspense>
+    );
+  } else if (section === "app" && sub === "talent" && extra && user?.kind === "admin") {
+    page = (
+      <PublicFrame bare>
+        <div className="mx-auto max-w-[1240px] px-5 pb-16 pt-6 md:px-8">
+          <TalentPage key={extra} id={extra} />
+        </div>
+      </PublicFrame>
     );
   } else if (section === "app" && user && user.kind !== "admin" && user.onboarded) {
     const tab = sub ?? defaultTab(user);

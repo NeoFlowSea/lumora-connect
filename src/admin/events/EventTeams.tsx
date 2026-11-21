@@ -5,8 +5,12 @@ import { useAction, useApi } from "../../api/hooks";
 import type { Result } from "../../api/types";
 import { Card, Empty, ErrorNote, Select, Skeleton, Spinner, inputCls, when } from "../../components/form";
 import { Pill, btn, useToast } from "../../components/ui";
+import { t, tp, trackLabel } from "../../i18n";
 import { go } from "../../lib/router";
+import { placeTitle } from "../../app/HackathonsTab";
 import { statusTone } from "./shared";
+
+const smallBtn = `${btn.sm} min-h-11 border border-line hover:border-sky hover:bg-tint md:min-h-9`;
 
 export function EventTeams({ id }: { id: string }) {
   const toast = useToast();
@@ -35,19 +39,27 @@ export function EventTeams({ id }: { id: string }) {
 
   const list = useMemo(() => {
     const s = q.trim().toLowerCase();
-    return (teams.data ?? []).filter(
-      (t) => !s || `${t.teamName} ${t.lead?.name ?? ""} ${t.members.join(" ")} ${t.track}`.toLowerCase().includes(s),
-    );
+    return (teams.data ?? []).filter((x) => !s || `${x.teamName} ${x.lead?.name ?? ""} ${x.members.join(" ")} ${x.track}`.toLowerCase().includes(s));
   }, [teams.data, q]);
 
   if (event.loading && !event.data) return <Skeleton rows={3} className="h-40" />;
   const ev = event.data;
   if (!ev) {
-    return <Empty title="Event not found" text="It may have been deleted." action={<button onClick={() => go("#/admin/events")} className={btn.ghost}>Back to events</button>} />;
+    return (
+      <Empty
+        title={t("admin.events.notFound")}
+        text={t("admin.events.notFoundText")}
+        action={
+          <button onClick={() => go("#/admin/events")} className={btn.ghost}>
+            {t("admin.events.back")}
+          </button>
+        }
+      />
+    );
   }
 
   const allTeams = teams.data ?? [];
-  const teamOptions = [{ value: "", label: "Not assigned" }, ...allTeams.map((t) => ({ value: t.id, label: `${t.teamName}${t.lead ? `, ${t.lead.name}` : ""}` }))];
+  const teamOptions = [{ value: "", label: t("admin.teams.notAssigned") }, ...allTeams.map((x) => ({ value: x.id, label: `${x.teamName}${x.lead ? `, ${x.lead.name}` : ""}` }))];
 
   const placeKeys = ev.places.map((p) => `place:${p.place}`);
   const ranked = placeKeys.map((k) => picks[k]).filter(Boolean);
@@ -64,13 +76,13 @@ export function EventTeams({ id }: { id: string }) {
     const keys = [...placeKeys, ...ev!.nominations.filter((n) => n.trim()).map((n) => `nom:${n}`), ...finalistKeys];
     const results: Result[] = keys.filter((k) => picks[k]).map((k) => ({ key: k, teamId: picks[k] }));
     if (await saveResults.run(results)) {
-      toast("Results saved, badges awarded");
+      toast(t("admin.teams.savedToast"));
       setSavedNote(true);
     }
   }
 
   async function onFinish() {
-    if (await finish.run()) toast("Event marked as finished");
+    if (await finish.run()) toast(t("admin.teams.finishedToast"));
   }
 
   const extra = (label: string, v: string) =>
@@ -85,33 +97,36 @@ export function EventTeams({ id }: { id: string }) {
     <div className="grid gap-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0">
-          <button onClick={() => go("#/admin/events")} className="text-[12px] font-semibold text-mist hover:text-ink">
-            Events
+          <button onClick={() => go("#/admin/events")} className="-ml-1 min-h-11 px-1 text-[13px] font-semibold text-mist hover:text-ink">
+            {t("admin.nav.events")}
           </button>
-          <h1 className="mt-1 break-words text-[clamp(22px,3vw,30px)]">{ev.title}</h1>
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-[12px] text-mist">
+          <h1 className="break-words text-[clamp(22px,3vw,30px)]">{ev.title}</h1>
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-[13px] text-mist">
             <Pill tone={statusTone(ev.status)}>{statusLabel(ev.status)}</Pill>
+            {ev.demo && <Pill tone="line">{t("app.hack.demo")}</Pill>}
             <span>
               {when(ev.start)}
-              {ev.end.slice(0, 10) !== ev.start.slice(0, 10) ? ` to ${when(ev.end, false)}` : ""}
+              {ev.end.slice(0, 10) !== ev.start.slice(0, 10) ? ` – ${when(ev.end, false)}` : ""}
             </span>
-            <span>{ev.mode === "online" ? "Online" : ev.city}</span>
+            <span>{ev.mode === "online" ? t("app.hack.mode.online") : ev.city}</span>
           </div>
         </div>
-        <button onClick={() => go(`#/admin/events/${id}`)} className={`${btn.sm} border border-line hover:border-sky hover:bg-tint`}>
-          <Pencil size={14} /> Edit event
+        <button onClick={() => go(`#/admin/events/${id}`)} className={smallBtn}>
+          <Pencil size={14} /> {t("admin.teams.edit")}
         </button>
       </div>
 
       {ev.status !== "finished" && (
-        <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-accent/30 bg-accent/10 p-4 text-[13px]">
-          <span className="min-w-0 flex-1 text-accent">
-            Results are usually assigned after the event. Mark it as finished so participants see it in past events.
-          </span>
-          <button onClick={onFinish} disabled={finish.pending} className={`${btn.sm} bg-accent text-paper hover:bg-accent-deep disabled:opacity-60`}>
-            {finish.pending && <Spinner />} Mark as finished
+        <div className="flex flex-wrap items-center gap-3 rounded-lg border border-line bg-tint p-4 text-[14px]">
+          <span className="min-w-0 flex-1">{t("admin.teams.finishNote")}</span>
+          <button onClick={onFinish} disabled={finish.pending} className={`${btn.sm} min-h-11 bg-blue text-white hover:bg-blue-deep disabled:opacity-60 md:min-h-9`}>
+            {finish.pending && <Spinner />} {t("admin.teams.finish")}
           </button>
-          {finish.error && <div className="w-full"><ErrorNote>{finish.error}</ErrorNote></div>}
+          {finish.error && (
+            <div className="w-full">
+              <ErrorNote>{finish.error}</ErrorNote>
+            </div>
+          )}
         </div>
       )}
 
@@ -119,53 +134,50 @@ export function EventTeams({ id }: { id: string }) {
         <Card className="min-w-0">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="flex items-center gap-2 text-[17px]">
-              <Users size={17} /> Registered teams
+              <Users size={17} /> {t("admin.teams.registered")}
             </h2>
-            <span className="text-[13px] text-mist">
-              {allTeams.length}
-              {ev.maxTeams ? ` of ${ev.maxTeams}` : ""} teams
-            </span>
+            <span className="text-[13px] text-mist">{ev.maxTeams ? t("admin.events.teamsOf", { n: allTeams.length, max: ev.maxTeams }) : `${allTeams.length} ${tp("app.hack.teamsN", allTeams.length)}`}</span>
           </div>
           <label className="relative mt-4 block">
             <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-mist" />
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search team, lead, member or track" className={`${inputCls} pl-9`} />
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("admin.teams.search")} aria-label={t("admin.teams.search")} className={`${inputCls} pl-9`} />
           </label>
           <div className="mt-4">
             {teams.error && <ErrorNote>{teams.error}</ErrorNote>}
             {teams.loading && !teams.data ? (
               <Skeleton rows={3} className="h-28" />
             ) : allTeams.length === 0 ? (
-              <Empty icon={<Users size={20} />} title="No teams yet" text={ev.status === "registration_open" ? "Teams appear here as soon as participants register." : "Open registration in the event settings so teams can join."} />
+              <Empty icon={<Users size={20} />} title={t("admin.teams.noneTitle")} text={t(ev.status === "registration_open" ? "admin.teams.noneOpen" : "admin.teams.noneClosed")} />
             ) : list.length === 0 ? (
-              <p className="py-6 text-center text-[13px] text-mist">No team matches your search.</p>
+              <p className="py-6 text-center text-[13px] text-mist">{t("admin.teams.noMatch")}</p>
             ) : (
               <ul className="grid gap-3">
-                {list.map((t) => (
-                  <li key={t.id} className="rounded-2xl border border-line bg-paper/40 p-4">
+                {list.map((x) => (
+                  <li key={x.id} className="min-w-0 rounded-lg border border-line bg-paper/40 p-4">
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <div className="break-words text-[15px] font-semibold">{t.teamName}</div>
+                        <div className="break-words text-[15px] font-semibold">{x.teamName}</div>
                         <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-mist">
                           <span className="flex items-center gap-1">
-                            Lead: <span className="text-ink">{t.lead?.name ?? "Deleted account"}</span>
-                            {t.lead?.verified && <BadgeCheck size={13} className="text-sky" aria-label="verified" />}
+                            {t("admin.teams.lead")}: <span className="text-ink">{x.lead?.name ?? t("admin.teams.deleted")}</span>
+                            {x.lead?.verified && <BadgeCheck size={13} className="text-sky" aria-label={t("common.status.verified")} />}
                           </span>
-                          {t.lead && t.lead.badges.length > 0 && (
+                          {x.lead && x.lead.badges.length > 0 && (
                             <span className="flex items-center gap-1">
-                              <Trophy size={12} /> {t.lead.badges.length} badge{t.lead.badges.length === 1 ? "" : "s"}
+                              <Trophy size={12} /> {tp("admin.teams.badgesN", x.lead.badges.length)}
                             </span>
                           )}
                         </div>
                       </div>
-                      {t.track && <Pill tone="tint">{t.track}</Pill>}
+                      {x.track && <Pill tone="tint">{trackLabel(x.track)}</Pill>}
                     </div>
-                    <div className="mt-3 grid gap-1 text-[12px]">
-                      {extra("Members", t.members.filter(Boolean).join(", ") || "Lead only")}
-                      {extra("Contact", t.contact)}
-                      {extra("GitHub", t.github)}
-                      {extra("Portfolio", t.portfolio)}
-                      {extra("Phone", t.phone)}
-                      {extra("Why", t.motivation)}
+                    <div className="mt-3 grid gap-1 text-[13px]">
+                      {extra(t("app.hack.members"), x.members.filter(Boolean).join(", ") || t("admin.teams.leadOnly"))}
+                      {extra(t("app.hack.contact"), x.contact)}
+                      {extra("GitHub", x.github)}
+                      {extra(t("app.hack.portfolio"), x.portfolio)}
+                      {extra(t("app.hack.phone"), x.phone)}
+                      {extra(t("admin.teams.why"), x.motivation)}
                     </div>
                   </li>
                 ))}
@@ -176,11 +188,12 @@ export function EventTeams({ id }: { id: string }) {
 
         <Card className="min-w-0 xl:sticky xl:top-24 xl:self-start">
           <h2 className="flex items-center gap-2 text-[17px]">
-            <Trophy size={17} /> Results
+            <Trophy size={17} /> {t("app.hack.results")}
           </h2>
-          <p className="mt-1 text-[12px] text-mist">Pick a team for each award. Saving gives the team lead a badge and a notification.</p>
+          <p className="mt-1 text-[13px] text-mist">{t("admin.teams.resultsLead")}</p>
+          {!ev.demo && ev.podium.length > 0 && <p className="mt-3 rounded-lg bg-tint px-3 py-2 text-[13px] text-sky">{t("admin.teams.realPodium", { list: ev.podium.join(", ") })}</p>}
           {allTeams.length === 0 ? (
-            <p className="mt-4 text-[13px] text-mist">Results can be assigned once teams are registered.</p>
+            <p className="mt-4 text-[13px] text-mist">{t("admin.teams.resultsLater")}</p>
           ) : (
             <div className="mt-5 grid gap-3">
               {ev.places.map((p) => {
@@ -188,36 +201,34 @@ export function EventTeams({ id }: { id: string }) {
                 const bad = picks[key] && dupes.has(picks[key]);
                 return (
                   <label key={key} className="grid gap-1.5">
-                    <span className="text-[12px] font-semibold text-mist">
-                      {p.title}
+                    <span className="text-[13px] font-medium text-mist">
+                      {placeTitle(p.title)}
                       {p.prize ? <span className="font-normal">, {p.prize}</span> : null}
                     </span>
                     <Select value={picks[key] ?? ""} options={teamOptions} onChange={(e) => setPick(key, e.target.value)} className={bad ? "border-bad" : ""} />
                   </label>
                 );
               })}
-              {dupes.size > 0 && <ErrorNote>One team can take only one ranked place. Pick a different team for the repeated place.</ErrorNote>}
-              {ev.nominations.filter((n) => n.trim()).map((n) => (
-                <label key={n} className="grid gap-1.5">
-                  <span className="text-[12px] font-semibold text-mist">Nomination: {n}</span>
-                  <Select value={picks[`nom:${n}`] ?? ""} options={teamOptions} onChange={(e) => setPick(`nom:${n}`, e.target.value)} />
-                </label>
-              ))}
+              {dupes.size > 0 && <ErrorNote>{t("admin.teams.dupes")}</ErrorNote>}
+              {ev.nominations
+                .filter((n) => n.trim())
+                .map((n) => (
+                  <label key={n} className="grid gap-1.5">
+                    <span className="text-[13px] font-medium text-mist">{t("admin.teams.nomination", { name: n })}</span>
+                    <Select value={picks[`nom:${n}`] ?? ""} options={teamOptions} onChange={(e) => setPick(`nom:${n}`, e.target.value)} />
+                  </label>
+                ))}
               {finalistKeys.map((k, i) => (
                 <label key={k} className="grid gap-1.5">
-                  <span className="text-[12px] font-semibold text-mist">Finalist {i + 1}</span>
+                  <span className="text-[13px] font-medium text-mist">{t("admin.teams.finalistN", { n: i + 1 })}</span>
                   <Select value={picks[k] ?? ""} options={teamOptions} onChange={(e) => setPick(k, e.target.value)} />
                 </label>
               ))}
               <ErrorNote>{saveResults.error}</ErrorNote>
               <button onClick={onSave} disabled={saveResults.pending || dupes.size > 0} className={`${btn.primary} mt-1 disabled:opacity-60`}>
-                {saveResults.pending && <Spinner />} Save results
+                {saveResults.pending && <Spinner />} {t("admin.teams.save")}
               </button>
-              {savedNote && (
-                <p className="rounded-xl bg-good/10 px-3 py-2 text-[12px] text-good">
-                  Saved. Each team lead got a badge on their profile and a notification. Saving again replaces the badges for this event.
-                </p>
-              )}
+              {savedNote && <p className="rounded-lg bg-good/10 px-3 py-2 text-[13px] text-good">{t("admin.teams.savedNote")}</p>}
             </div>
           )}
         </Card>

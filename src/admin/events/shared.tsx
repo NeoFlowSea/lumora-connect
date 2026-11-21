@@ -1,28 +1,17 @@
 import { useState, type KeyboardEvent } from "react";
 import { Minus, Plus, X } from "lucide-react";
-import type { EventAccent, EventStatus, EventType, Hackathon, HackathonInput } from "../../api/types";
+import type { EventStatus, EventType, Hackathon, HackathonInput } from "../../api/types";
 import { inputCls } from "../../components/form";
+import { t } from "../../i18n";
 
 /* Helpers shared by the event list, editor and teams screens. */
 
-export const EVENT_TYPES: { value: EventType; label: string }[] = [
-  { value: "hackathon", label: "Hackathon" },
-  { value: "case", label: "IT case competition" },
-  { value: "meetup", label: "Meetup" },
-  { value: "workshop", label: "Workshop" },
-];
+export const EVENT_TYPE_KEYS: EventType[] = ["hackathon", "case", "meetup", "workshop"];
+export const eventTypeOptions = () => EVENT_TYPE_KEYS.map((value) => ({ value, label: typeLabel(value) }));
+export const typeLabel = (x: EventType) => t(`app.hack.type.${x}`);
 
-export const typeLabel = (t: EventType) => EVENT_TYPES.find((x) => x.value === t)?.label ?? t;
-
-export const STATUSES: { value: EventStatus; label: string; hint: string }[] = [
-  { value: "draft", label: "Draft", hint: "Only admins can see it. Nothing is public yet." },
-  { value: "published", label: "Published", hint: "Visible to everyone, registration not open yet." },
-  { value: "registration_open", label: "Registration open", hint: "Participants can register teams now." },
-  { value: "registration_closed", label: "Registration closed", hint: "Visible, but no new teams can join." },
-  { value: "in_progress", label: "In progress", hint: "The event is running. Registered leads were notified." },
-  { value: "finished", label: "Finished", hint: "Over. Assign results to award winner badges." },
-  { value: "cancelled", label: "Cancelled", hint: "Shown as cancelled. Registered leads get a notification." },
-];
+export const STATUS_KEYS: EventStatus[] = ["draft", "published", "registration_open", "registration_closed", "in_progress", "finished", "cancelled"];
+export const statusHint = (s: EventStatus) => t(`admin.status.hint.${s}`);
 
 export function statusTone(s: EventStatus): "tint" | "blue" | "line" | "good" {
   if (s === "registration_open") return "good";
@@ -30,15 +19,6 @@ export function statusTone(s: EventStatus): "tint" | "blue" | "line" | "good" {
   if (s === "published" || s === "registration_closed") return "tint";
   return "line";
 }
-
-export const ACCENTS: { value: EventAccent; label: string; swatch: string; card: string; sub: string }[] = [
-  { value: "blue", label: "Blue", swatch: "bg-blue", card: "bg-blue text-white", sub: "text-white/80" },
-  { value: "yellow", label: "Yellow", swatch: "bg-accent", card: "bg-accent text-paper", sub: "text-paper/75" },
-  { value: "sky", label: "Sky", swatch: "bg-sky", card: "bg-sky text-paper", sub: "text-paper/75" },
-  { value: "navy", label: "Navy", swatch: "bg-paper ring-1 ring-line", card: "bg-paper text-ink ring-1 ring-line", sub: "text-mist" },
-];
-
-export const accentOf = (a: EventAccent) => ACCENTS.find((x) => x.value === a) ?? ACCENTS[0];
 
 export const LANGUAGES = ["Uzbek", "Russian", "English", "Karakalpak"];
 
@@ -92,7 +72,7 @@ export function defaultEvent(): HackathonInput {
     maxTeams: 30,
     ageMin: 14,
     ageMax: 25,
-    eligibility: "Students and young developers from Uzbekistan.",
+    eligibility: t("admin.editor.defaultEligibility"),
     languages: ["Uzbek", "Russian", "English"],
     places: [1, 2, 3].map((p) => ({ place: p, title: `${ordinal(p)} place`, prize: "" })),
     nominations: [],
@@ -103,6 +83,10 @@ export function defaultEvent(): HackathonInput {
     agenda: [],
     status: "draft",
     registrationFields: { github: true, portfolio: false, motivation: false, phone: false },
+    podium: [],
+    participants: 0,
+    photo: "",
+    demo: false,
   };
 }
 
@@ -116,8 +100,8 @@ export function toInput(h: Hackathon): HackathonInput {
 export function Stepper({ value, onChange, min = 0, max = 999, label }: { value: number; onChange: (v: number) => void; min?: number; max?: number; label: string }) {
   const set = (v: number) => onChange(Math.max(min, Math.min(max, Number.isFinite(v) ? v : min)));
   return (
-    <div className="flex items-stretch overflow-hidden rounded-xl border border-line bg-paper/60">
-      <button type="button" aria-label={`Decrease ${label}`} onClick={() => set(value - 1)} disabled={value <= min} className="grid w-10 shrink-0 place-items-center text-mist hover:bg-tint hover:text-ink disabled:opacity-40">
+    <div className="flex min-h-11 items-stretch overflow-hidden rounded-lg border border-line bg-paper/60">
+      <button type="button" aria-label={t("admin.editor.decrease", { label })} onClick={() => set(value - 1)} disabled={value <= min} className="grid w-11 shrink-0 place-items-center text-mist hover:bg-tint hover:text-ink disabled:opacity-40">
         <Minus size={14} />
       </button>
       <input
@@ -127,7 +111,7 @@ export function Stepper({ value, onChange, min = 0, max = 999, label }: { value:
         onChange={(e) => set(parseInt(e.target.value.replace(/\D/g, "") || "0", 10))}
         className="w-full min-w-0 bg-transparent py-2.5 text-center text-[14px] text-ink outline-none"
       />
-      <button type="button" aria-label={`Increase ${label}`} onClick={() => set(value + 1)} disabled={value >= max} className="grid w-10 shrink-0 place-items-center text-mist hover:bg-tint hover:text-ink disabled:opacity-40">
+      <button type="button" aria-label={t("admin.editor.increase", { label })} onClick={() => set(value + 1)} disabled={value >= max} className="grid w-11 shrink-0 place-items-center text-mist hover:bg-tint hover:text-ink disabled:opacity-40">
         <Plus size={14} />
       </button>
     </div>
@@ -154,10 +138,10 @@ export function TagInput({ value, onChange, placeholder }: { value: string[]; on
     <div className="grid gap-2">
       {value.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {value.map((t) => (
-            <span key={t} className="inline-flex items-center gap-1 rounded-full bg-tint py-1 pl-3 pr-1.5 text-[12px] font-semibold text-sky">
-              {t}
-              <button type="button" aria-label={`Remove ${t}`} onClick={() => onChange(value.filter((x) => x !== t))} className="grid h-5 w-5 place-items-center rounded-full hover:bg-tint-2">
+          {value.map((v) => (
+            <span key={v} className="inline-flex items-center gap-1 rounded-md bg-tint py-1 pl-2.5 pr-1 text-[13px] text-sky">
+              {v}
+              <button type="button" aria-label={t("admin.editor.removeItem", { name: v })} onClick={() => onChange(value.filter((x) => x !== v))} className="grid h-7 w-7 place-items-center rounded-md hover:bg-tint-2">
                 <X size={12} />
               </button>
             </span>
@@ -166,8 +150,8 @@ export function TagInput({ value, onChange, placeholder }: { value: string[]; on
       )}
       <div className="flex gap-2">
         <input value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={onKey} placeholder={placeholder} className={inputCls} />
-        <button type="button" onClick={add} disabled={!draft.trim()} className="shrink-0 rounded-xl border border-line px-3 text-[13px] font-semibold text-mist hover:border-sky hover:text-ink disabled:opacity-40">
-          Add
+        <button type="button" onClick={add} disabled={!draft.trim()} className="min-h-11 shrink-0 rounded-lg border border-line px-3 text-[13px] font-semibold text-mist hover:border-sky hover:text-ink disabled:opacity-40">
+          {t("common.action.add")}
         </button>
       </div>
     </div>

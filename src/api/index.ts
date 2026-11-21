@@ -770,7 +770,7 @@ const opportunities = {
         kind: "application",
         title: tx(`n.status_${status}_title`),
         body: tx(`n.status_${status}_body`, { company: c.name, title: o.title }) + (note ? ` ${tx("n.note", { note })}` : ""),
-        link: `#/app/jobs/${o.id}`,
+        link: `#/jobs/${o.id}`,
       });
     });
   },

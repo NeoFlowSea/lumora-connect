@@ -53,6 +53,11 @@ body {
 
 /* in the base layer so utilities like font-glitch can override it */
 @layer base {
+  /* grid children may shrink below their content, so long names and truncated lines never push the page wider than the phone */
+  .grid > * {
+    min-width: 0;
+  }
+
   h1,
   h2,
   h3 {
@@ -74,51 +79,6 @@ input,
 select,
 textarea {
   font: inherit;
-}
-
-/* Light dotted grid for section backgrounds */
-.dots {
-  background-image: radial-gradient(rgba(141, 176, 255, 0.16) 1px, transparent 1px);
-  background-size: 22px 22px;
-}
-
-/* Soft blue glows */
-.glow-blue {
-  background: radial-gradient(closest-side, rgba(61, 123, 250, 0.35), transparent);
-}
-
-/* Spotlight on tiles: follows the cursor via CSS variables */
-.spot {
-  position: relative;
-  overflow: hidden;
-}
-.spot::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 0.35s;
-  background: radial-gradient(
-    380px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(61, 123, 250, 0.3),
-    transparent 60%
-  );
-  pointer-events: none;
-}
-.spot:hover::before {
-  opacity: 1;
-}
-
-/* Marquee */
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-.marquee-track {
-  animation: marquee 40s linear infinite;
-}
-.marquee:hover .marquee-track {
-  animation-play-state: paused;
 }
 
 /* Glitch for the Rubik Glitch headings (see src/components/GlitchText.tsx).
@@ -238,9 +198,6 @@ textarea {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .marquee-track {
-    animation: none;
-  }
   *,
   *::before,
   *::after {

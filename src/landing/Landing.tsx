@@ -1,64 +1,66 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { MotionConfig } from "framer-motion";
 import Lenis from "lenis";
 import { Nav } from "./Nav";
 import { Hero } from "./Hero";
-import { Stats } from "./Stats";
+import { Proof } from "./Proof";
+import { Featured } from "./Featured";
 import { HowItWorks } from "./HowItWorks";
-import { Categories } from "./Categories";
-import { Talent } from "./Talent";
-import { Opportunities } from "./Opportunities";
-import { Hackathons } from "./Hackathons";
-import { Join } from "./Join";
+import { Projects } from "./Projects";
+import { NextHackathon } from "./NextHackathon";
+import { Quotes } from "./Quotes";
+import { Faq } from "./Faq";
+import { FinalCta } from "./FinalCta";
 import { Footer } from "./Footer";
-import { currentUser } from "../api";
-import { defaultTab } from "../app/AppShell";
-import { go } from "../lib/router";
-import { GridBackground } from "../components/GridBackground";
-import { TouchGlow } from "../components/TouchGlow";
+import { openApp } from "../pages/PublicFrame";
+import { scrollToId, setLenis } from "./parts";
 
-const isTouch = () => window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768;
-
+/* Public landing page. Order: hero with two doors and job search, real numbers and partners,
+   open postings, how it works, winning projects, the next round, Lumora's own lines, FAQ, the doors again. */
 export function Landing() {
-  const [touch] = useState(isTouch);
-  // signed in: straight into the app; otherwise to sign in, and back here after
-  const open = (target?: string) => {
-    const u = currentUser();
-    if (u) go(u.kind === "admin" ? "#/admin" : target ?? `#/app/${defaultTab(u)}`);
-    else go(`#/login${target ? `?next=${encodeURIComponent(target)}` : ""}`);
-  };
-  const openEvent = (id?: string) => open(id ? `#/app/hackathons/${id}` : "#/app/hackathons");
-
   useEffect(() => {
-    // smooth scroll only on desktop; phones keep native scrolling
-    if (touch || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const lenis = new Lenis({ lerp: 0.1 });
+    // smooth scroll only on desktop with a fine pointer; phones keep native scrolling
+    const desktop = window.matchMedia("(pointer: fine) and (min-width: 1024px)").matches;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let raf = 0;
-    const loop = (t: number) => {
-      lenis.raf(t);
+    let lenis: Lenis | null = null;
+    if (desktop && !reduced) {
+      lenis = new Lenis({ lerp: 0.12 });
+      setLenis(lenis);
+      const loop = (time: number) => {
+        lenis?.raf(time);
+        raf = requestAnimationFrame(loop);
+      };
       raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
+    }
+    // arriving from another page with "#faq" style links: jump to that section
+    const hash = window.location.hash;
+    if (hash.length > 1 && !hash.startsWith("#/")) requestAnimationFrame(() => scrollToId(hash.slice(1), false));
+    else window.scrollTo({ top: 0 });
     return () => {
       cancelAnimationFrame(raf);
-      lenis.destroy();
+      setLenis(null);
+      lenis?.destroy();
     };
-  }, [touch]);
+  }, []);
 
   return (
-    <>
-      {touch ? <TouchGlow /> : <GridBackground />}
-      <Nav onOpenApp={() => open()} />
-      <main>
-        <Hero onOpenApp={() => open()} />
-        <Stats />
-        <HowItWorks />
-        <Categories />
-        <Talent onOpenApp={() => open("#/app/swipe")} />
-        <Opportunities onOpenApp={() => open("#/app/opportunities")} />
-        <Hackathons onOpen={openEvent} />
-        <Join />
-      </main>
-      <Footer />
-    </>
+    <MotionConfig reducedMotion="user">
+      <div className="min-h-[100svh] bg-paper">
+        <Nav onOpenApp={() => openApp()} />
+        <main>
+          <Hero />
+          <Proof />
+          <Featured />
+          <HowItWorks />
+          <Projects />
+          <NextHackathon />
+          <Quotes />
+          <Faq />
+          <FinalCta />
+        </main>
+        <Footer />
+      </div>
+    </MotionConfig>
   );
 }

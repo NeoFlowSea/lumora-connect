@@ -78,6 +78,13 @@ export function t(key: string, vars?: Record<string, string | number>, l: Lang =
   return s;
 }
 
+/** label for a track id such as "Data & AI"; the id itself is kept in data */
+export function trackLabel(name: string): string {
+  const k = `common.track.${name}`;
+  const v = t(k);
+  return v === k ? name : v;
+}
+
 /** plural-aware translate: tp("app.teams", 5) looks up app.teams_one / _few / _many / _other */
 export function tp(key: string, n: number, vars?: Record<string, string | number>): string {
   const rule = new Intl.PluralRules(locale()).select(n);

@@ -1,28 +1,31 @@
 import type { ReactNode } from "react";
-import { motion } from "framer-motion";
-import { Briefcase, Building2, CalendarDays, ExternalLink, LayoutGrid, LogOut, ScrollText, Users as UsersIcon } from "lucide-react";
+import { BadgeCheck, Briefcase, Building2, CalendarDays, ExternalLink, LayoutGrid, LogOut, ScrollText, Users as UsersIcon } from "lucide-react";
 import { Wordmark } from "../components/Logo";
+import { LangSwitch } from "../components/LangSwitch";
 import { NotificationBell } from "../app/Notifications";
-import { api } from "../api";
-import { useApi, useSession } from "../api/hooks";
+import { api, statsNow } from "../api";
+import { useSession } from "../api/hooks";
+import { t, useLang } from "../i18n";
 import { go } from "../lib/router";
 
-export type AdminSection = "overview" | "companies" | "users" | "events" | "opportunities" | "audit";
+export type AdminSection = "overview" | "verification" | "companies" | "users" | "events" | "opportunities" | "audit";
 
-const sections: { key: AdminSection; label: string; icon: typeof LayoutGrid; href: string }[] = [
-  { key: "overview", label: "Overview", icon: LayoutGrid, href: "#/admin" },
-  { key: "companies", label: "Companies", icon: Building2, href: "#/admin/companies" },
-  { key: "users", label: "Users", icon: UsersIcon, href: "#/admin/users" },
-  { key: "events", label: "Events", icon: CalendarDays, href: "#/admin/events" },
-  { key: "opportunities", label: "Opportunities", icon: Briefcase, href: "#/admin/opportunities" },
-  { key: "audit", label: "Audit log", icon: ScrollText, href: "#/admin/audit" },
+const sections: { key: AdminSection; icon: typeof LayoutGrid; href: string }[] = [
+  { key: "overview", icon: LayoutGrid, href: "#/admin" },
+  { key: "verification", icon: BadgeCheck, href: "#/admin/verification" },
+  { key: "companies", icon: Building2, href: "#/admin/companies" },
+  { key: "users", icon: UsersIcon, href: "#/admin/users" },
+  { key: "events", icon: CalendarDays, href: "#/admin/events" },
+  { key: "opportunities", icon: Briefcase, href: "#/admin/opportunities" },
+  { key: "audit", icon: ScrollText, href: "#/admin/audit" },
 ];
 
 export function AdminShell({ section, children }: { section: AdminSection; children: ReactNode }) {
-  const user = useSession();
-  const queue = useApi(() => api.admin.companyQueue(), []);
-  const pending = queue.data?.length ?? 0;
+  useLang();
+  const user = useSession(); // re-renders on every DB change, so the counts below stay fresh
   if (!user || user.kind !== "admin") return null;
+  const s = statsNow();
+  const countFor = (k: AdminSection) => (k === "companies" ? s.pendingCompanies : k === "verification" ? s.pendingVerifications : 0);
 
   async function signOut() {
     await api.auth.logout();
@@ -31,95 +34,77 @@ export function AdminShell({ section, children }: { section: AdminSection; child
 
   return (
     <div className="min-h-[100svh] bg-cloud">
-      <header className="fixed inset-x-0 top-0 z-40 border-b border-line bg-paper/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-[1400px] items-center gap-3 px-5 md:px-8">
-          <button onClick={() => go("#/admin")} aria-label="Admin overview" className="flex shrink-0 items-center gap-3">
+      <header className="fixed inset-x-0 top-0 z-40 border-b border-line bg-paper">
+        <div className="mx-auto flex h-16 max-w-[1400px] items-center gap-2 px-4 md:gap-3 md:px-8">
+          <button onClick={() => go("#/admin")} aria-label={t("admin.shell.home")} className="flex min-h-11 shrink-0 items-center">
             <Wordmark size={30} />
           </button>
-          <span className="hidden rounded-full bg-tint px-2.5 py-1 text-[12px] font-semibold text-sky sm:inline">Admin</span>
-          <div className="ml-auto flex items-center gap-1.5 md:gap-2">
+          <span className="hidden rounded-md bg-tint px-2 py-0.5 text-[12px] font-semibold text-sky sm:inline">{t("admin.shell.badge")}</span>
+          <div className="ml-auto flex items-center gap-1 md:gap-2">
             <span className="hidden max-w-[180px] truncate text-[13px] font-semibold lg:block" title={user.email}>
               {user.name}
             </span>
-            <span
-              className={`hidden rounded-full px-2.5 py-1 text-[11px] font-semibold sm:inline ${
-                user.level === "super" ? "bg-accent text-paper" : "border border-line text-mist"
-              }`}
-            >
-              {user.level === "super" ? "Super admin" : "Moderator"}
+            <span className="hidden rounded-md border border-line px-2 py-0.5 text-[12px] font-semibold text-mist xl:inline">
+              {t(user.level === "super" ? "admin.level.super" : "admin.level.moderator")}
             </span>
+            <LangSwitch className="hidden sm:inline-flex" />
             <NotificationBell />
-            <a
-              href="#/"
-              className="hidden items-center gap-1.5 rounded-full px-3 py-2 text-[13px] font-semibold text-mist transition-colors hover:bg-tint hover:text-ink md:flex"
-            >
-              <ExternalLink size={15} /> View site
+            <a href="#/" className="hidden min-h-11 items-center gap-1.5 rounded-lg px-3 text-[13px] font-semibold text-mist transition-colors hover:bg-tint hover:text-ink md:flex">
+              <ExternalLink size={15} /> {t("admin.shell.viewSite")}
             </a>
             <button
               onClick={signOut}
-              aria-label="Sign out"
-              title="Sign out"
-              className="grid h-10 w-10 place-items-center rounded-full text-mist transition-colors hover:bg-tint hover:text-ink"
+              aria-label={t("common.nav.signOut")}
+              title={t("common.nav.signOut")}
+              className="grid h-11 w-11 place-items-center rounded-lg text-mist transition-colors hover:bg-tint hover:text-ink"
             >
               <LogOut size={18} />
             </button>
           </div>
         </div>
-        {/* phones: horizontally scrollable section bar */}
-        <nav className="scrollbar-none flex gap-1 overflow-x-auto border-t border-line px-3 py-2 md:hidden">
-          {sections.map((s) => {
-            const on = s.key === section;
+        {/* phones: horizontally scrollable section bar with 44px targets */}
+        <nav aria-label={t("admin.shell.sections")} className="scrollbar-none flex gap-1 overflow-x-auto border-t border-line px-2 py-1 md:hidden">
+          {sections.map((x) => {
+            const on = x.key === section;
+            const n = countFor(x.key);
             return (
               <button
-                key={s.key}
-                onClick={() => go(s.href)}
-                className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-semibold ${
-                  on ? "bg-tint text-accent" : "text-mist"
-                }`}
+                key={x.key}
+                onClick={() => go(x.href)}
+                aria-current={on ? "page" : undefined}
+                className={`flex min-h-11 shrink-0 items-center gap-1.5 rounded-lg px-3 text-[13px] font-semibold ${on ? "bg-tint text-accent" : "text-mist"}`}
               >
-                <s.icon size={14} />
-                {s.label}
-                {s.key === "companies" && pending > 0 && <CountBadge n={pending} />}
+                <x.icon size={15} />
+                {t(`admin.nav.${x.key}`)}
+                {n > 0 && <CountBadge n={n} />}
               </button>
             );
           })}
+          <LangSwitch className="ml-1 shrink-0 self-center sm:hidden" />
         </nav>
       </header>
 
-      <div className="mx-auto flex max-w-[1400px] gap-8 px-5 pb-16 pt-[124px] md:px-8 md:pt-24">
+      <div className="mx-auto flex max-w-[1400px] gap-8 px-4 pb-16 pt-[132px] md:px-8 md:pt-24">
         <aside className="sticky top-24 hidden h-fit w-[220px] shrink-0 md:block">
-          <nav className="grid gap-1">
-            {sections.map((s) => {
-              const on = s.key === section;
+          <nav aria-label={t("admin.shell.sections")} className="grid gap-0.5">
+            {sections.map((x) => {
+              const on = x.key === section;
+              const n = countFor(x.key);
               return (
                 <button
-                  key={s.key}
-                  onClick={() => go(s.href)}
-                  className={`relative flex items-center gap-3 rounded-2xl px-4 py-2.5 text-left text-[14px] font-semibold transition-colors ${
-                    on ? "text-accent" : "text-mist hover:text-ink"
-                  }`}
+                  key={x.key}
+                  onClick={() => go(x.href)}
+                  aria-current={on ? "page" : undefined}
+                  className={`flex min-h-11 items-center gap-3 rounded-lg px-3.5 text-left text-[14px] font-semibold transition-colors ${on ? "bg-tint text-accent" : "text-mist hover:bg-tint/50 hover:text-ink"}`}
                 >
-                  {on && (
-                    <motion.span
-                      layoutId="admin-nav"
-                      className="absolute inset-0 rounded-2xl bg-tint"
-                      transition={{ type: "spring", stiffness: 400, damping: 32 }}
-                    />
-                  )}
-                  <s.icon size={17} className="relative" />
-                  <span className="relative">{s.label}</span>
-                  {s.key === "companies" && pending > 0 && (
-                    <span className="relative ml-auto">
-                      <CountBadge n={pending} />
-                    </span>
-                  )}
+                  <x.icon size={17} />
+                  <span className="min-w-0 flex-1 truncate">{t(`admin.nav.${x.key}`)}</span>
+                  {n > 0 && <CountBadge n={n} />}
                 </button>
               );
             })}
           </nav>
-          <p className="mt-6 px-4 text-[11px] leading-relaxed text-mist/80">
-            Demo data lives in this browser only. Changes here are not shared with other people.
-          </p>
+          <p className="mt-6 px-3.5 text-[12px] leading-relaxed text-mist">{t("admin.shell.localNote")}</p>
         </aside>
         <main className="min-w-0 flex-1">{children}</main>
       </div>
@@ -128,7 +113,11 @@ export function AdminShell({ section, children }: { section: AdminSection; child
 }
 
 function CountBadge({ n }: { n: number }) {
-  return <span className="grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1.5 text-[11px] font-bold text-paper">{n}</span>;
+  return (
+    <span className="grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1.5 text-[12px] font-bold leading-none text-paper" aria-label={t("admin.shell.waiting", { n })}>
+      {n}
+    </span>
+  );
 }
 
 /** page title block used by every admin section */
@@ -136,10 +125,25 @@ export function AdminHeader({ title, text, action }: { title: string; text?: str
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div className="min-w-0">
-        <h1 className="text-[clamp(24px,3vw,32px)]">{title}</h1>
-        {text && <p className="mt-1 max-w-[70ch] text-[13px] text-mist">{text}</p>}
+        <h1 className="break-words text-[clamp(24px,3vw,32px)]">{title}</h1>
+        {text && <p className="mt-1 max-w-[70ch] text-[14px] text-mist">{text}</p>}
       </div>
       {action}
     </div>
+  );
+}
+
+/** small segmented filter chip used by admin lists */
+export function FilterChip({ on, onClick, children }: { on: boolean; onClick: () => void; children: ReactNode }) {
+  return (
+    <button
+      onClick={onClick}
+      aria-pressed={on}
+      className={`inline-flex min-h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg border px-3 text-[13px] font-semibold transition-colors md:min-h-9 ${
+        on ? "border-sky bg-tint text-ink" : "border-line text-mist hover:border-sky hover:text-ink"
+      }`}
+    >
+      {children}
+    </button>
   );
 }

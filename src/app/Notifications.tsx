@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { BadgeCheck, Bell, Briefcase, Building2, CalendarDays, Heart, Info, Trophy } from "lucide-react";
 import { api } from "../api";
 import { useAction, useApi, useSession, useUnread } from "../api/hooks";
 import type { Notification, NotificationKind } from "../api/types";
 import { Empty, ErrorNote, Skeleton, Spinner, ago } from "../components/form";
-import { btn, ease } from "../components/ui";
+import { btn } from "../components/ui";
+import { t, tp, useLang } from "../i18n";
 import { go } from "../lib/router";
+
+/* Header bell with a dropdown, and the full page at #/app/notifications.
+   Stored titles and bodies were written in the language active when they were created. */
 
 const ICONS: Record<NotificationKind, typeof Bell> = {
   match: Heart,
@@ -28,27 +31,30 @@ function Item({ n, onOpen, compact }: { n: Notification; onOpen: (n: Notificatio
   return (
     <button
       onClick={() => onOpen(n)}
-      className={`flex w-full items-start gap-3 text-left transition-colors hover:bg-tint ${compact ? "rounded-2xl px-3 py-2.5" : "rounded-2xl px-4 py-3.5"} ${
-        n.read ? "" : "bg-accent/[0.07]"
-      }`}
+      className={`flex w-full min-w-0 items-start gap-3 rounded-lg text-left transition-colors hover:bg-tint ${compact ? "px-2.5 py-2.5" : "px-3 py-3.5 md:px-4"} ${n.read ? "" : "bg-tint/50"}`}
     >
-      <span className={`mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full ${n.read ? "bg-tint text-sky" : "bg-accent text-paper"}`}>
+      <span className={`mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full ${n.read ? "bg-tint text-sky" : "bg-blue text-white"}`}>
         <Icon size={16} />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="flex items-start justify-between gap-3">
-          <span className={`text-[13px] ${n.read ? "font-medium" : "font-semibold text-ink"}`}>{n.title}</span>
-          <span className="shrink-0 text-[11px] text-mist">{ago(n.at)}</span>
+        <span className="flex min-w-0 items-start justify-between gap-3">
+          <span className={`min-w-0 break-words text-[14px] ${n.read ? "font-medium text-mist" : "font-semibold text-ink"}`}>{n.title}</span>
+          <span className="shrink-0 text-[12px] text-mist">{ago(n.at)}</span>
         </span>
-        <span className={`mt-0.5 block text-[12px] text-mist ${compact ? "line-clamp-2" : ""}`}>{n.body}</span>
+        {n.body && <span className={`mt-0.5 block break-words text-[13px] text-mist ${compact ? "line-clamp-2" : ""}`}>{n.body}</span>}
       </span>
-      {!n.read && <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-accent" aria-label="unread" />}
+      {!n.read && (
+        <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-accent">
+          <span className="sr-only">{t("app.notif.unread")}</span>
+        </span>
+      )}
     </button>
   );
 }
 
 /** Header bell with an unread count and a dropdown of the latest notifications. */
 export function NotificationBell() {
+  useLang();
   const user = useSession();
   const unread = useUnread();
   const [isOpen, setOpen] = useState(false);
@@ -72,6 +78,7 @@ export function NotificationBell() {
 
   if (!user) return null;
   const items = (list.data ?? []).slice(0, 8);
+  const seeAll = user.kind === "admin" ? null : "#/app/notifications";
 
   async function pick(n: Notification) {
     setOpen(false);
@@ -82,61 +89,55 @@ export function NotificationBell() {
     <div ref={box} className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        aria-label={unread ? `Notifications, ${unread} unread` : "Notifications"}
+        aria-label={unread ? tp("app.notif.bellUnread", unread) : t("app.notif.title")}
         aria-expanded={isOpen}
-        className={`relative grid h-10 w-10 place-items-center rounded-full transition-colors hover:bg-tint ${isOpen ? "bg-tint text-ink" : "text-mist hover:text-ink"}`}
+        className={`relative grid h-11 w-11 place-items-center rounded-lg transition-colors hover:bg-tint ${isOpen ? "bg-tint text-ink" : "text-mist hover:text-ink"}`}
       >
         <Bell size={19} />
         {unread > 0 && (
-          <span className="absolute right-1 top-1 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-accent px-1 text-[10px] font-bold text-paper">
+          <span className="absolute right-0.5 top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1 text-[12px] font-bold leading-none text-paper">
             {unread > 9 ? "9+" : unread}
           </span>
         )}
       </button>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -6, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -6, scale: 0.98 }}
-            transition={{ duration: 0.18, ease }}
-            className="fixed inset-x-3 top-[68px] z-50 origin-top-right rounded-3xl border border-line bg-surface p-2 shadow-2xl md:absolute md:inset-x-auto md:right-0 md:top-12 md:w-[380px]"
-            role="dialog"
-            aria-label="Notifications"
-          >
-            <div className="flex items-center justify-between gap-2 px-3 pb-2 pt-2">
-              <span className="text-[14px] font-semibold">Notifications</span>
-              {unread > 0 && (
-                <button onClick={() => markAll.run()} disabled={markAll.pending} className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-sky hover:text-ink disabled:opacity-60">
-                  {markAll.pending && <Spinner />} Mark all read
-                </button>
-              )}
-            </div>
-            <div className="max-h-[min(60vh,440px)] overflow-y-auto">
-              {list.loading ? (
-                <div className="p-2">
-                  <Skeleton rows={3} className="h-14" />
-                </div>
-              ) : items.length === 0 ? (
-                <p className="px-3 py-8 text-center text-[13px] text-mist">Nothing yet. Matches, application updates and badges show up here.</p>
-              ) : (
-                items.map((n) => <Item key={n.id} n={n} onOpen={pick} compact />)
-              )}
-            </div>
-            {user.kind !== "admin" && (
-              <button
-                onClick={() => {
-                  setOpen(false);
-                  go("#/app/notifications");
-                }}
-                className="mt-1 w-full rounded-2xl px-3 py-2.5 text-center text-[13px] font-semibold text-sky hover:bg-tint hover:text-ink"
-              >
-                See all
+      {isOpen && (
+        <div
+          className="fixed inset-x-3 top-[68px] z-50 rounded-xl border border-line bg-surface p-1.5 shadow-2xl md:absolute md:inset-x-auto md:right-0 md:top-12 md:w-[380px]"
+          role="dialog"
+          aria-label={t("app.notif.title")}
+        >
+          <div className="flex min-h-11 items-center justify-between gap-2 px-2.5">
+            <span className="text-[15px] font-semibold">{t("app.notif.title")}</span>
+            {unread > 0 && (
+              <button onClick={() => markAll.run()} disabled={markAll.pending} className="inline-flex min-h-11 items-center gap-1.5 px-1 text-[13px] font-semibold text-sky hover:text-ink disabled:opacity-60">
+                {markAll.pending && <Spinner />} {t("app.notif.markAll")}
               </button>
             )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+          <div className="max-h-[min(60vh,440px)] overflow-y-auto">
+            {list.loading ? (
+              <div className="p-2">
+                <Skeleton rows={3} className="h-14" />
+              </div>
+            ) : items.length === 0 ? (
+              <p className="px-3 py-8 text-center text-[13px] text-mist">{t("app.notif.emptyShort")}</p>
+            ) : (
+              items.map((n) => <Item key={n.id} n={n} onOpen={pick} compact />)
+            )}
+          </div>
+          {seeAll && (
+            <button
+              onClick={() => {
+                setOpen(false);
+                go(seeAll);
+              }}
+              className="mt-1 min-h-11 w-full rounded-lg px-3 text-center text-[14px] font-semibold text-sky hover:bg-tint hover:text-ink"
+            >
+              {t("app.notif.seeAll")}
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -148,25 +149,26 @@ function isToday(iso: string) {
 }
 
 export function NotificationsPage() {
+  useLang();
   const list = useApi(() => api.notifications.list(), []);
   const markAll = useAction(api.notifications.markAllRead);
   const items = list.data ?? [];
   const unread = items.filter((n) => !n.read).length;
   const groups = [
-    { label: "Today", items: items.filter((n) => isToday(n.at)) },
-    { label: "Earlier", items: items.filter((n) => !isToday(n.at)) },
+    { key: "today", label: t("app.notif.today"), items: items.filter((n) => isToday(n.at)) },
+    { key: "earlier", label: t("app.notif.earlier"), items: items.filter((n) => !isToday(n.at)) },
   ].filter((g) => g.items.length);
 
   return (
-    <div className="mx-auto max-w-[760px]">
+    <div className="mx-auto min-w-0 max-w-[760px]">
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[clamp(26px,3vw,36px)]">Notifications</h1>
-          <p className="mt-1 text-[14px] text-mist">{unread ? `${unread} unread` : "You're all caught up."}</p>
+          <h1 className="text-[clamp(26px,3vw,34px)]">{t("app.notif.title")}</h1>
+          <p className="mt-1 text-[14px] text-mist">{unread ? tp("app.notif.unreadN", unread) : t("app.notif.allRead")}</p>
         </div>
         {unread > 0 && (
           <button onClick={() => markAll.run()} disabled={markAll.pending} className={`${btn.ghost} disabled:opacity-60`}>
-            {markAll.pending && <Spinner />} Mark all read
+            {markAll.pending && <Spinner />} {t("app.notif.markAll")}
           </button>
         )}
       </div>
@@ -178,20 +180,20 @@ export function NotificationsPage() {
       ) : !items.length ? (
         <Empty
           icon={<Bell size={20} />}
-          title="No notifications yet"
-          text="Matches, application updates, approvals and hackathon badges will show up here."
+          title={t("app.notif.emptyTitle")}
+          text={t("app.notif.emptyText")}
           action={
             <button onClick={() => go("#/app/swipe")} className={btn.primary}>
-              Start swiping
+              {t("app.notif.goSwipe")}
             </button>
           }
         />
       ) : (
         <div className="grid gap-6">
           {groups.map((g) => (
-            <section key={g.label}>
-              <h2 className="mb-2 px-1 text-[13px] font-semibold text-mist">{g.label}</h2>
-              <div className="grid gap-1 rounded-3xl border border-line bg-surface p-2">
+            <section key={g.key} aria-label={g.label}>
+              <h2 className="mb-2 px-1 text-[14px] font-semibold text-mist">{g.label}</h2>
+              <div className="grid gap-0.5 rounded-xl border border-line bg-surface p-1.5">
                 {g.items.map((n) => (
                   <Item key={n.id} n={n} onOpen={open} />
                 ))}

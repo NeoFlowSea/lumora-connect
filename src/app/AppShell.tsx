@@ -80,10 +80,11 @@ export function AppShell({ tab, children }: { tab: string; children: ReactNode }
             </button>
             <NotificationBell />
             <LangSwitch className="hidden sm:inline-flex" />
+            <LangSwitch compact className="sm:hidden" />
             <span className="ml-1 hidden max-w-[160px] truncate rounded-full border border-line px-3 py-1 text-[12px] font-semibold text-mist lg:block" title={user.email}>
               {user.name}
             </span>
-            <button onClick={signOut} aria-label={t("common.nav.signOut")} title={t("common.nav.signOut")} className="grid h-10 w-10 place-items-center rounded-full text-mist transition-colors hover:bg-tint hover:text-ink">
+            <button onClick={signOut} aria-label={t("common.nav.signOut")} title={t("common.nav.signOut")} className="hidden h-10 sm:grid w-10 place-items-center rounded-full text-mist transition-colors hover:bg-tint hover:text-ink">
               <LogOut size={18} />
             </button>
           </div>

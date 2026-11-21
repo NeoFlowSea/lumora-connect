@@ -374,7 +374,7 @@ function opportunities(): Opportunity[] {
       city: format === "remote" ? "Remote" : c[4],
       dur: type === "Event" ? "One evening" : type === "Position" ? "Permanent" : `${8 + (i % 3) * 4} weeks`,
       pay: min ? `${min.toLocaleString("en-US")}${max && max !== min ? `–${max.toLocaleString("en-US")}` : ""} UZS per month` : type === "Event" ? "Free" : "Unpaid, certificate and reference",
-      desc: `${c[1]} ${type === "Event" ? "hosts" : "is looking for"} ${type === "Event" ? `a ${title.toLowerCase()}` : `a ${title.toLowerCase()}`}. ${c[6]}. You will work with a mentor on real tasks, not tutorials.`,
+      desc: type === "Event" ? `${c[1]} hosts this event: ${title}. ${c[6]}.` : `${c[1]} is hiring for this role: ${title}. ${c[6]}. You will work with a mentor on real tasks, not tutorials.`,
       req: [`Basic ${pick(skillsBy[cat])}`, level === "junior" ? "A finished project you can show" : "Curiosity and time for 15+ hours a week", "Uzbek or Russian; English is a plus"],
       postedAt: ago(1 + (i % 14)),
       hidden: false,

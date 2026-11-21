@@ -1,23 +1,23 @@
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useLang } from "../i18n";
+
+/* Countdown to an event start. Digits in Press Start 2P (the only place that font is used).
+   Real numbers on the first frame; a changing digit drops in, or simply swaps with reduced motion. */
 
 function parts(to: string) {
   const diff = Math.max(0, new Date(to).getTime() - Date.now());
-  const d = Math.floor(diff / 86400000);
-  const h = Math.floor((diff % 86400000) / 3600000);
-  const m = Math.floor((diff % 3600000) / 60000);
-  const s = Math.floor((diff % 60000) / 1000);
   return [
-    { v: d, l: "days" },
-    { v: h, l: "hours" },
-    { v: m, l: "min" },
-    { v: s, l: "sec" },
+    { v: Math.floor(diff / 86400000), k: "days" },
+    { v: Math.floor((diff % 86400000) / 3600000), k: "hours" },
+    { v: Math.floor((diff % 3600000) / 60000), k: "min" },
+    { v: Math.floor((diff % 60000) / 1000), k: "sec" },
   ];
 }
 
-/* When a value changes, the old number drops out through the bottom
-   and the new one falls in from the top. */
 function DropNumber({ value }: { value: string }) {
+  const reduce = useReducedMotion();
+  if (reduce) return <div className="h-[17px] font-pixel text-[17px] leading-none">{value}</div>;
   return (
     <div className="relative h-[17px] overflow-hidden">
       <AnimatePresence initial={false} mode="popLayout">
@@ -37,20 +37,20 @@ function DropNumber({ value }: { value: string }) {
 }
 
 export function Countdown({ to, dark }: { to: string; dark?: boolean }) {
+  const { t } = useLang();
   const [p, setP] = useState(() => parts(to));
   useEffect(() => {
-    const t = setInterval(() => setP(parts(to)), 1000);
-    return () => clearInterval(t);
+    setP(parts(to));
+    const id = setInterval(() => setP(parts(to)), 1000);
+    return () => clearInterval(id);
   }, [to]);
+  const label = p.map((x) => `${x.v} ${t(`landing.cd.${x.k}`)}`).join(", ");
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-wrap gap-2" role="timer" aria-label={label}>
       {p.map((x) => (
-        <div
-          key={x.l}
-          className={`min-w-[64px] rounded-xl px-3 py-2 text-center ${dark ? "bg-white/15 text-current" : "bg-tint text-sky"}`}
-        >
+        <div key={x.k} aria-hidden className={`min-w-[64px] rounded-lg px-3 py-2 text-center ${dark ? "bg-white/15 text-current" : "bg-tint text-sky"}`}>
           <DropNumber value={String(x.v).padStart(2, "0")} />
-          <div className={`mt-1 text-[11px] ${dark ? "opacity-75" : "text-mist"}`}>{x.l}</div>
+          <div className={`mt-1.5 text-[12px] ${dark ? "opacity-80" : "text-mist"}`}>{t(`landing.cd.${x.k}`)}</div>
         </div>
       ))}
     </div>

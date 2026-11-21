@@ -82,7 +82,7 @@ export function Chips({ options, value, onChange }: { options: string[]; value: 
 }
 
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <section className={`rounded-xl border border-line bg-surface p-5 md:p-6 ${className}`}>{children}</section>;
+  return <section className={`min-w-0 rounded-xl border border-line bg-surface p-5 md:p-6 ${className}`}>{children}</section>;
 }
 
 export function Empty({ icon, title, text, action }: { icon?: ReactNode; title: string; text?: string; action?: ReactNode }) {

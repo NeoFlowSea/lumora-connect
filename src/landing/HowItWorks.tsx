@@ -1,52 +1,41 @@
-import { motion } from "framer-motion";
-import { BadgeCheck, Heart, MessageCircle } from "lucide-react";
-import { Highlight, Reveal, ease } from "../components/ui";
+import { useLang } from "../i18n";
+import { Fade, Section, SectionHead } from "./parts";
 
-const steps = [
-  {
-    icon: BadgeCheck,
-    t: "Your hackathon result is your profile",
-    d: "Placements at Lumora IT case competitions are confirmed by the organizers and shown as badges. No CV to write.",
-  },
-  {
-    icon: Heart,
-    t: "Swipe companies, companies swipe you",
-    d: "Right means interested. When both sides swipe right, it is a match and the conversation starts.",
-  },
-  {
-    icon: MessageCircle,
-    t: "Match, talk, get the internship",
-    d: "Matched companies see your projects and reach you directly. Track every application in one place.",
-  },
-];
-
+/* Three steps for each side, next to each other so both sides see the whole deal. */
 export function HowItWorks() {
+  const { t } = useLang();
+  const sides = [
+    { id: "for-students", title: t("landing.how.students"), key: "s", cta: { label: t("landing.how.studentsCta"), href: "#/register?type=talent" } },
+    { id: "for-companies", title: t("landing.how.companies"), key: "c", cta: { label: t("landing.how.companiesCta"), href: "#/register?type=company" } },
+  ];
   return (
-    <section id="how" className="mx-auto max-w-[1240px] px-5 py-24 md:px-8 md:py-36">
-      <Reveal>
-        <h2 className="max-w-[22ch] text-[clamp(28px,3.6vw,46px)]">
-          Like a dating app, but the <Highlight>match is a job</Highlight>
-        </h2>
-      </Reveal>
-      <div className="mt-14 grid gap-5 md:grid-cols-3">
-        {steps.map((s, i) => (
-          <motion.div
-            key={s.t}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-10% 0px" }}
-            transition={{ duration: 0.7, ease, delay: i * 0.12 }}
-            className="group relative rounded-3xl border border-line bg-surface p-7 transition-[box-shadow,border-color,transform] hover:-translate-y-1 hover:border-sky hover:shadow-[0_24px_50px_-30px_rgba(26,75,168,0.45)]"
-          >
-            <span className="absolute right-6 top-6 font-display text-[13px] text-sky">0{i + 1}</span>
-            <span className="grid h-12 w-12 place-items-center rounded-2xl bg-tint text-sky transition-colors group-hover:bg-blue group-hover:text-white">
-              <s.icon size={22} />
-            </span>
-            <h3 className="mt-6 text-[20px]">{s.t}</h3>
-            <p className="mt-3 text-[15px] leading-relaxed text-mist">{s.d}</p>
-          </motion.div>
-        ))}
-      </div>
-    </section>
+    <Section id="how" className="border-t border-line">
+      <Fade>
+        <SectionHead title={t("landing.how.title")} lead={t("landing.how.lead")} />
+        <div className="grid gap-4 md:grid-cols-2">
+          {sides.map((s) => (
+            <div key={s.id} id={s.id} className="scroll-mt-24 rounded-xl border border-line bg-surface p-6 md:p-8">
+              <h3 className="text-[20px]">{s.title}</h3>
+              <ol className="mt-6 grid gap-6">
+                {[1, 2, 3].map((n) => (
+                  <li key={n} className="grid grid-cols-[32px_1fr] gap-4">
+                    <span aria-hidden className="grid h-8 w-8 place-items-center rounded-full border border-sky/40 text-[14px] font-semibold text-sky">
+                      {n}
+                    </span>
+                    <div>
+                      <div className="text-[16px] font-semibold">{t(`landing.how.${s.key}${n}`)}</div>
+                      <p className="mt-1 text-[15px] leading-relaxed text-mist">{t(`landing.how.${s.key}${n}d`)}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              <a href={s.cta.href} className="mt-7 inline-flex min-h-11 items-center text-[15px] font-semibold text-sky underline-offset-4 hover:underline">
+                {s.cta.label}
+              </a>
+            </div>
+          ))}
+        </div>
+      </Fade>
+    </Section>
   );
 }

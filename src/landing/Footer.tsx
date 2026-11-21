@@ -1,71 +1,81 @@
-import type { MouseEvent } from "react";
+import { useLang } from "../i18n";
+import { lumora } from "../content/lumora";
 import { Wordmark } from "../components/Logo";
+import { isExternal, onAnchor, wrap } from "./parts";
 
-/* Every link goes somewhere real: a landing section or an app route.
-   Section links scroll smoothly instead of changing the hash. */
-const columns: { h: string; l: [string, string][] }[] = [
-  {
-    h: "Talent",
-    l: [
-      ["Create a profile", "#/register?type=talent"],
-      ["Opportunities", "#/app/opportunities"],
-      ["Hackathons", "#/app/hackathons"],
-      ["This season's winners", "#talent"],
-    ],
-  },
-  {
-    h: "Companies",
-    l: [
-      ["Register a company", "#/register?type=company"],
-      ["Post an opportunity", "#/app/dashboard"],
-      ["Swipe talent", "#/app/swipe"],
-      ["Sponsor a case", "#hackathons"],
-    ],
-  },
-  {
-    h: "Lumora Connect",
-    l: [
-      ["How it works", "#how"],
-      ["Tracks", "#tracks"],
-      ["Sign in", "#/login"],
-      ["Demo accounts", "#/login"],
-    ],
-  },
-];
-
-function onSection(e: MouseEvent<HTMLAnchorElement>, href: string) {
-  if (href.startsWith("#/")) return;
-  e.preventDefault();
-  document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
-}
-
+/* Every link goes to a real route, a landing section or a real Lumora channel. */
 export function Footer() {
+  const { t } = useLang();
+  const columns: { h: string; l: [string, string][] }[] = [
+    {
+      h: t("landing.footer.students"),
+      l: [
+        [t("landing.footer.createProfile"), "#/register?type=talent"],
+        [t("common.nav.jobs"), "#/jobs"],
+        [t("landing.footer.nextRound"), "#hackathons"],
+        [t("landing.footer.projects"), "#talent"],
+      ],
+    },
+    {
+      h: t("landing.footer.companies"),
+      l: [
+        [t("landing.footer.registerCompany"), "#/register?type=company"],
+        [t("landing.footer.howCompanies"), "#for-companies"],
+        [t("landing.footer.faq"), "#faq"],
+        [t("common.nav.signIn"), "#/login"],
+      ],
+    },
+    {
+      h: "Lumora",
+      l: [
+        ["Telegram", lumora.links.telegram],
+        ["Instagram", lumora.links.instagram],
+        ["LinkedIn", lumora.links.linkedin],
+      ],
+    },
+  ];
+
   return (
-    <footer className="border-t border-line bg-cloud/80">
-      <div className="mx-auto grid max-w-[1240px] gap-10 px-5 py-14 md:grid-cols-[1.4fr_1fr_1fr_1fr] md:px-8">
+    <footer className="border-t border-line bg-cloud">
+      <div className={`${wrap} grid gap-10 py-12 sm:grid-cols-2 md:grid-cols-[1.5fr_1fr_1fr_1fr] md:py-14`}>
         <div>
-          <Wordmark />
-          <p className="mt-4 max-w-[36ch] text-[14px] text-mist">The talent network of Lumora IT case competitions. Tashkent, Uzbekistan.</p>
+          <a href="#/" onClick={(e) => onAnchor(e, "#top")} aria-label={t("common.brand")} className="inline-block">
+            <Wordmark />
+          </a>
+          <p className="mt-4 max-w-[34ch] text-[14px] text-mist">{t("common.footer.tagline")}</p>
         </div>
         {columns.map((c) => (
-          <div key={c.h}>
-            <div className="text-[14px] font-semibold">{c.h}</div>
-            <ul className="mt-3 space-y-2 text-[14px] text-mist">
+          <nav key={c.h} aria-label={c.h}>
+            <h2 className="text-[14px] font-semibold tracking-normal">{c.h}</h2>
+            <ul className="mt-2 text-[14px] text-mist">
               {c.l.map(([label, href]) => (
-                <li key={label}>
-                  <a href={href} onClick={(e) => onSection(e, href)} className="transition-colors hover:text-ink">
+                <li key={href}>
+                  <a
+                    href={href}
+                    onClick={(e) => onAnchor(e, href)}
+                    {...(isExternal(href) ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                    className="inline-flex min-h-11 items-center transition-colors hover:text-ink md:min-h-9"
+                  >
                     {label}
                   </a>
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
         ))}
       </div>
       <div className="border-t border-line">
-        <div className="mx-auto flex max-w-[1240px] flex-wrap justify-between gap-3 px-5 py-5 text-[13px] text-mist md:px-8">
-          <span>2026 Lumora</span>
-          <span>Preview build with demo data stored in your browser. English, with Russian and Uzbek coming</span>
+        <div className={`${wrap} flex flex-col gap-3 py-5 text-[13px] text-mist md:flex-row md:items-center md:justify-between`}>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
+            <span>© 2026 Lumora</span>
+            <a href="#/privacy" className="inline-flex min-h-11 items-center hover:text-ink md:min-h-0">
+              {t("common.footer.privacy")}
+            </a>
+            <a href="#/terms" className="inline-flex min-h-11 items-center hover:text-ink md:min-h-0">
+              {t("common.footer.terms")}
+            </a>
+          </div>
+          <span>{t("common.footer.preview")}</span>
         </div>
       </div>
     </footer>

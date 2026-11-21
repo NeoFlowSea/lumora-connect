@@ -1,23 +1,32 @@
 # Lumora Connect
 
-Lumora Connect is a Tinder-style talent network for Uzbekistan: hackathon winners and young tech talent swipe companies, companies swipe verified talent, a mutual right swipe is a match. Lumora runs IT case hackathons across Uzbek cities. This repo is the front-end preview: the backend is a mock API that runs in the browser (`src/api`, localStorage), with seeded demo accounts. Each visitor has their own data.
+Lumora Connect is the talent network of Lumora IT case competitions in Uzbekistan: students and young tech talent find internships, programs and jobs, companies find verified talent, and a mutual right swipe is a match. Lumora runs one-day IT case competitions across Uzbek cities. This repo is the front-end preview: the backend is a mock API that runs in the browser (`src/api`, localStorage). Each visitor has their own data. Demo logins are listed only in README.md, never on the site.
 
 ## Structure
-- Intro splash (`src/components/Splash.tsx`): blue screen with the white shield, then vertical strips wipe right, like the Tinder iOS launch.
-- Public landing (`src/landing/*`): hero with a self-swiping deck, stats, how it works, tracks, winners, opportunities, hackathons, join, footer. Lenis smooth scroll, Framer Motion reveals.
-- Auth (`src/auth/AuthScreen.tsx`): login, two-step register (account type first), demo accounts panel. App (`src/app/*`): talent tabs Swipe, Opportunities, Hackathons, Profile; company tabs Swipe, Dashboard, Hackathons, Profile; plus Inbox (matches and chat) and notifications. Admin (`src/admin/*`): overview, companies, users, events (editor, teams, results), opportunities, audit. Hash routes in `src/lib/router.ts`, guards in `src/App.tsx`.
-- Mock backend (`src/api`): `types.ts` domain model, `seed.ts` demo data and `DEMO_ACCOUNTS`, `db.ts` localStorage store with change events, `index.ts` async API with permission checks, `hooks.ts` (`useApi`, `useAction`, `useSession`). Shared form and state primitives in `src/components/form.tsx`.
-- `src/data.ts` holds the static source lists the seed is built from (categories, companies, talents, opportunities).
-- Glitch headings use `src/components/GlitchText.tsx`: only transform and opacity animate (compositor), phase locked to the wall clock via the Web Animations API.
+- Intro splash (`src/components/Splash.tsx`): blue screen with the white shield, then strips wipe right. Shown once per visit on the landing only; timers sit in a ref with a hard stop.
+- Public landing (`src/landing/*`): dual-door hero with a calm card deck and job search, real numbers and partners, featured jobs, how it works, real winning projects, next hackathon (the only glitch heading), slogans, FAQ, final CTA, footer.
+- Public pages: jobs list `#/jobs` (`src/app/JobsBrowser.tsx`), job page `#/jobs/:id`, company page `#/company/:id`, `#/privacy`, `#/terms`, 404. `src/pages/PublicFrame.tsx` shows them inside the app shell when signed in, otherwise with the site header and footer.
+- Auth (`src/auth/*`): sign in, short sign-up (account type first, consent), forgot, reset and confirm with a Preview mailbox (the mock has no mail server). Onboarding wizard after the first sign-in (`src/onboarding/*`).
+- App (`src/app/*`): talent tabs Swipe, Jobs, Events, Profile; company tabs Swipe, Dashboard, Events, Profile; plus Inbox, notifications and talent pages `#/app/talent/:id`. Own profile in `src/app/profile/*` with completeness and verification.
+- Admin (`src/admin/*`, lazy-loaded): overview, verification queue, companies, users, events (editor, teams, results), opportunities, audit.
+- Hash routes in `src/lib/router.ts`, guards in `src/App.tsx`.
+- Mock backend (`src/api`): `types.ts` domain model, `seed.ts` sample data and `DEMO_ACCOUNTS`, `db.ts` localStorage store with change events, `index.ts` async API with permission checks, `crypto.ts` salted password hashes, `hooks.ts` (`useApi`, `useAction`, `useSession`). Shared primitives in `src/components/form.tsx` and `src/components/ui.tsx`.
+- Real Lumora facts, past rounds, winning projects and photos: `src/content/lumora.ts`, `public/photos`. Sample people, companies, postings and upcoming events carry `demo: true` and show a "Demo profile" / "Sample" tag. Never attribute sample people to real rounds; never post fake jobs under real company names.
+- `src/data.ts` holds the track list.
+
+## Languages
+Uzbek (Latin), Russian and English. `src/i18n/index.tsx` has `t("area.key", vars)`, `tp()` for plurals, `useLang()`, `locale()` and `trackLabel()`. Dictionaries are per area in `src/i18n/dict/<area>.ts`, each with en, ru and uz. Every visible string goes through them, including API errors and notifications (`api.ts`).
 
 ## Stack
-Vite + React 18 + TypeScript, Tailwind v4 (`@import "tailwindcss"` in `src/index.css`, tokens in `@theme`), Framer Motion, Lenis, lucide-react. `base: "./"` in vite.config so the build works on GitHub Pages. Deploy workflow in `.github/workflows/deploy.yml`: `main` goes to the site root, every `design/<name>` branch to `/<name>/`.
+Vite + React 18 + TypeScript, Tailwind v4 (`@import "tailwindcss"` in `src/index.css`, tokens in `@theme`), Framer Motion, Lenis, lucide-react, self-hosted fonts via @fontsource. `base: "./"` in vite.config so the build works on GitHub Pages. Deploy workflow in `.github/workflows/deploy.yml`: `main` goes to the site root, every `design/<name>` branch to `/<name>/`.
 
 ## Design rules
-- Palette 60/30/10: navy `#0F2557` page background (60), blue `#3D7BFA` sections, cards, icons (30), yellow `#FFC93C` only for main buttons, active tab, stats and highlights (10). Tokens live in `@theme` in `src/index.css`; text is `ink` `#F4F7FF` and `mist` `#A9B7D8`.
+- Palette 60/30/10: navy `#0F2557` page background (60), blue `#3D7BFA` sections, cards, icons (30), yellow `#FFC93C` only for the one main action per screen, active tab, key numbers (10). Tokens live in `@theme` in `src/index.css`; text is `ink` `#F4F7FF` and `mist` `#A9B7D8`.
 - Logo: white shield with a `#3D7BFA` mark on a `#3D7BFA` rounded tile, exactly like `Logo.jpg` (traced paths live in `src/components/Logo.tsx`).
-- Fonts: IBM Plex Mono for all text and most headings (`font-display`, `font-body`). Rubik Glitch (`font-glitch`) only on the hero title and the landing "Next Lumora hackathon" heading. Press Start 2P (`font-pixel`) only for countdown digits. Heading base styles sit in `@layer base` so these utilities win. Sentence case, no all-caps labels, no arrows in button text.
-- Respect `prefers-reduced-motion`. Keep everything usable at 375px (bottom tab bar on phones).
+- Fonts: Onest for all text and headings (`font-display`, `font-body`). Rubik Glitch (`font-glitch`) only on the landing "Next Lumora hackathon" heading. Press Start 2P (`font-pixel`) only for countdown digits. Heading base styles sit in `@layer base` so these utilities win.
+- No glow shadows, blurred blobs, dotted grids or gradient text. Radius scale: controls `rounded-lg`, cards `rounded-xl`, modals `rounded-2xl`, tags `rounded-md`, avatars `rounded-full`.
+- Sentence case, no all-caps labels, no arrows in button text. Text at least 12px, tap targets at least 44px on phones.
+- Respect `prefers-reduced-motion`. Keep everything usable at 375px with no horizontal scroll (bottom tab bar on phones).
 
 ## Commands
 `npm run dev` starts the dev server on http://localhost:5173. `npm run build` type-checks and builds into `dist`.

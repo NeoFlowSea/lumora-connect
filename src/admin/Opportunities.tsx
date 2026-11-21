@@ -5,6 +5,7 @@ import { useAction, useApi, useSession } from "../api/hooks";
 import type { AdminProfile } from "../api/types";
 import { Card, Empty, ErrorNote, Field, Skeleton, Spinner, Textarea, ago } from "../components/form";
 import { Modal, Pill, btn, useToast } from "../components/ui";
+import { t } from "../i18n";
 import { AdminHeader } from "./AdminShell";
 
 export function Opportunities() {
@@ -18,14 +19,14 @@ export function Opportunities() {
   return (
     <div>
       <AdminHeader
-        title="Opportunities"
-        text={`Hide postings that break the rules and restore them once fixed.${hiddenCount ? ` ${hiddenCount} hidden right now.` : ""}`}
+        title={t("admin.opps.title")}
+        text={`${t("admin.opps.lead")}${hiddenCount ? ` ${t("admin.opps.hiddenNow", { n: hiddenCount })}` : ""}`}
       />
       <ErrorNote>{list.error}</ErrorNote>
       {list.loading ? (
         <Skeleton rows={4} className="h-24" />
       ) : !list.data?.length ? (
-        <Empty icon={<Briefcase size={20} />} title="No postings yet" text="Postings appear here as soon as an approved company publishes them." />
+        <Empty icon={<Briefcase size={20} />} title={t("admin.opps.noneTitle")} text={t("admin.opps.noneText")} />
       ) : (
         <div className="grid gap-3">
           {list.data.map((o) => (
@@ -57,28 +58,30 @@ function OpportunityRow({
     return true as const;
   });
   return (
-    <Card className={o.hidden ? "border-bad/40" : ""}>
+    <Card className={`min-w-0 ${o.hidden ? "border-bad/40" : ""}`}>
       <div className="flex flex-wrap items-start gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-[16px]">{o.title}</h3>
-            <Pill tone={o.type === "Internship" ? "blue" : "line"}>{o.type}</Pill>
+            <h3 className="min-w-0 break-words text-[16px]">{o.title}</h3>
+            <Pill tone="line">{t(`admin.opps.type.${o.type.replace(" ", "")}`)}</Pill>
+            {o.demo && <Pill tone="line">{t("common.status.demo")}</Pill>}
             {o.hidden && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-bad/15 px-2.5 py-1 text-[12px] font-semibold text-bad">
-                <EyeOff size={12} /> Hidden
+              <span className="inline-flex items-center gap-1 rounded-md bg-bad/15 px-2 py-0.5 text-[12px] font-semibold text-[#ffb3b3]">
+                <EyeOff size={12} /> {t("admin.opps.hidden")}
               </span>
             )}
           </div>
           <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-mist">
-            <span>{o.company?.name ?? "Deleted company"}</span>
+            <a href={`#/company/${o.companyId}`} className="hover:underline">{o.company?.name ?? t("admin.opps.deletedCompany")}</a>
             <span className="flex items-center gap-1">
               <MapPin size={12} /> {o.city}
             </span>
             <span>{o.pay}</span>
-            <span>Posted {ago(o.postedAt)}</span>
+            <span>{t("admin.opps.posted", { when: ago(o.postedAt) })}</span>
+            <a href={`#/jobs/${o.id}`} className="text-sky hover:underline">{t("admin.opps.view")}</a>
           </div>
           {o.hidden && o.hiddenReason && (
-            <p className="mt-2 rounded-xl bg-bad/10 px-3 py-2 text-[13px] text-[#ffb3b3]">Reason: {o.hiddenReason}</p>
+            <p className="mt-2 break-words rounded-lg bg-bad/10 px-3 py-2 text-[13px] text-[#ffb3b3]">{t("admin.opps.reasonShown", { reason: o.hiddenReason })}</p>
           )}
           <p className="mt-2 line-clamp-2 max-w-[80ch] text-[13px] text-mist">{o.desc}</p>
         </div>
@@ -87,20 +90,20 @@ function OpportunityRow({
             <button
               disabled={restore.pending}
               onClick={async () => {
-                if (await restore.run()) toast("Posting restored");
+                if (await restore.run()) toast(t("admin.opps.restoredToast"));
               }}
-              className={`${btn.sm} bg-accent text-paper hover:bg-accent-deep disabled:opacity-60`}
+              className={`${btn.sm} min-h-11 bg-blue text-white hover:bg-blue-deep disabled:opacity-60 md:min-h-9`}
             >
-              {restore.pending ? <Spinner /> : <Eye size={15} />} Restore
+              {restore.pending ? <Spinner /> : <Eye size={15} />} {t("admin.opps.restore")}
             </button>
           ) : (
-            <button onClick={onHide} className={`${btn.sm} border border-line hover:bg-tint`}>
-              <EyeOff size={15} /> Hide
+            <button onClick={onHide} className={`${btn.sm} min-h-11 border border-line hover:bg-tint md:min-h-9`}>
+              <EyeOff size={15} /> {t("admin.opps.hide")}
             </button>
           )}
           {isSuper && (
-            <button onClick={onDelete} className={`${btn.sm} border border-line text-bad hover:border-bad`}>
-              <Trash2 size={15} /> Delete
+            <button onClick={onDelete} className={`${btn.sm} min-h-11 border border-line text-[#ffb3b3] hover:border-bad md:min-h-9`}>
+              <Trash2 size={15} /> {t("common.action.delete")}
             </button>
           )}
         </div>
@@ -134,29 +137,27 @@ function HideModal({ opp, onClose }: { opp: OpportunityWithCompany | null; onClo
           onSubmit={async (e) => {
             e.preventDefault();
             if (!reason.trim()) {
-              hide.setError("Add a reason for hiding it.");
+              hide.setError(t("admin.opps.reasonRequired"));
               return;
             }
             if (await hide.run(opp.id, reason)) {
-              toast("Posting hidden");
+              toast(t("admin.opps.hiddenToast"));
               close();
             }
           }}
         >
-          <h2 className="text-[22px]">Hide {opp.title}</h2>
-          <p className="text-[13px] text-mist">
-            Talent stops seeing it right away. {opp.company?.name ?? "The company"} gets a notification with your reason.
-          </p>
-          <Field label="Reason">
-            <Textarea autoFocus value={reason} onChange={(e) => setReason(e.target.value)} placeholder="For example: pay terms are unclear, please list the monthly stipend." />
+          <h2 className="break-words text-[22px]">{t("admin.opps.hideTitle", { title: opp.title })}</h2>
+          <p className="text-[14px] text-mist">{t("admin.opps.hideText", { name: opp.company?.name ?? "—" })}</p>
+          <Field label={t("admin.companies.reason")}>
+            <Textarea autoFocus value={reason} onChange={(e) => setReason(e.target.value)} placeholder={t("admin.opps.reasonPh")} />
           </Field>
           <ErrorNote>{hide.error}</ErrorNote>
           <div className="flex flex-wrap gap-3">
             <button type="submit" disabled={hide.pending} className={`${btn.primary} disabled:opacity-60`}>
-              {hide.pending ? <Spinner /> : <EyeOff size={16} />} Hide posting
+              {hide.pending ? <Spinner /> : <EyeOff size={16} />} {t("admin.opps.hideSubmit")}
             </button>
             <button type="button" onClick={close} className={btn.ghost}>
-              Cancel
+              {t("common.action.cancel")}
             </button>
           </div>
         </form>
@@ -175,24 +176,24 @@ function DeleteModal({ opp, onClose }: { opp: OpportunityWithCompany | null; onC
     <Modal open={!!opp} onClose={onClose}>
       {opp && (
         <div className="grid gap-4">
-          <h2 className="text-[22px]">Delete {opp.title}?</h2>
-          <p className="text-[13px] text-mist">The posting and all its applications are removed. This cannot be undone, except by resetting the demo data.</p>
+          <h2 className="break-words text-[22px]">{t("admin.opps.deleteTitle", { title: opp.title })}</h2>
+          <p className="text-[14px] text-mist">{t("admin.opps.deleteText")}</p>
           <ErrorNote>{del.error}</ErrorNote>
           <div className="flex flex-wrap gap-3">
             <button
               disabled={del.pending}
               onClick={async () => {
                 if (await del.run(opp.id)) {
-                  toast("Posting deleted");
+                  toast(t("admin.opps.deletedToast"));
                   onClose();
                 }
               }}
-              className={`${btn.sm} bg-bad px-5 py-2.5 text-white hover:bg-bad/90 disabled:opacity-60`}
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-bad px-5 text-[15px] font-semibold text-white hover:bg-bad/90 disabled:opacity-60"
             >
-              {del.pending ? <Spinner /> : <Trash2 size={15} />} Delete posting
+              {del.pending ? <Spinner /> : <Trash2 size={15} />} {t("admin.opps.deleteSubmit")}
             </button>
             <button onClick={onClose} className={btn.ghost}>
-              Cancel
+              {t("common.action.cancel")}
             </button>
           </div>
         </div>

@@ -11,7 +11,9 @@ import { defaultTab } from "../app/AppShell";
    Signed-in talent and companies see them inside the app shell; everyone else gets the site header and footer. */
 export function PublicFrame({ children, tab = "opportunities", bare = false }: { children: ReactNode; tab?: string; bare?: boolean }) {
   const user = useSession();
-  useEffect(() => window.scrollTo({ top: 0 }), []);
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, []);
   if (user && user.kind !== "admin" && !bare) return <AppShell tab={tab}>{children}</AppShell>;
   return (
     <div className="flex min-h-[100svh] flex-col bg-paper">
