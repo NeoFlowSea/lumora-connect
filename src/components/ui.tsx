@@ -47,11 +47,15 @@ export function Highlight({ children, delay = 0.2 }: { children: ReactNode; dela
 }
 
 export const btn = {
+  /* yellow: only the one main action on a screen */
   primary:
-    "inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-[15px] font-semibold text-paper shadow-[0_10px_30px_-12px_rgba(255,201,60,0.55)] transition-[background-color,transform,box-shadow] hover:bg-accent-deep hover:shadow-[0_14px_34px_-12px_rgba(255,201,60,0.7)] active:scale-[0.98]",
+    "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-[15px] font-semibold text-paper transition-colors hover:bg-accent-deep active:translate-y-px",
+  /* blue: secondary actions */
+  secondary:
+    "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-blue px-5 py-2.5 text-[15px] font-semibold text-white transition-colors hover:bg-[#3470ea] active:translate-y-px",
   ghost:
-    "inline-flex items-center justify-center gap-2 rounded-full border border-line bg-transparent px-6 py-3 text-[15px] font-semibold text-ink transition-colors hover:border-sky hover:bg-tint",
-  sm: "inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-semibold",
+    "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-line bg-transparent px-5 py-2.5 text-[15px] font-semibold text-ink transition-colors hover:border-sky hover:bg-tint",
+  sm: "inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg px-3.5 py-1.5 text-[13px] font-semibold",
 };
 
 /* Toasts */
@@ -78,7 +82,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.96 }}
               transition={{ duration: 0.3, ease }}
-              className="rounded-full bg-accent px-4 py-2.5 text-[14px] font-semibold text-paper shadow-lg"
+              className="rounded-lg bg-ink px-4 py-2.5 text-[14px] font-semibold text-paper shadow-lg"
             >
               {t.text}
             </motion.div>
@@ -107,7 +111,7 @@ export function Modal({ open, onClose, children, wide }: { open: boolean; onClos
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 30, opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.4, ease }}
-            className={`max-h-[92vh] w-full overflow-y-auto rounded-t-3xl bg-surface p-6 shadow-2xl md:rounded-3xl md:p-8 ${wide ? "md:max-w-[760px]" : "md:max-w-[560px]"}`}
+            className={`max-h-[92vh] w-full overflow-y-auto rounded-t-2xl bg-surface p-6 shadow-2xl md:rounded-2xl md:p-8 ${wide ? "md:max-w-[760px]" : "md:max-w-[560px]"}`}
           >
             {children}
           </motion.div>
@@ -124,7 +128,7 @@ export function Pill({ children, tone = "tint" }: { children: ReactNode; tone?: 
     line: "border border-line text-mist",
     good: "bg-good/15 text-good",
   }[tone];
-  return <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[12px] font-semibold ${cls}`}>{children}</span>;
+  return <span className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[12px] font-medium ${cls}`}>{children}</span>;
 }
 
 export const initials = (n: string) =>
