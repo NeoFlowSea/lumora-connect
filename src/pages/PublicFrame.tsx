@@ -3,6 +3,7 @@ import { useSession } from "../api/hooks";
 import { AppShell } from "../app/AppShell";
 import { Nav } from "../landing/Nav";
 import { Footer } from "../landing/Footer";
+import { SiteTabs } from "../landing/SiteTabs";
 import { go } from "../lib/router";
 import { currentUser } from "../api";
 import { defaultTab } from "../app/AppShell";
@@ -16,10 +17,11 @@ export function PublicFrame({ children, tab = "opportunities", bare = false }: {
   }, []);
   if (user && user.kind !== "admin" && !bare) return <AppShell tab={tab}>{children}</AppShell>;
   return (
-    <div className="flex min-h-[100svh] flex-col bg-paper">
+    <div className="flex min-h-[100svh] flex-col bg-paper pb-16 md:pb-0">
       <Nav onOpenApp={openApp} />
       <main className="flex-1 pt-18">{children}</main>
       <Footer />
+      <SiteTabs />
     </div>
   );
 }

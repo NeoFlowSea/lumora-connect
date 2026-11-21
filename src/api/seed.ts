@@ -648,7 +648,7 @@ function hackathons(): Hackathon[] {
       eventType: "hackathon",
       short: "A partner hackathon: build an LLM app in 36 hours with mentors.",
       description: "Two days, hybrid format. Winners get mentoring from the community's founders.",
-      accent: "yellow",
+      accent: "orange",
       city: "Tashkent",
       venue: "",
       mode: "hybrid",

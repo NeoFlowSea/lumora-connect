@@ -17,7 +17,7 @@ const GALLERY = ["school21-group", "school21-pitch", "tashkent-stage", "andijan-
 
 /* The next round people can register for, the four questions the jury asks,
    and the real history of past rounds underneath. */
-export function NextHackathon() {
+export function NextHackathon({ allRounds = false }: { allRounds?: boolean }) {
   const { t } = useLang();
   const list = useApi(() => api.hackathons.list(), []);
   const upcoming = (list.data ?? []).filter((h) => !["finished", "cancelled", "draft"].includes(h.status));
@@ -47,7 +47,7 @@ export function NextHackathon() {
           </div>
         </div>
       </div>
-      <PastRounds />
+      <PastRounds initialAll={allRounds} />
     </section>
   );
 }
@@ -109,9 +109,9 @@ function NoEvent() {
   );
 }
 
-function PastRounds() {
+function PastRounds({ initialAll }: { initialAll: boolean }) {
   const { t, tp } = useLang();
-  const [all, setAll] = useState(false);
+  const [all, setAll] = useState(initialAll);
   const rounds = all ? lumora.rounds : lumora.rounds.slice(0, 6);
   const n = (v: number) => v.toLocaleString(locale());
   const date = (iso: string) => new Date(`${iso}T12:00`).toLocaleDateString(locale(), { day: "numeric", month: "short", year: "numeric" });

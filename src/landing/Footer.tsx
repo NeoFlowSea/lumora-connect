@@ -2,9 +2,10 @@ import { useLang } from "../i18n";
 import { lumora } from "../content/lumora";
 import { Wordmark } from "../components/Logo";
 import { isExternal, onAnchor, wrap } from "./parts";
+import { sectionLink } from "../lib/router";
 import { Stable } from "../i18n/Stable";
 
-/* Every link goes to a real route, a landing section or a real Lumora channel. */
+/* Every link goes to a real route, a section of the home or Connect page, or a real Lumora channel. */
 export function Footer() {
   const { t } = useLang();
   const columns: { h: string; l: [string, string][] }[] = [
@@ -13,22 +14,26 @@ export function Footer() {
       l: [
         [t("landing.footer.createProfile"), "#/register?type=talent"],
         [t("common.nav.jobs"), "#/jobs"],
-        [t("landing.footer.nextRound"), "#hackathons"],
-        [t("landing.footer.projects"), "#talent"],
+        [t("landing.footer.nextRound"), sectionLink("hackathons", "hackathons")],
+        [t("landing.footer.projects"), sectionLink("hackathons", "talent")],
       ],
     },
     {
       h: t("landing.footer.companies"),
       l: [
         [t("landing.footer.registerCompany"), "#/register?type=company"],
-        [t("landing.footer.howCompanies"), "#for-companies"],
-        [t("landing.footer.faq"), "#faq"],
+        [t("landing.footer.howCompanies"), sectionLink("connect", "for-companies")],
+        [t("landing.footer.faq"), sectionLink("connect", "faq")],
         [t("common.nav.signIn"), "#/login"],
       ],
     },
     {
-      h: "Lumora",
+      h: t("home.footer.lumora"),
       l: [
+        [t("home.nav.about"), "#/about"],
+        [t("home.nav.hackathons"), "#/hackathons"],
+        [t("home.nav.connect"), "#/connect"],
+        [t("home.nav.contact"), "#/contacts"],
         ["Telegram", lumora.links.telegram],
         ["Instagram", lumora.links.instagram],
         ["LinkedIn", lumora.links.linkedin],
@@ -40,8 +45,8 @@ export function Footer() {
     <footer className="border-t border-line bg-cloud">
       <div className={`${wrap} grid gap-10 py-12 sm:grid-cols-2 md:grid-cols-[1.5fr_1fr_1fr_1fr] md:py-14`}>
         <div>
-          <a href="#/" onClick={(e) => onAnchor(e, "#top")} aria-label={t("common.brand")} className="inline-block">
-            <Wordmark />
+          <a href="#/" onClick={(e) => onAnchor(e, "#/")} aria-label={t("common.brand")} className="inline-flex min-h-11 items-center">
+            <Wordmark connect={false} />
           </a>
           <p className="mt-4 max-w-[48ch] text-[14px] text-mist"><Stable k="common.footer.tagline" /></p>
         </div>

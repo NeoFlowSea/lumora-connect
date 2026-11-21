@@ -269,7 +269,7 @@ export type EventStatus =
   | "in_progress"
   | "finished"
   | "cancelled";
-export type EventAccent = "blue" | "yellow" | "sky" | "navy";
+export type EventAccent = "blue" | "orange" | "sky" | "navy";
 
 export interface Place {
   place: number;

@@ -31,12 +31,13 @@ export function LogoTile({ size = 32 }: { size?: number }) {
   );
 }
 
-export function Wordmark({ size = 32 }: { size?: number }) {
+/** `connect` adds the product name: on in the app and on Lumora Connect pages, off on the Lumora home */
+export function Wordmark({ size = 32, connect = true }: { size?: number; connect?: boolean }) {
   return (
     <span className="flex items-center gap-2.5">
       <LogoTile size={size} />
       <span className="whitespace-nowrap font-display text-[15px] font-medium tracking-tight text-ink">
-        Lumora <span className="text-sky">Connect</span>
+        Lumora{connect && <> <span className="text-sky">Connect</span></>}
       </span>
     </span>
   );

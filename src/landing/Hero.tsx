@@ -30,7 +30,7 @@ export function Hero() {
       <div className={`${wrap} grid items-center gap-12 md:grid-cols-[1.35fr_0.65fr] md:gap-10`}>
         <div>
           <p className="text-[15px] font-medium text-sky"><Stable k="landing.hero.kicker" /></p>
-          <h1 className="mt-4 text-balance text-[clamp(34px,4.6vw,60px)] font-semibold leading-[1.05] tracking-[-0.035em]"><Stable texts={lumora.slogans.hero} /></h1>
+          <h1 className="mt-4 select-none text-balance text-[clamp(34px,4.6vw,60px)] font-semibold leading-[1.05] tracking-[-0.035em]"><Stable texts={lumora.slogans.hero} /></h1>
           <p className="mt-5 max-w-[68ch] text-[17px] leading-relaxed text-mist md:text-[18px]"><Stable k="landing.hero.text" /></p>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-2 sm:max-w-[560px]">

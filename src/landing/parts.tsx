@@ -2,6 +2,7 @@ import type { MouseEvent, ReactNode } from "react";
 import { motion } from "framer-motion";
 import type Lenis from "lenis";
 import { t } from "../i18n";
+import { pageOf } from "../lib/router";
 
 /* Small pieces shared by the landing sections, the site header and the footer. */
 
@@ -24,10 +25,18 @@ export function scrollToId(id: string, smooth = true): boolean {
   return true;
 }
 
-/** onClick for links like "#faq": scroll on the landing page, or let the browser go to the landing page elsewhere. */
+/** onClick for section links ("#faq", "#/?to=about", "#/connect?to=faq", "#/"):
+    when the section is on the page already open, scroll to it; otherwise let the browser open that page. */
 export function onAnchor(e: MouseEvent<HTMLAnchorElement>, href: string) {
-  if (!href.startsWith("#") || href.startsWith("#/")) return;
-  if (scrollToId(href.slice(1))) e.preventDefault();
+  if (!href.startsWith("#")) return;
+  if (!href.startsWith("#/")) {
+    if (scrollToId(href.slice(1))) e.preventDefault();
+    return;
+  }
+  if (pageOf(href) !== pageOf(window.location.hash)) return;
+  const [path, q = ""] = href.slice(2).split("?");
+  if (path.includes("/")) return; // deeper routes are real pages
+  if (scrollToId(new URLSearchParams(q).get("to") ?? "top")) e.preventDefault();
 }
 
 /* ---------- layout ---------- */

@@ -7,7 +7,7 @@ import { useEffect, useRef } from "react";
 const SP = 28; // grid spacing in px
 const R = 170; // cursor influence radius
 const BLUE = "141,176,255";
-const SKY = "255,201,60";
+const ORANGE = "255,138,61"; // the accent
 
 type Dir = 0 | 1 | 2 | 3; // right, down, left, up
 const DX = [1, 0, -1, 0];
@@ -153,7 +153,7 @@ export function GridBackground() {
           continue;
         }
         const env = Math.min(1, p.age * 2.5, (p.life - p.age) * 2);
-        const col = p.sky ? SKY : BLUE;
+        const col = p.sky ? ORANGE : BLUE;
         const n = p.hist.length;
         for (let k = 1; k < n; k++) {
           const a = (k / n) * env * 0.9;

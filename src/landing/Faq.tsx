@@ -6,20 +6,21 @@ import { Stable } from "../i18n/Stable";
 
 const KEYS = ["what", "who", "verify", "free", "companies", "langs"];
 
-/* Plain accordion: real buttons with aria-expanded, panels labelled by their question. */
-export function Faq() {
+/* Plain accordion: real buttons with aria-expanded, panels labelled by their question.
+   `area` is the dictionary prefix: "<area>.title", "<area>.lead", "<area>.<key>.q" and ".a". */
+export function Faq({ area = "landing.faq", keys = KEYS }: { area?: string; keys?: string[] }) {
   useLang();
-  const [open, setOpen] = useState<string | null>("what");
+  const [open, setOpen] = useState<string | null>(keys[0]);
   const base = useId();
   return (
     <Section id="faq" className="border-t border-line">
       <Fade className="grid gap-8 md:grid-cols-[1fr_1.8fr] md:gap-12">
         <div>
-          <h2 className="text-[clamp(26px,3.2vw,40px)] tracking-[-0.025em]"><Stable k="landing.faq.title" /></h2>
-          <p className="mt-3 max-w-[60ch] text-[16px] text-mist"><Stable k="landing.faq.lead" /></p>
+          <h2 className="text-[clamp(26px,3.2vw,40px)] tracking-[-0.025em]"><Stable k={`${area}.title`} /></h2>
+          <p className="mt-3 max-w-[60ch] text-[16px] text-mist"><Stable k={`${area}.lead`} /></p>
         </div>
         <ul className="border-t border-line">
-          {KEYS.map((k) => {
+          {keys.map((k) => {
             const isOpen = open === k;
             const id = `${base}-${k}`;
             return (
@@ -33,12 +34,12 @@ export function Faq() {
                     onClick={() => setOpen(isOpen ? null : k)}
                     className="flex min-h-14 w-full items-center justify-between gap-4 py-3 text-left transition-colors hover:text-sky"
                   >
-                    <Stable k={`landing.faq.${k}.q`} />
+                    <Stable k={`${area}.${k}.q`} />
                     <ChevronDown size={20} className={`shrink-0 text-mist transition-transform ${isOpen ? "rotate-180" : ""}`} />
                   </button>
                 </h3>
                 <div id={`${id}-a`} role="region" aria-labelledby={`${id}-q`} hidden={!isOpen} className="pb-5 pr-8">
-                  <p className="max-w-[80ch] text-[15px] leading-relaxed text-mist"><Stable k={`landing.faq.${k}.a`} /></p>
+                  <p className="max-w-[80ch] text-[15px] leading-relaxed text-mist"><Stable k={`${area}.${k}.a`} /></p>
                 </div>
               </li>
             );

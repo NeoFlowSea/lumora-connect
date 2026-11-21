@@ -8,6 +8,7 @@ import { app } from "./dict/app";
 import { admin } from "./dict/admin";
 import { legal } from "./dict/legal";
 import { api } from "./dict/api";
+import { home } from "./dict/home";
 
 /* Three interface languages. Every screen reads its strings through t("area.key").
    Dictionaries live in src/i18n/dict/<area>.ts, one file per area, each with en, ru and uz.
@@ -24,7 +25,7 @@ export const LANGS: { code: Lang; label: string; short: string }[] = [
 type Dict = Record<string, string>;
 type Area = { en: Dict; ru: Dict; uz: Dict };
 
-const areas: Record<string, Area> = { common, landing, auth, profile, jobs, app, admin, legal, api };
+const areas: Record<string, Area> = { common, landing, home, auth, profile, jobs, app, admin, legal, api };
 
 const KEY = "lumora-lang";
 const listeners = new Set<() => void>();

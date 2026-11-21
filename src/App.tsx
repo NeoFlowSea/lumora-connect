@@ -3,6 +3,8 @@ import { Splash } from "./components/Splash";
 import { ToastProvider } from "./components/ui";
 import { Loading } from "./components/form";
 import { Landing } from "./landing/Landing";
+import { Home } from "./landing/Home";
+import { AboutPage, ContactsPage, HackathonsPage } from "./landing/pages";
 import { AppShell, defaultTab, tabsFor } from "./app/AppShell";
 import { Swipe } from "./app/Swipe";
 import { HackathonsTab } from "./app/HackathonsTab";
@@ -21,13 +23,16 @@ import { PublicFrame } from "./pages/PublicFrame";
 import { NotFound } from "./pages/NotFound";
 import { Legal } from "./pages/Legal";
 import { useSession } from "./api/hooks";
-import { go, useRoute } from "./lib/router";
+import { go, legacyAnchor, useRoute } from "./lib/router";
 
 // admin is a separate chunk: visitors never download it
 const AdminApp = lazy(() => import("./admin/AdminApp").then((m) => ({ default: m.AdminApp })));
 
 /* Routes
-   #/                      landing
+   #/                      Lumora home (about Lumora, rounds, contacts)
+   #/about, #/hackathons, #/contacts   Lumora pages
+   #/connect               Lumora Connect landing
+   ?to=<id> on either      open at that section; old anchors like "#talent" go to the Connect page
    #/jobs, #/jobs/:id      opportunities, public
    #/company/:id           company page, public
    #/privacy, #/terms      legal pages
@@ -45,6 +50,13 @@ export default function App() {
   const { path, query } = useRoute();
   const user = useSession();
   const [section, sub, extra] = path;
+
+  // anchors from the old single landing now live on the Connect page
+  useEffect(() => {
+    if (section) return;
+    const moved = legacyAnchor(window.location.hash);
+    if (moved) window.location.replace(moved);
+  }, [section]);
 
   // route guards
   useEffect(() => {
@@ -68,7 +80,15 @@ export default function App() {
 
   let page;
   if (!section) {
-    page = <Landing />;
+    page = <Home to={query.to} />;
+  } else if (section === "connect" && !sub) {
+    page = <Landing to={query.to} />;
+  } else if (section === "about" && !sub) {
+    page = <AboutPage to={query.to} />;
+  } else if (section === "hackathons" && !sub) {
+    page = <HackathonsPage to={query.to} />;
+  } else if (section === "contacts" && !sub) {
+    page = <ContactsPage to={query.to} />;
   } else if (section === "login" || section === "register") {
     page = <AuthScreen mode={section} initialType={query.type === "company" ? "company" : query.type === "talent" ? "talent" : undefined} />;
   } else if (section === "forgot") {

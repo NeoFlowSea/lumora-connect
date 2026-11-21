@@ -20,7 +20,21 @@ export const lumora = {
     students: 2700,
     regions: 14,
     partners: 30,
+    /** "100% real company cases" */
+    realCases: 100,
   },
+
+  /** cities in the city selector of the previous site's About page */
+  cities: ["Tashkent", "Fergana", "Samarkand", "Namangan", "Jizzakh", "Nukus", "Qarshi"],
+
+  /** the four stages of a round, in order (previous site, tournaments page). Texts: home.format.* */
+  stages: ["register", "case", "prototype", "pitch"] as const,
+
+  /** what a team brings to the jury (previous site). Texts: home.format.d.* */
+  deliverables: ["prototype", "story", "pitch"] as const,
+
+  /** team sizes offered by the previous site's application form; each announcement confirms the real one */
+  teamSizes: [2, 3, 4, 5],
 
   slogans: {
     hero: { en: "Here, students solve real tech problems.", ru: "Здесь студенты решают настоящие технологические задачи.", uz: "Bu yerda talabalar haqiqiy texnologik muammolarni hal qiladi." } as L,
@@ -36,11 +50,12 @@ export const lumora = {
     { key: "delivery", q: { en: "Can the team explain it clearly?", ru: "Может ли команда ясно это объяснить?", uz: "Jamoa buni aniq tushuntira oladimi?" } as L },
   ],
 
+  /** core team from the previous site's About page; photos in public/photos/team/<photo>.webp, roles in home.about.role.<key> */
   team: [
-    { name: "Kamron Sobirjonov", role: "Chief Executive Officer" },
-    { name: "Anvarjon Sobirov", role: "Chief Operating Officer" },
-    { name: "Nuriddin Mukhiddinjonov", role: "Chief Financial Officer" },
-    { name: "Nurulloxon Valixonov", role: "Chief Technology Officer" },
+    { name: "Kamron Sobirjonov", role: "Chief Executive Officer", key: "ceo", photo: "kamron-sobirjonov" },
+    { name: "Anvarjon Sobirov", role: "Chief Operating Officer", key: "coo", photo: "anvarjon-sobirov" },
+    { name: "Nuriddin Mukhiddinjonov", role: "Chief Financial Officer", key: "cfo", photo: "nuriddin-mukhiddinjonov" },
+    { name: "Nurulloxon Valixonov", role: "Chief Technology Officer", key: "cto", photo: "nurulloxon-valixonov" },
   ],
 
   /** organizations named on the previous site and in channel posts */
@@ -166,22 +181,25 @@ export const lumora = {
     },
   ],
 
-  /** past rounds, newest first. Real data. */
+  /** past rounds, newest first. Real data, except the fields listed in `placeholder`: the previous site and
+      the channel publish no participant count or no winners for those rounds, so on 22 Nov 2026 the team asked
+      for stand-in values (participants between 50 and 80, invented team names). Replace them with the real
+      figures when they are known and remove the field from `placeholder`. */
   rounds: [
-    { id: "r-tashkent-2026-10", city: "Tashkent", venue: "School 21", date: "2026-10-31", participants: 120, teams: 21, partners: ["AICA", "AI Alliance", "IT Park Uzbekistan", "MediaPark"], podium: [] as string[], case: "" },
-    { id: "r-andijan-2026-10", city: "Andijan", venue: "SAT Tashkent", date: "2026-10-04", participants: 0, teams: 0, partners: ["AICA", "AI Alliance"], podium: ["LaDele", "Technest", "Marshals"], case: "Students are losing interest in paper tests. How to digitalize learning?" },
-    { id: "r-sirdaryo-2026-10", city: "Guliston", venue: "Guliston Academy", date: "2026-10-04", participants: 0, teams: 0, partners: ["AICA", "AI Alliance"], podium: ["ForkBomb", "SayxunDev", "PlacePulse"], case: "The gap between advertised image and real quality in service places. How to build trust?" },
-    { id: "r-bukhara-2026-09", city: "Bukhara", venue: "Presidential School", date: "2026-09-27", participants: 0, teams: 0, partners: ["AICA", "AI Alliance"], podium: ["La Peace", "Eden", "Marvarid"], case: "Teachers lose hours every week to grading and paperwork." },
-    { id: "r-nukus-2026-08", city: "Nukus", venue: "", date: "2026-08-23", participants: 40, teams: 0, partners: ["StartUp Garage"], podium: [], case: "" },
-    { id: "r-samarkand-2026-08", city: "Samarkand", venue: "", date: "2026-08-09", participants: 0, teams: 0, partners: ["StartUp Garage", "Capitalist"], podium: ["RealCoders", "Galaxy Zip", "Summok"], case: "Help startup founders and investors find each other." },
-    { id: "r-fergana-2026-08", city: "Fergana", venue: "", date: "2026-08-02", participants: 0, teams: 0, partners: ["StartUp Garage"], podium: ["Flux", "Grid", "Al Xorazmiy"], case: "Investment information is scattered across spreadsheets, emails and notes." },
+    { id: "r-tashkent-2026-10", city: "Tashkent", venue: "School 21", date: "2026-10-31", participants: 120, teams: 21, partners: ["AICA", "AI Alliance", "IT Park Uzbekistan", "MediaPark"], podium: ["ByteCraft", "NeoLab", "Pixel Forge"], placeholder: ["podium"], case: "" },
+    { id: "r-andijan-2026-10", city: "Andijan", venue: "SAT Tashkent", date: "2026-10-04", participants: 64, teams: 0, partners: ["AICA", "AI Alliance"], podium: ["LaDele", "Technest", "Marshals"], case: "Students are losing interest in paper tests. How to digitalize learning?", placeholder: ["participants"] },
+    { id: "r-sirdaryo-2026-10", city: "Guliston", venue: "Guliston Academy", date: "2026-10-04", participants: 58, teams: 0, partners: ["AICA", "AI Alliance"], podium: ["ForkBomb", "SayxunDev", "PlacePulse"], case: "The gap between advertised image and real quality in service places. How to build trust?", placeholder: ["participants"] },
+    { id: "r-bukhara-2026-09", city: "Bukhara", venue: "Presidential School", date: "2026-09-27", participants: 72, teams: 0, partners: ["AICA", "AI Alliance"], podium: ["La Peace", "Eden", "Marvarid"], case: "Teachers lose hours every week to grading and paperwork.", placeholder: ["participants"] },
+    { id: "r-nukus-2026-08", city: "Nukus", venue: "", date: "2026-08-23", participants: 40, teams: 0, partners: ["StartUp Garage"], podium: ["Aral Devs", "CodeSteppe", "Amu Stack"], case: "", placeholder: ["podium"] },
+    { id: "r-samarkand-2026-08", city: "Samarkand", venue: "", date: "2026-08-09", participants: 67, teams: 0, partners: ["StartUp Garage", "Capitalist"], podium: ["RealCoders", "Galaxy Zip", "Summok"], case: "Help startup founders and investors find each other.", placeholder: ["participants"] },
+    { id: "r-fergana-2026-08", city: "Fergana", venue: "", date: "2026-08-02", participants: 61, teams: 0, partners: ["StartUp Garage"], podium: ["Flux", "Grid", "Al Xorazmiy"], case: "Investment information is scattered across spreadsheets, emails and notes.", placeholder: ["participants"] },
     { id: "r-tashkent-2026-08", city: "Tashkent", venue: "", date: "2026-08-02", participants: 50, teams: 0, partners: ["StartUp Garage"], podium: ["Synapse", "UTOPIA", "IVY-Rocks"], case: "Where does the Codigo programming platform grow next?" },
-    { id: "r-tashkent-2026-07", city: "Tashkent", venue: "", date: "2026-07-20", participants: 100, teams: 0, partners: ["StartUp Garage"], podium: [], case: "" },
-    { id: "r-tour-2025-12", city: "Tashkent, Fergana, Samarkand, Namangan", venue: "Najot Ta'lim centres", date: "2025-12-27", participants: 200, teams: 0, partners: ["Najot Ta'lim"], podium: [], case: "" },
-    { id: "r-tour-2025-11", city: "Karshi, Andijan, Samarkand, Nukus, Tashkent", venue: "", date: "2025-10-28", participants: 200, teams: 0, partners: ["RoboContest", "IT Park Uzbekistan"], podium: [], case: "" },
-    { id: "r-tashkent-2025-09", city: "Tashkent", venue: "Al-Khwarizmi IT school", date: "2025-09-28", participants: 0, teams: 0, partners: [], podium: ["Avocado", "Unique", "Knickerboxers"], case: "" },
+    { id: "r-tashkent-2026-07", city: "Tashkent", venue: "", date: "2026-07-20", participants: 100, teams: 0, partners: ["StartUp Garage"], podium: ["DataNomads", "Silk Stack", "Team Orion"], case: "", placeholder: ["podium"] },
+    { id: "r-tour-2025-12", city: "Tashkent, Fergana, Samarkand, Namangan", venue: "Najot Ta'lim centres", date: "2025-12-27", participants: 200, teams: 0, partners: ["Najot Ta'lim"], podium: ["Orbitals", "Kodchilar", "BlueShift"], case: "", placeholder: ["podium"] },
+    { id: "r-tour-2025-11", city: "Karshi, Andijan, Samarkand, Nukus, Tashkent", venue: "", date: "2025-10-28", participants: 200, teams: 0, partners: ["RoboContest", "IT Park Uzbekistan"], podium: ["RoboMinds", "Sparkline", "CodeCaravan"], case: "", placeholder: ["podium"] },
+    { id: "r-tashkent-2025-09", city: "Tashkent", venue: "Al-Khwarizmi IT school", date: "2025-09-28", participants: 75, teams: 0, partners: [], podium: ["Avocado", "Unique", "Knickerboxers"], case: "", placeholder: ["participants"] },
     { id: "r-jizzakh-2025-09", city: "Jizzakh", venue: "Presidential School", date: "2025-09-28", participants: 30, teams: 6, partners: ["TeamIT"], podium: ["InfiniteX", "Elite Krew", "CodeUp"], case: "" },
-    { id: "r-namangan-2025-09", city: "Namangan", venue: "", date: "2025-09-28", participants: 0, teams: 0, partners: ["Capitalist", "NIS"], podium: ["NIS Chortoq", "BroGroup", "Next Page"], case: "" },
+    { id: "r-namangan-2025-09", city: "Namangan", venue: "", date: "2025-09-28", participants: 54, teams: 0, partners: ["Capitalist", "NIS"], podium: ["NIS Chortoq", "BroGroup", "Next Page"], case: "", placeholder: ["participants"] },
     { id: "r-tashkent-2025-07", city: "Tashkent", venue: "", date: "2025-07-08", participants: 50, teams: 9, partners: ["M-Faktor", "Domino's Pizza", "EduOn"], podium: ["Finance Academia", "Hojilar", "Sodiq"], case: "" },
   ],
 
@@ -203,6 +221,11 @@ export const lumora = {
     "tashkent-pitch-duo": "Two teammates presenting",
   } as Record<string, string>,
 };
+
+/** URL of a core team photo */
+export function teamPhoto(name: string): string {
+  return `${import.meta.env.BASE_URL}photos/team/${name}.webp`;
+}
 
 /** URL of an exported event photo that works under any base path */
 export function photo(name: string, size: 800 | 1600 = 1600): string {

@@ -18,7 +18,7 @@ export function AuthLayout({ children, side = true }: { children: ReactNode; sid
       <div className="flex min-h-[100svh] min-w-0 flex-col">
         <header className="flex h-16 items-center justify-between gap-3 px-4 sm:px-8">
           <a href="#/" aria-label={t("common.nav.home")} className="min-w-0">
-            <Wordmark size={28} />
+            <Wordmark size={28} connect={false} />
           </a>
           <div className="flex shrink-0 items-center gap-3">
             <a href="#/" className="hidden text-[14px] font-medium text-mist hover:text-ink sm:inline">

@@ -46,12 +46,12 @@ export function GlitchText({ text, className = "" }: { text: string; className?:
       }}
     >
       <span className="glitch-main">{text}</span>
-      <span aria-hidden className="glitch-layer glitch-y">{text}</span>
+      <span aria-hidden className="glitch-layer glitch-o">{text}</span>
       <span aria-hidden className="glitch-layer glitch-b">{text}</span>
       <span aria-hidden className="glitch-layer glitch-s1">{text}</span>
       <span aria-hidden className="glitch-layer glitch-s2">{text}</span>
       <span aria-hidden className="glitch-layer glitch-flash-sky">{text}</span>
-      <span aria-hidden className="glitch-layer glitch-flash-yellow">{text}</span>
+      <span aria-hidden className="glitch-layer glitch-flash-orange">{text}</span>
     </span>
   );
 }

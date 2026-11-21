@@ -8,7 +8,7 @@ import { formatLabel, href, proofLabel, shortUrl } from "../jobs/format";
 
 /* Small shared pieces for the dashboard, inbox, notifications, profile, swipe and the public pages. */
 
-/* deterministic monogram tones from the blue side of the palette, never yellow */
+/* deterministic monogram tones from the blue side of the palette, never orange */
 const TONES = [
   { bg: "#3d7bfa", fg: "#ffffff" },
   { bg: "#2f67e0", fg: "#ffffff" },
