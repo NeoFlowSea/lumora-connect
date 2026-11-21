@@ -1,50 +1,50 @@
 import { useEffect, useRef, useState } from "react";
 
-/* Glitch text that keeps time like a clock.
-   - Only transform and opacity animate, on stacked copies of the text. Browsers
-     run those on the compositor, so scrolling (Lenis, the canvas grid, iOS touch
-     scrolling) cannot freeze or drift them.
-   - Every layer's position in the 3.6 s cycle is set from the wall clock with the
-     Web Animations API, so all glitch headings on the page fire on the same beat.
-   - Off screen the layers stop animating; when they come back they are re-synced
-     to the clock, so they rejoin the beat in phase. */
+/* Glitch text that plays while the cursor is over it.
+   - At rest the text is still. Hovering starts the 3.6 s beat from its first frame
+     and repeats it as long as the cursor stays. When the cursor leaves during a burst,
+     the burst finishes first, so the text never freezes half-glitched.
+   - On touch screens a tap plays one burst.
+   - Only transform and opacity animate, on stacked copies of the text, so the
+     compositor runs it and scrolling cannot freeze it. */
 
 export const GLITCH_PERIOD = 3600;
-
-function syncToClock(el: HTMLElement) {
-  // a large whole number of periods keeps currentTime positive and the phase exact
-  const t = (Date.now() % GLITCH_PERIOD) + GLITCH_PERIOD * 1000;
-  for (const a of el.getAnimations({ subtree: true })) {
-    try {
-      a.currentTime = t;
-    } catch {
-      /* older engines: the CSS animation still runs, just not phase-locked */
-    }
-  }
-}
+/** the glitching part of each beat; the rest of the beat is still */
+const BURST = 1300;
 
 export function GlitchText({ text, className = "" }: { text: string; className?: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const [on, setOn] = useState(true);
+  const [playing, setPlaying] = useState(false);
+  const started = useRef(0);
+  const stopTimer = useRef<number | undefined>(undefined);
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || typeof IntersectionObserver === "undefined") return;
-    const io = new IntersectionObserver(([e]) => setOn(e.isIntersecting), { rootMargin: "120px 0px" });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
+  useEffect(() => () => window.clearTimeout(stopTimer.current), []);
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || !on || typeof el.getAnimations !== "function") return;
-    // wait a frame so the browser has created the CSS animations, then lock them to the clock
-    const id = requestAnimationFrame(() => syncToClock(el));
-    return () => cancelAnimationFrame(id);
-  }, [on]);
+  function start() {
+    window.clearTimeout(stopTimer.current);
+    if (playing) return;
+    started.current = performance.now();
+    setPlaying(true);
+  }
+
+  /** stop after the current burst, or right away if the beat is in its still part */
+  function stopSoon() {
+    const inBeat = (performance.now() - started.current) % GLITCH_PERIOD;
+    const wait = inBeat < BURST ? BURST - inBeat : 0;
+    window.clearTimeout(stopTimer.current);
+    stopTimer.current = window.setTimeout(() => setPlaying(false), wait);
+  }
 
   return (
-    <span ref={ref} className={`glitch ${on ? "" : "glitch-off"} ${className}`}>
+    <span
+      className={`glitch ${playing ? "" : "glitch-off"} ${className}`}
+      onPointerEnter={(e) => e.pointerType === "mouse" && start()}
+      onPointerLeave={(e) => e.pointerType === "mouse" && stopSoon()}
+      onPointerDown={(e) => {
+        if (e.pointerType === "mouse") return;
+        start();
+        stopSoon();
+      }}
+    >
       <span className="glitch-main">{text}</span>
       <span aria-hidden className="glitch-layer glitch-y">{text}</span>
       <span aria-hidden className="glitch-layer glitch-b">{text}</span>

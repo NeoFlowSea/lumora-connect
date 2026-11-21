@@ -40,19 +40,8 @@ const AdminApp = lazy(() => import("./admin/AdminApp").then((m) => ({ default: m
 
 const APP_EXTRA = ["inbox", "notifications", "talent", "jobs", "company"];
 
-function introWanted() {
-  if (window.location.hash.startsWith("#/")) return false; // deep links skip the intro
-  try {
-    if (sessionStorage.getItem("lumora-intro")) return false;
-    sessionStorage.setItem("lumora-intro", "1");
-  } catch {
-    /* ignore */
-  }
-  return true;
-}
-
 export default function App() {
-  const [intro, setIntro] = useState(introWanted);
+  const [intro, setIntro] = useState(true); // the launch intro plays on every visit
   const { path, query } = useRoute();
   const user = useSession();
   const [section, sub, extra] = path;

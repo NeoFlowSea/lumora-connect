@@ -47,14 +47,36 @@ export function Fade({ children, className = "" }: { children: ReactNode; classN
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      viewport={{ once: true, margin: "-12% 0px" }}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
     </motion.div>
   );
+}
+
+/** a list item that rises into view a beat after its neighbour */
+export function Rise({ i, children, className = "" }: { i: number; children: ReactNode; className?: string }) {
+  return (
+    <motion.li
+      className={className}
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-8% 0px" }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: (i % 3) * 0.08 }}
+    >
+      {children}
+    </motion.li>
+  );
+}
+
+/** spotlight that follows the cursor on cards with the "spot" class */
+export function spotMove(e: MouseEvent<HTMLElement>) {
+  const r = e.currentTarget.getBoundingClientRect();
+  e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`);
+  e.currentTarget.style.setProperty("--my", `${e.clientY - r.top}px`);
 }
 
 export function SectionHead({ title, lead, aside }: { title: ReactNode; lead?: ReactNode; aside?: ReactNode }) {

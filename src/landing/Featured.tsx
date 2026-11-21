@@ -3,7 +3,7 @@ import { locale, t as tr, useLang } from "../i18n";
 import { listNow, statsNow, type OpportunityWithCompany } from "../api";
 import { useDbTick } from "../api/hooks";
 import { ago } from "../components/form";
-import { Fade, Monogram, SampleTag, Section, SectionHead } from "./parts";
+import { Fade, Monogram, Rise, SampleTag, Section, SectionHead, spotMove } from "./parts";
 
 /* Six open postings, Wellfound style: role first, company, place, pay up front. */
 export function Featured() {
@@ -25,10 +25,10 @@ export function Featured() {
           }
         />
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {list.slice(0, 6).map((o) => (
-            <li key={o.id}>
+          {list.slice(0, 6).map((o, i) => (
+            <Rise key={o.id} i={i}>
               <JobCard o={o} />
-            </li>
+            </Rise>
           ))}
         </ul>
       </Fade>
@@ -48,7 +48,7 @@ function JobCard({ o }: { o: OpportunityWithCompany }) {
   const { t } = useLang();
   const place = o.format === "remote" ? t("common.format.remote") : o.city;
   return (
-    <a href={`#/jobs/${o.id}`} className="group flex h-full flex-col rounded-xl border border-line bg-surface p-5 transition-colors hover:border-sky">
+    <a href={`#/jobs/${o.id}`} onMouseMove={spotMove} className="spot group flex h-full flex-col rounded-xl border border-line bg-surface p-5 transition-colors hover:border-sky">
       <div className="flex items-center gap-3">
         <Monogram name={o.company.name} hue={o.company.hue} logo={o.company.logo} />
         <div className="min-w-0 flex-1">

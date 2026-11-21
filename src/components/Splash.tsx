@@ -29,7 +29,7 @@ export function Splash({ onDone }: { onDone: () => void }) {
   done.current = onDone;
   useEffect(() => {
     const start = Date.now();
-    const t = reduced ? [300, 400, 800, 1100] : [900, 1150, 1950, 2450];
+    const t = reduced ? [500, 650, 1200, 1600] : [900, 1150, 1950, 2450];
     let finished = false;
     const finish = () => {
       if (finished) return;

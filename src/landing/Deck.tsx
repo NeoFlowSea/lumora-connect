@@ -14,7 +14,7 @@ import { Monogram } from "./parts";
 
 type Item = { kind: "company"; c: CompanyProfile; role: string } | { kind: "talent"; p: TalentProfile };
 
-const STEP = 4200;
+const STEP = 2800;
 
 export function Deck() {
   const { t } = useLang();
@@ -48,7 +48,8 @@ export function Deck() {
   const [paused, setPaused] = useState(false);
   const [hold, setHold] = useState(false);
   const [visible, setVisible] = useState(true);
-  const [reduced] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  // plays like the earlier landing even when the system asks for less motion; the pause button stops it
+  const [reduced] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const busy = useRef(false);
 

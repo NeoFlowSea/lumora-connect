@@ -1,7 +1,7 @@
 import { Trophy } from "lucide-react";
 import { locale, useLang } from "../i18n";
 import { lumora, photo } from "../content/lumora";
-import { Fade, Section, SectionHead } from "./parts";
+import { Fade, Rise, Section, SectionHead } from "./parts";
 
 /* Real winning projects from Lumora rounds, with photos from the event. Devpost style. */
 export function Projects() {
@@ -12,8 +12,8 @@ export function Projects() {
       <Fade>
         <SectionHead title={t("landing.projects.title")} lead={t("landing.projects.lead")} />
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {lumora.projects.map((p) => (
-            <li key={p.project} className="flex flex-col overflow-hidden rounded-xl border border-line bg-surface">
+          {lumora.projects.map((p, i) => (
+            <Rise key={p.project} i={i} className="group flex flex-col overflow-hidden rounded-xl border border-line bg-surface transition-colors hover:border-sky">
               <img
                 src={photo(p.photo, 800)}
                 alt={`${p.team}, ${p.event}`}
@@ -40,7 +40,7 @@ export function Projects() {
                   </div>
                 </div>
               </div>
-            </li>
+            </Rise>
           ))}
         </ul>
       </Fade>
