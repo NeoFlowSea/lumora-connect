@@ -82,7 +82,7 @@ export function spotMove(e: MouseEvent<HTMLElement>) {
 export function SectionHead({ title, lead, aside }: { title: ReactNode; lead?: ReactNode; aside?: ReactNode }) {
   return (
     <div className="mb-8 flex flex-wrap items-end justify-between gap-x-8 gap-y-4 md:mb-10">
-      <div className="max-w-[640px]">
+      <div className="max-w-[880px]">
         <h2 className="text-[clamp(26px,3.2vw,40px)] tracking-[-0.025em]">{title}</h2>
         {lead && <p className="mt-3 text-[16px] text-mist">{lead}</p>}
       </div>

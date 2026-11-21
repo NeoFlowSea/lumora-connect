@@ -7,6 +7,7 @@ import { useApi, useDbTick } from "../api/hooks";
 import type { CompanyProfile, TalentProfile } from "../api/types";
 import { initials } from "../components/ui";
 import { Monogram } from "./parts";
+import { Stable } from "../i18n/Stable";
 
 /* The product, previewed: a stack of sample companies and sample students that
    swipes itself every few seconds. It stops on hover, on focus, when the visitor
@@ -172,7 +173,7 @@ function Stamp({ show, className, children }: { show: boolean; className: string
 }
 
 function CompanyCard({ c, role }: { c: CompanyProfile; role: string }) {
-  const { t } = useLang();
+  useLang();
   return (
     <div className="flex h-full flex-col">
       <div className="px-5 pb-4 pt-14" style={{ background: c.hue || "#3d7bfa" }}>
@@ -180,7 +181,7 @@ function CompanyCard({ c, role }: { c: CompanyProfile; role: string }) {
           <span className="rounded-lg bg-white p-0.5">
             <Monogram name={c.name} hue={c.hue} logo={c.logo} size={48} />
           </span>
-          <span className="rounded-md bg-paper/40 px-1.5 py-0.5 text-[12px] font-medium text-white">{t("common.status.demo")}</span>
+          <span className="rounded-md bg-paper/40 px-1.5 py-0.5 text-[12px] font-medium text-white"><Stable k="common.status.demo" /></span>
         </div>
         <div className="mt-3 text-[21px] font-semibold leading-tight text-white">{c.name}</div>
         <div className="mt-1 flex items-center gap-1 text-[13px] text-white/85">
@@ -189,7 +190,7 @@ function CompanyCard({ c, role }: { c: CompanyProfile; role: string }) {
       </div>
       <div className="flex flex-1 flex-col p-5">
         <p className="line-clamp-2 text-[15px] text-ink">{c.tagline}</p>
-        <div className="mt-4 text-[12px] text-mist">{t("landing.deck.hiring")}</div>
+        <div className="mt-4 text-[12px] text-mist"><Stable k="landing.deck.hiring" /></div>
         <div className="mt-0.5 line-clamp-1 text-[15px] font-semibold">{role}</div>
         <div className="mt-auto flex flex-wrap gap-1.5 pt-4">
           {c.tags.slice(0, 3).map((x) => (
@@ -216,7 +217,7 @@ function TalentCard({ p }: { p: TalentProfile }) {
               {initials(p.name)}
             </span>
           )}
-          <span className="rounded-md bg-paper/40 px-1.5 py-0.5 text-[12px] font-medium text-ink">{t("common.status.demo")}</span>
+          <span className="rounded-md bg-paper/40 px-1.5 py-0.5 text-[12px] font-medium text-ink"><Stable k="common.status.demo" /></span>
         </div>
         <div className="mt-3 flex items-center gap-1.5 text-[21px] font-semibold leading-tight">
           {p.name}
@@ -227,7 +228,7 @@ function TalentCard({ p }: { p: TalentProfile }) {
         </div>
       </div>
       <div className="flex flex-1 flex-col p-5">
-        <div className="text-[12px] text-mist">{t("landing.deck.built")}</div>
+        <div className="text-[12px] text-mist"><Stable k="landing.deck.built" /></div>
         <div className="mt-0.5 line-clamp-1 text-[15px] font-semibold">{p.project}</div>
         <p className="mt-2 line-clamp-2 text-[14px] text-mist">{p.headline}</p>
         <div className="mt-auto flex flex-wrap gap-1.5 pt-4">

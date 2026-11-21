@@ -10,6 +10,14 @@ import "@fontsource/rubik-glitch/400.css";
 import "@fontsource/press-start-2p/400.css";
 import "./index.css";
 
+// Load every script of the fonts up front. Otherwise the Cyrillic files arrive only when someone
+// switches to Russian, and for a moment the text shows in a fallback font with different widths.
+if (document.fonts?.load) {
+  const sample = "Aa Жж Oʻʼ 0";
+  for (const w of [400, 500, 600, 700]) document.fonts.load(`${w} 16px Onest`, sample).catch(() => {});
+  document.fonts.load(`400 16px "Rubik Glitch"`, sample).catch(() => {});
+}
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <App />

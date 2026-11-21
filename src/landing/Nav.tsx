@@ -7,6 +7,7 @@ import { LangSwitch } from "../components/LangSwitch";
 import { btn } from "../components/ui";
 import { go } from "../lib/router";
 import { onAnchor, wrap } from "./parts";
+import { Stable } from "../i18n/Stable";
 
 /* Site header for the landing and the public pages.
    Desktop: links, language, sign in and one yellow button.
@@ -72,7 +73,7 @@ export function Nav({ onOpenApp }: { onOpenApp: () => void }) {
           <LangSwitch className="hidden lg:inline-flex" />
           {!signedIn && (
             <button onClick={onOpenApp} className="hidden min-h-11 rounded-lg px-3 text-[15px] font-semibold text-ink transition-colors hover:bg-tint lg:block">
-              {t("common.nav.signIn")}
+              <Stable k="common.nav.signIn" />
             </button>
           )}
           <button onClick={main.act} className={`${btn.primary} !hidden !min-h-11 !px-4 !text-[14px] whitespace-nowrap sm:!inline-flex`}>
@@ -111,7 +112,7 @@ export function Nav({ onOpenApp }: { onOpenApp: () => void }) {
                   }}
                   className={btn.ghost}
                 >
-                  {t("common.nav.signIn")}
+                  <Stable k="common.nav.signIn" />
                 </button>
               )}
               <button

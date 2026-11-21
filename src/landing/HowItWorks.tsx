@@ -1,5 +1,6 @@
 import { useLang } from "../i18n";
 import { Fade, Section, SectionHead, spotMove } from "./parts";
+import { Stable } from "../i18n/Stable";
 
 /* Three steps for each side, next to each other so both sides see the whole deal. */
 export function HowItWorks() {
@@ -11,7 +12,7 @@ export function HowItWorks() {
   return (
     <Section id="how" className="border-t border-line">
       <Fade>
-        <SectionHead title={t("landing.how.title")} lead={t("landing.how.lead")} />
+        <SectionHead title={<Stable k="landing.how.title" />} lead={<Stable k="landing.how.lead" />} />
         <div className="grid gap-4 md:grid-cols-2">
           {sides.map((s) => (
             <div key={s.id} id={s.id} onMouseMove={spotMove} className="spot scroll-mt-24 rounded-xl border border-line bg-surface p-6 transition-colors hover:border-sky md:p-8">
@@ -23,8 +24,8 @@ export function HowItWorks() {
                       {n}
                     </span>
                     <div>
-                      <div className="text-[16px] font-semibold">{t(`landing.how.${s.key}${n}`)}</div>
-                      <p className="mt-1 text-[15px] leading-relaxed text-mist">{t(`landing.how.${s.key}${n}d`)}</p>
+                      <div className="text-[16px] font-semibold"><Stable k={`landing.how.${s.key}${n}`} /></div>
+                      <p className="mt-1 text-[15px] leading-relaxed text-mist"><Stable k={`landing.how.${s.key}${n}d`} /></p>
                     </div>
                   </li>
                 ))}

@@ -61,8 +61,8 @@ function SidePanel() {
         <figcaption className="absolute bottom-0 left-0 right-0 bg-[#0b1d46]/85 px-8 py-3 text-[12px] text-mist">{t("auth.side.caption")}</figcaption>
       </figure>
       <div className="px-8 py-8 xl:px-10">
-        <p className="max-w-[34ch] text-[20px] font-semibold leading-snug text-ink">{lumora.slogans.postcode[lang]}</p>
-        <p className="mt-2 max-w-[46ch] text-[14px] text-mist">{t("auth.side.text")}</p>
+        <p className="max-w-[44ch] text-[20px] font-semibold leading-snug text-ink">{lumora.slogans.postcode[lang]}</p>
+        <p className="mt-2 max-w-[60ch] text-[14px] text-mist">{t("auth.side.text")}</p>
         <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-line pt-6">
           {facts.map((f) => (
             <div key={f.k}>

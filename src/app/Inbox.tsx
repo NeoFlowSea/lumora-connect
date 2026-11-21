@@ -196,7 +196,7 @@ function Conversation({ match, meId }: { match: MatchRow; meId: string }) {
                 <Heart size={20} />
               </div>
               <div className="font-semibold">{t("app.inbox.matchedAgo", { when: ago(match.at) })}</div>
-              <p className="mx-auto mt-1 max-w-[36ch] text-[13px] text-mist">{t(other.kind === "company" ? "app.inbox.hintToCompany" : "app.inbox.hintToTalent")}</p>
+              <p className="mx-auto mt-1 max-w-[56ch] text-[13px] text-mist">{t(other.kind === "company" ? "app.inbox.hintToCompany" : "app.inbox.hintToTalent")}</p>
             </div>
           </div>
         ) : (

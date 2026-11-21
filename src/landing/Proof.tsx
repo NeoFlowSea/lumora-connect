@@ -3,6 +3,7 @@ import { animate, useInView } from "framer-motion";
 import { locale, useLang } from "../i18n";
 import { lumora } from "../content/lumora";
 import { wrap } from "./parts";
+import { Stable } from "../i18n/Stable";
 
 /* Counts up from zero when the number scrolls into view. Until then it shows the
    real number, so a screenshot or a reader that never scrolls still sees the right value. */
@@ -27,10 +28,10 @@ function CountUp({ to, suffix = "" }: { to: number; suffix?: string }) {
 export function Proof() {
   const { t } = useLang();
   const stats = [
-    { v: lumora.numbers.hackathons, s: "+", l: t("landing.proof.hackathons") },
-    { v: lumora.numbers.students, s: "+", l: t("landing.proof.students") },
-    { v: lumora.numbers.regions, s: "", l: t("landing.proof.regions") },
-    { v: lumora.numbers.partners, s: "+", l: t("landing.proof.partners") },
+    { v: lumora.numbers.hackathons, s: "+", l: "landing.proof.hackathons" },
+    { v: lumora.numbers.students, s: "+", l: "landing.proof.students" },
+    { v: lumora.numbers.regions, s: "", l: "landing.proof.regions" },
+    { v: lumora.numbers.partners, s: "+", l: "landing.proof.partners" },
   ];
   const more = Math.max(0, lumora.numbers.partners - lumora.partners.length);
   const names = [...lumora.partners, ...(more > 0 ? [t("landing.proof.more", { n: more })] : [])];
@@ -43,13 +44,15 @@ export function Proof() {
             <div className="text-[clamp(34px,4vw,48px)] font-semibold leading-none tracking-[-0.03em] text-accent">
               <CountUp to={s.v} suffix={s.s} />
             </div>
-            <div className="mt-2 max-w-[22ch] text-[14px] text-mist">{s.l}</div>
+            <div className="mt-2 text-[14px] text-mist">
+              <Stable k={s.l} />
+            </div>
           </div>
         ))}
       </div>
       <div className="border-t border-line">
         <div className={`${wrap} pt-8 md:pt-10`}>
-          <h2 className="text-[15px] font-medium tracking-normal text-mist">{t("landing.proof.partnersTitle")}</h2>
+          <h2 className="text-[15px] font-medium tracking-normal text-mist"><Stable k="landing.proof.partnersTitle" /></h2>
         </div>
           <div className="marquee relative mt-4 overflow-hidden pb-8 md:pb-10 [mask-image:linear-gradient(90deg,transparent,#000_8%,#000_92%,transparent)]">
             <ul className="sr-only">

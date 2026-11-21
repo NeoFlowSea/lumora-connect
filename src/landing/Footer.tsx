@@ -2,6 +2,7 @@ import { useLang } from "../i18n";
 import { lumora } from "../content/lumora";
 import { Wordmark } from "../components/Logo";
 import { isExternal, onAnchor, wrap } from "./parts";
+import { Stable } from "../i18n/Stable";
 
 /* Every link goes to a real route, a landing section or a real Lumora channel. */
 export function Footer() {
@@ -42,7 +43,7 @@ export function Footer() {
           <a href="#/" onClick={(e) => onAnchor(e, "#top")} aria-label={t("common.brand")} className="inline-block">
             <Wordmark />
           </a>
-          <p className="mt-4 max-w-[34ch] text-[14px] text-mist">{t("common.footer.tagline")}</p>
+          <p className="mt-4 max-w-[48ch] text-[14px] text-mist"><Stable k="common.footer.tagline" /></p>
         </div>
         {columns.map((c) => (
           <nav key={c.h} aria-label={c.h}>
@@ -69,13 +70,13 @@ export function Footer() {
           <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
             <span>© 2026 Lumora</span>
             <a href="#/privacy" className="inline-flex min-h-11 items-center hover:text-ink md:min-h-0">
-              {t("common.footer.privacy")}
+              <Stable k="common.footer.privacy" />
             </a>
             <a href="#/terms" className="inline-flex min-h-11 items-center hover:text-ink md:min-h-0">
-              {t("common.footer.terms")}
+              <Stable k="common.footer.terms" />
             </a>
           </div>
-          <span>{t("common.footer.preview")}</span>
+          <span><Stable k="common.footer.preview" /></span>
         </div>
       </div>
     </footer>

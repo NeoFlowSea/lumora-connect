@@ -4,6 +4,7 @@ import { listNow, statsNow, type OpportunityWithCompany } from "../api";
 import { useDbTick } from "../api/hooks";
 import { ago } from "../components/form";
 import { Fade, Monogram, Rise, SampleTag, Section, SectionHead, spotMove } from "./parts";
+import { Stable } from "../i18n/Stable";
 
 /* Six open postings, Wellfound style: role first, company, place, pay up front. */
 export function Featured() {
@@ -16,8 +17,8 @@ export function Featured() {
     <Section id="jobs">
       <Fade>
         <SectionHead
-          title={t("landing.jobs.title")}
-          lead={t("landing.jobs.lead")}
+          title={<Stable k="landing.jobs.title" />}
+          lead={<Stable k="landing.jobs.lead" />}
           aside={
             <a href="#/jobs" className="inline-flex min-h-11 items-center text-[15px] font-semibold text-sky underline-offset-4 hover:underline">
               {t("landing.jobs.all", { n: total })}
