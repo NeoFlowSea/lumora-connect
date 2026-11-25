@@ -7,8 +7,9 @@ import { lumora, photo } from "../content/lumora";
    on every device; the arrows on the sides and the dots switch them by hand (and restart the timer).
    On desktop the photos sit blurred and come into focus while the cursor is over them, or while
    a keyboard user is on the arrows (styles in index.css, .peek). The owner asked for both.
-   The photo sits in a liquid glass frame, and the arrows and dots are small glass controls
-   (.glass in index.css); the frame's sheen follows the cursor. */
+   Liquid glass: the frame around the photo is a glass pane laid over a larger copy of the same
+   photo, so the photo shows through it blurred, like iOS. The arrows and dots are small glass
+   controls over the photo itself (.glass in index.css); the sheen follows the cursor. */
 
 const PHOTOS = ["school21-group", "tashkent-final", "school21-pitch", "regional-winners", "bukhara-build", "fergana-pitch"];
 const EVERY = 6000;
@@ -38,8 +39,24 @@ export function HeroPhotos() {
   const arrow = "glass glass-dark absolute top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full text-white transition-transform hover:scale-105";
 
   return (
-    <div className="peek glass rounded-[28px] p-2" onMouseMove={sheen}>
-      <div role="group" aria-roledescription="carousel" aria-label={t("home.hero.photos")} className="relative aspect-[4/3] w-full overflow-hidden rounded-[20px] bg-cloud md:aspect-[4/5] lg:aspect-square">
+    <div className="peek relative rounded-[32px] p-3.5 md:p-4" onMouseMove={sheen}>
+      {/* What the glass sits on: the same photo, larger, filling the whole frame. */}
+      <div aria-hidden className="absolute inset-0 overflow-hidden rounded-[32px] bg-cloud">
+        {PHOTOS.map((p, k) => (
+          <img
+            key={p}
+            src={photo(p, 800)}
+            alt=""
+            loading={k === 0 ? "eager" : "lazy"}
+            decoding="async"
+            className={`absolute inset-0 h-full w-full scale-110 object-cover transition-opacity duration-700 ${k === i ? "opacity-100" : "opacity-0"}`}
+          />
+        ))}
+      </div>
+      {/* The glass pane over it: everything behind shows through blurred (backdrop-filter in .glass). */}
+      <div aria-hidden className="glass absolute inset-0 rounded-[32px]" />
+
+      <div role="group" aria-roledescription="carousel" aria-label={t("home.hero.photos")} className="relative aspect-[4/3] w-full overflow-hidden rounded-[22px] bg-cloud shadow-[0_10px_30px_-8px_rgba(3,10,30,0.6)] md:aspect-[4/5] lg:aspect-square">
         {PHOTOS.map((p, k) => (
           <img
             key={p}
