@@ -68,12 +68,12 @@ function NextRound() {
         <div className="mb-2 text-[13px] text-mist"><Stable k="landing.next.startsIn" /></div>
         <Countdown to={r.start} />
       </div>
-      {/* green, across the whole card */}
+      {/* dark green, across the whole card */}
       <a
         href={lumora.links.telegram}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-7 flex min-h-12 w-full items-center justify-center rounded-lg bg-accent px-8 text-[16px] font-semibold text-paper transition-colors hover:bg-accent-deep"
+        className="mt-7 flex min-h-12 w-full items-center justify-center rounded-lg bg-go px-8 text-[16px] font-semibold text-white transition-colors hover:bg-go-deep"
       >
         <Stable k="home.hero.register" />
       </a>

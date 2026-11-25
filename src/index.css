@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* 60 / 30 / 10: navy dominant, blue secondary, green accent */
+  /* 60 / 30 / 10: navy dominant, blue secondary, orange accent */
   --color-paper: #0f2557; /* 60: page background */
   --color-cloud: #0c1f4b; /* alternate section background */
   --color-surface: #16326e; /* cards and panels */
@@ -11,8 +11,10 @@
   --color-sky-soft: #3d7bfa;
   --color-tint: rgba(61, 123, 250, 0.16);
   --color-tint-2: rgba(61, 123, 250, 0.3);
-  --color-accent: #22c55e; /* 10: calls to action and highlights */
-  --color-accent-deep: #1db954;
+  --color-accent: #ff8a3d; /* 10: calls to action and highlights */
+  --color-accent-deep: #f2752b;
+  --color-go: #15803d; /* dark green: only the hackathon Register buttons, with white text (5:1) */
+  --color-go-deep: #166534;
   --color-ink: #f4f7ff; /* main text */
   --color-mist: #a9b7d8; /* secondary text */
   --color-line: rgba(255, 255, 255, 0.1);
@@ -114,7 +116,7 @@ textarea {
 /* Glitch for the Rubik Glitch headings (see src/components/GlitchText.tsx).
    One 3.6 s beat, locked to the wall clock: about 1.3 s of glitch, then still to read.
    Only transform and opacity animate, so the compositor runs it and scrolling
-   cannot pause it. Colors: palette green, blue and light blue. */
+   cannot pause it. Colors: palette orange, blue and light blue. */
 .glitch {
   position: relative;
   display: inline-block;
@@ -138,12 +140,12 @@ textarea {
   opacity: 0;
   will-change: transform, opacity;
 }
-.glitch-o { color: #22c55e; clip-path: inset(0 0 50% 0); animation-name: g-o; }
+.glitch-o { color: #ff8a3d; clip-path: inset(0 0 50% 0); animation-name: g-o; }
 .glitch-b { color: #3d7bfa; clip-path: inset(46% 0 0 0); animation-name: g-b; }
 .glitch-s1 { color: #8db0ff; clip-path: inset(28% 0 54% 0); animation-name: g-s1; }
 .glitch-s2 { color: #f4f7ff; clip-path: inset(64% 0 18% 0); animation-name: g-s2; }
 .glitch-flash-sky { color: #8db0ff; animation-name: g-flash-sky; }
-.glitch-flash-orange { color: #22c55e; animation-name: g-flash-orange; }
+.glitch-flash-orange { color: #ff8a3d; animation-name: g-flash-orange; }
 .glitch-off .glitch-main,
 .glitch-off .glitch-layer {
   animation: none;

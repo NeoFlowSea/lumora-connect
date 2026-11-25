@@ -11,8 +11,8 @@ import { Stable } from "../i18n/Stable";
 
 /* Site header for the Lumora home, Lumora Connect and the public pages.
    Links: Lumora (home), About, Hackathons, Connect, Jobs, Contacts; the page you are on is marked.
-   Desktop: links, language, sign in and one green button.
-   Phones: logo, the green button and a menu with the same links as 48px rows. */
+   Desktop: links, language, sign in and one orange button.
+   Phones: logo, the orange button and a menu with the same links as 48px rows. */
 export function Nav({ onOpenApp }: { onOpenApp: () => void }) {
   const { t } = useLang();
   const user = useSession();

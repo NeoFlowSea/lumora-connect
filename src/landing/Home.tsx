@@ -47,7 +47,7 @@ function HomeHero() {
           <p className="mt-5 max-w-[68ch] text-[18px] font-medium leading-relaxed text-ink/85 md:text-[20px]"><Stable k="home.hero.steps" /></p>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <a href={join} className="inline-flex min-h-14 items-center justify-center rounded-lg bg-accent px-8 text-[17px] font-semibold text-paper transition-colors hover:bg-accent-deep">
+            <a href={join} className="inline-flex min-h-14 items-center justify-center rounded-lg bg-go px-8 text-[17px] font-semibold text-white transition-colors hover:bg-go-deep">
               <Stable k="home.hero.register" />
             </a>
             <a href="#/connect" className="inline-flex min-h-14 items-center justify-center rounded-lg border border-line px-8 text-[17px] font-semibold transition-colors hover:border-sky hover:bg-tint">
