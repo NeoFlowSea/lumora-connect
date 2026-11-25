@@ -29,7 +29,7 @@ import { go, legacyAnchor, useRoute } from "./lib/router";
 const AdminApp = lazy(() => import("./admin/AdminApp").then((m) => ({ default: m.AdminApp })));
 
 /* Routes
-   #/                      Lumora home (about Lumora, rounds, contacts)
+   #/                      Lumora home (scroll intro, about Lumora, rounds, contacts)
    #/about, #/hackathons, #/contacts   Lumora pages
    #/connect               Lumora Connect landing
    ?to=<id> on either      open at that section; old anchors like "#talent" go to the Connect page
@@ -43,10 +43,17 @@ const AdminApp = lazy(() => import("./admin/AdminApp").then((m) => ({ default: m
    #/admin/...             admin (admins only)
    anything else           404 */
 
+/** "", "#", "#/", "#/?to=x" and plain anchors like "#faq" open the home page */
+function isHome(hash: string) {
+  if (!hash.startsWith("#/")) return !legacyAnchor(hash);
+  return hash.slice(2).split("?")[0] === "";
+}
+
 const APP_EXTRA = ["inbox", "notifications", "talent", "jobs", "company"];
 
 export default function App() {
-  const [intro, setIntro] = useState(true); // the launch intro plays on every visit
+  // the launch splash plays on every visit, except when the visit opens on the home page: its scroll intro is enough
+  const [intro, setIntro] = useState(() => !isHome(window.location.hash));
   const { path, query } = useRoute();
   const user = useSession();
   const [section, sub, extra] = path;
