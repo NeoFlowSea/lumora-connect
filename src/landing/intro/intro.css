@@ -1,0 +1,30 @@
+/* Palette of the intro home (#/), from the team's brief of 25 Nov 2026:
+   blue #0A3D91, deep #06265F, night #071A3F, cream #FBF8F1, spark #FFC83D (buttons and dots only),
+   signal #38D0F0. The site's tokens are redefined on the page wrapper, so the shared header,
+   footer and sections pick the brief's colours without changing the rest of the site. */
+.intro-theme {
+  --color-paper: #071a3f; /* night: page */
+  --color-cloud: #06265f; /* deep: alternate sections */
+  --color-surface: #06265f;
+  --color-blue: #0a3d91; /* blue: one filled block per screen */
+  --color-blue-deep: #06265f;
+  --color-sky: #38d0f0; /* signal: small labels */
+  --color-sky-soft: #0a3d91;
+  --color-tint: rgba(56, 208, 240, 0.12);
+  --color-tint-2: rgba(56, 208, 240, 0.24);
+  --color-accent: #ffc83d; /* spark */
+  --color-accent-deep: #f2b62a;
+  --color-ink: #fbf8f1; /* cream */
+  --color-mist: #b6c1d8;
+  --color-line: rgba(251, 248, 241, 0.13);
+  min-height: 100svh;
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-stage *,
+  .intro-stage {
+    transition: none !important;
+  }
+}
