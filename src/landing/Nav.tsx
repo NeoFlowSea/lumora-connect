@@ -32,18 +32,19 @@ export function Nav({ onOpenApp }: { onOpenApp: () => void }) {
 
   const page = useRoute().path[0] ?? "";
   const links = [
-    { label: t("home.nav.lumora"), href: "#/", icon: House, on: page === "" },
-    { label: t("home.nav.about"), href: "#/about", icon: Info, on: page === "about" },
-    { label: t("home.nav.hackathons"), href: "#/hackathons", icon: Trophy, on: page === "hackathons" },
-    { label: t("home.nav.connect"), href: "#/connect", icon: Handshake, on: page === "connect" || page === "company" },
-    { label: t("common.nav.jobs"), href: "#/jobs", icon: Briefcase, on: page === "jobs" },
-    { label: t("home.nav.contact"), href: "#/contacts", icon: Mail, on: page === "contacts" },
+    // k: dictionary key; labels render with Stable, so switching language does not move the links
+    { k: "home.nav.lumora", href: "#/", icon: House, on: page === "" },
+    { k: "home.nav.about", href: "#/about", icon: Info, on: page === "about" },
+    { k: "home.nav.hackathons", href: "#/hackathons", icon: Trophy, on: page === "hackathons" },
+    { k: "home.nav.connect", href: "#/connect", icon: Handshake, on: page === "connect" || page === "company" },
+    { k: "common.nav.jobs", href: "#/jobs", icon: Briefcase, on: page === "jobs" },
+    { k: "home.nav.contact", href: "#/contacts", icon: Mail, on: page === "contacts" },
   ];
 
   const signedIn = !!user;
   const main = signedIn
-    ? { label: t("common.nav.openApp"), act: onOpenApp }
-    : { label: t("common.nav.signUp"), act: () => go("#/register") };
+    ? { k: "common.nav.openApp", act: onOpenApp }
+    : { k: "common.nav.signUp", act: () => go("#/register") };
 
   const follow = (e: MouseEvent<HTMLAnchorElement>, href: string) => {
     setOpen(false);
@@ -62,9 +63,9 @@ export function Nav({ onOpenApp }: { onOpenApp: () => void }) {
         <nav aria-label={t("landing.nav.label")} className="hidden items-center gap-2 xl:flex">
           {links.map((l) => (
             // the page you are on lights up in orange (nav-on in index.css)
-            <a key={l.href} href={l.href} onClick={(e) => follow(e, l.href)} aria-current={l.on ? "page" : undefined} className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-[15px] transition-colors ${l.on ? "nav-on font-semibold text-accent" : "text-mist hover:bg-tint hover:text-ink"}`}>
+            <a key={l.href} href={l.href} onClick={(e) => follow(e, l.href)} aria-current={l.on ? "page" : undefined} className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-[15px] transition-colors ${l.on ? "nav-on font-semibold text-accent" : "text-mist hover:bg-tint hover:text-ink"}`}>
               <l.icon size={17} aria-hidden className="shrink-0" />
-              {l.label}
+              <Stable k={l.k} />
             </a>
           ))}
         </nav>
@@ -77,7 +78,7 @@ export function Nav({ onOpenApp }: { onOpenApp: () => void }) {
             </button>
           )}
           <button onClick={main.act} className={`${btn.primary} !hidden !min-h-11 !px-4 !text-[14px] whitespace-nowrap sm:!inline-flex`}>
-            {main.label}
+            <Stable k={main.k} />
           </button>
           <button
             type="button"
@@ -98,7 +99,7 @@ export function Nav({ onOpenApp }: { onOpenApp: () => void }) {
             {links.map((l) => (
               <a key={l.href} href={l.href} onClick={(e) => follow(e, l.href)} aria-current={l.on ? "page" : undefined} className={`flex min-h-12 items-center gap-3 border-b border-line text-[16px] last:border-b-0 ${l.on ? "nav-on font-semibold text-accent" : "text-ink/85"}`}>
                 <l.icon size={18} aria-hidden className="shrink-0" />
-                {l.label}
+                <Stable k={l.k} />
               </a>
             ))}
           </nav>
@@ -123,7 +124,7 @@ export function Nav({ onOpenApp }: { onOpenApp: () => void }) {
                 }}
                 className={`${btn.primary} sm:hidden`}
               >
-                {main.label}
+                <Stable k={main.k} />
               </button>
             </div>
           </div>

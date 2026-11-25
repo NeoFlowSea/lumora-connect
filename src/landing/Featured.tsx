@@ -8,7 +8,7 @@ import { Stable } from "../i18n/Stable";
 
 /* Six open postings, Wellfound style: role first, company, place, pay up front. */
 export function Featured() {
-  const { t } = useLang();
+  useLang();
   useDbTick();
   const list = listNow().filter((o) => !o.closed && o.company);
   const total = statsNow().openOpportunities;
@@ -21,7 +21,7 @@ export function Featured() {
           lead={<Stable k="landing.jobs.lead" />}
           aside={
             <a href="#/jobs" className="inline-flex min-h-11 items-center text-[15px] font-semibold text-sky underline-offset-4 hover:underline">
-              {t("landing.jobs.all", { n: total })}
+              <Stable k="landing.jobs.all" vars={{ n: total }} />
             </a>
           }
         />

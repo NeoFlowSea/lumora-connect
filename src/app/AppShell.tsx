@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { motion } from "framer-motion";
+import { Stable } from "../i18n/Stable";
 import { Briefcase, Layers, LayoutDashboard, LogOut, MessageCircle, Trophy, User as UserIcon } from "lucide-react";
 import { Wordmark } from "../components/Logo";
 import { NotificationBell } from "./Notifications";
@@ -10,24 +11,24 @@ import { go } from "../lib/router";
 import { t, useLang } from "../i18n";
 import { LangSwitch } from "../components/LangSwitch";
 
-export type TabDef = { key: string; label: string; icon: typeof Layers };
+export type TabDef = { key: string; k: string; label: string; icon: typeof Layers };
 
 /* labels are short on purpose: four of them share a 375px tab bar */
 
 export function tabsFor(user: User): TabDef[] {
   if (user.kind === "company") {
     return [
-      { key: "swipe", label: t("common.nav.swipe"), icon: Layers },
-      { key: "dashboard", label: t("common.nav.dashboard"), icon: LayoutDashboard },
-      { key: "hackathons", label: t("common.nav.events"), icon: Trophy },
-      { key: "profile", label: t("common.nav.profile"), icon: UserIcon },
+      { key: "swipe", k: "common.nav.swipe", label: t("common.nav.swipe"), icon: Layers },
+      { key: "dashboard", k: "common.nav.dashboard", label: t("common.nav.dashboard"), icon: LayoutDashboard },
+      { key: "hackathons", k: "common.nav.events", label: t("common.nav.events"), icon: Trophy },
+      { key: "profile", k: "common.nav.profile", label: t("common.nav.profile"), icon: UserIcon },
     ];
   }
   return [
-    { key: "swipe", label: t("common.nav.swipe"), icon: Layers },
-    { key: "opportunities", label: t("common.nav.jobs"), icon: Briefcase },
-    { key: "hackathons", label: t("common.nav.events"), icon: Trophy },
-    { key: "profile", label: t("common.nav.profile"), icon: UserIcon },
+    { key: "swipe", k: "common.nav.swipe", label: t("common.nav.swipe"), icon: Layers },
+    { key: "opportunities", k: "common.nav.jobs", label: t("common.nav.jobs"), icon: Briefcase },
+    { key: "hackathons", k: "common.nav.events", label: t("common.nav.events"), icon: Trophy },
+    { key: "profile", k: "common.nav.profile", label: t("common.nav.profile"), icon: UserIcon },
   ];
 }
 
@@ -65,7 +66,7 @@ export function AppShell({ tab, children }: { tab: string; children: ReactNode }
                 >
                   {on && <motion.span layoutId="tab-pill" className="absolute inset-0 rounded-lg bg-tint" transition={{ type: "spring", stiffness: 400, damping: 32 }} />}
                   <t.icon size={16} className="relative" />
-                  <span className="relative">{t.label}</span>
+                  <span className="relative"><Stable k={t.k} /></span>
                 </button>
               );
             })}
