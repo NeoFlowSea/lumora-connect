@@ -256,21 +256,50 @@ textarea {
   filter: drop-shadow(0 0 6px rgba(255, 138, 61, 0.55));
 }
 
-/* 3D hero photo (src/landing/HeroPhotos.tsx): the card tilts toward the cursor on desktop,
-   casts a deep shadow, catches light where the cursor is, and the arrows float in front of it. */
+/* 3D hero photo (src/landing/HeroPhotos.tsx): from tablet width up the card stands turned in space
+   with two cards stacked behind it; with a mouse it turns toward the cursor (inline transform from JS)
+   and returns to this resting pose. A deep shadow and a light spot make it read as an object. */
 .tilt-stage {
-  perspective: 1100px;
+  perspective: 900px;
 }
 .tilt-card {
   transform-style: preserve-3d;
   will-change: transform;
   border-radius: 0.75rem;
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
   box-shadow:
-    0 32px 64px -24px rgba(3, 10, 30, 0.8),
-    0 14px 28px -14px rgba(3, 10, 30, 0.55);
+    0 40px 70px -24px rgba(3, 10, 30, 0.85),
+    0 16px 30px -14px rgba(3, 10, 30, 0.6);
+}
+.tilt-back {
+  position: absolute;
+  inset: 0;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+  display: none;
+}
+.tilt-back-1 {
+  background: #1d3c80;
+  transform: translate3d(18px, -14px, -60px);
+}
+.tilt-back-2 {
+  background: #16326e;
+  transform: translate3d(36px, -28px, -120px);
+}
+@media (min-width: 768px) {
+  .tilt-stage {
+    padding: 28px 40px 10px 0;
+  }
+  .tilt-card {
+    transform: rotateY(-16deg) rotateX(7deg);
+  }
+  .tilt-back {
+    display: block;
+  }
 }
 .tilt-front {
-  transform: translateZ(44px);
+  transform: translateZ(60px);
 }
 .tilt-light {
   background: radial-gradient(420px circle at var(--lx, 50%) var(--ly, 50%), rgba(255, 255, 255, 0.16), transparent 55%);
@@ -287,6 +316,10 @@ textarea {
   *::after {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
+  }
+  /* the owner wants the 3D photo card to move even here: a short, smooth turn */
+  .tilt-card {
+    transition-duration: 0.3s !important;
   }
   /* kept moving on purpose: the slow partner marquee and the glitch, which only plays on hover or tap */
   .marquee-track {

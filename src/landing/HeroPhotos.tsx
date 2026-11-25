@@ -7,22 +7,21 @@ import { lumora, photo } from "../content/lumora";
    on every device; the arrows on the sides and the dots switch them by hand (and restart the timer).
    On desktop the photos sit blurred and come into focus while the cursor is over them, or while
    a keyboard user is on the arrows (styles in index.css, .peek). The owner asked for both.
-   3D: on desktop the photo card tilts toward the cursor, like a physical card in your hand, and the
-   arrows and dots float slightly in front of it. It settles back flat when the cursor leaves.
-   No tilt on touch screens or with reduced motion. */
+   3D: on tablets and desktops the photo card stands turned in space with two more cards stacked
+   behind it (the other photos), and casts a deep shadow. With a mouse it turns toward the cursor and
+   settles back when the cursor leaves; the arrows float in front. The owner wanted it to read as 3D,
+   so the mouse tilt also runs when the system asks for reduced motion. Phones keep a flat card. */
 
 const PHOTOS = ["school21-group", "tashkent-final", "school21-pitch", "regional-winners", "bukhara-build", "fergana-pitch"];
 const EVERY = 6000;
-const MAX_TILT = 9; // degrees
+const MAX_TILT = 14; // degrees either way
 
 export function HeroPhotos() {
   const { t } = useLang();
   const [i, setI] = useState(0);
   const [tick, setTick] = useState(0); // restarts the timer after a manual switch
   const card = useRef<HTMLDivElement>(null);
-  const [canTilt] = useState(
-    () => window.matchMedia("(hover: hover) and (pointer: fine)").matches && !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-  );
+  const [canTilt] = useState(() => window.matchMedia("(hover: hover) and (pointer: fine)").matches);
   const n = PHOTOS.length;
 
   useEffect(() => {
@@ -43,15 +42,15 @@ export function HeroPhotos() {
     const x = (e.clientX - r.left) / r.width - 0.5; // -0.5 .. 0.5
     const y = (e.clientY - r.top) / r.height - 0.5;
     el.style.transition = "transform 0.12s ease-out";
-    el.style.transform = `rotateX(${(-y * MAX_TILT * 2).toFixed(2)}deg) rotateY(${(x * MAX_TILT * 2).toFixed(2)}deg) scale(1.02)`;
+    el.style.transform = `rotateX(${(-y * MAX_TILT * 2).toFixed(2)}deg) rotateY(${(x * MAX_TILT * 2).toFixed(2)}deg) translateZ(20px)`;
     el.style.setProperty("--lx", `${(x + 0.5) * 100}%`);
     el.style.setProperty("--ly", `${(y + 0.5) * 100}%`);
   };
   const settle = () => {
     const el = card.current;
     if (!el) return;
-    el.style.transition = "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)";
-    el.style.transform = "";
+    el.style.transition = "transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)";
+    el.style.transform = ""; // back to the resting pose in index.css
   };
 
   const arrow =
@@ -60,6 +59,9 @@ export function HeroPhotos() {
   return (
     <div className="peek tilt-stage" onMouseMove={tilt} onMouseLeave={settle}>
       <div ref={card} className="tilt-card relative">
+        {/* two cards behind: the deck of photos, set back in depth */}
+        <div aria-hidden className="tilt-back tilt-back-1" />
+        <div aria-hidden className="tilt-back tilt-back-2" />
         <div role="group" aria-roledescription="carousel" aria-label={t("home.hero.photos")} className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-line bg-cloud md:aspect-[4/5] lg:aspect-square">
           {PHOTOS.map((p, k) => (
             <img
