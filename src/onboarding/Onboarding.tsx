@@ -33,6 +33,18 @@ import { CompletenessList, EmailBanner, Levels } from "./shared";
    Each step saves through users.updateMe; "Skip for now" moves on without saving.
    Finishing marks the account onboarded and opens the app. */
 
+/** a page that asked for sign-up first ("Register your team" on the home page) and waits for the new account */
+export const AFTER_ONBOARDING = "lumora-after-onboarding";
+function takeAfterOnboarding(): string | null {
+  try {
+    const v = sessionStorage.getItem(AFTER_ONBOARDING);
+    sessionStorage.removeItem(AFTER_ONBOARDING);
+    return v && v.startsWith("#/app/") ? v : null;
+  } catch {
+    return null;
+  }
+}
+
 const TALENT_STEPS = ["about", "education", "skills", "project", "done"] as const;
 const COMPANY_STEPS = ["brand", "about", "contact", "benefits", "done"] as const;
 
@@ -42,7 +54,7 @@ export function Onboarding() {
   const { query } = useRoute();
   const finish = useAction(async (to: string) => {
     await api.users.finishOnboarding();
-    go(to);
+    go(takeAfterOnboarding() ?? to);
     return true;
   });
   if (!user || user.kind === "admin") return null;
