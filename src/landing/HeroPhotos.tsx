@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useLang } from "../i18n";
 import { lumora, photo } from "../content/lumora";
@@ -6,22 +6,15 @@ import { lumora, photo } from "../content/lumora";
 /* Photos from real Lumora rounds on the home hero. They change on their own every 6 seconds,
    on every device; the arrows on the sides and the dots switch them by hand (and restart the timer).
    On desktop the photos sit blurred and come into focus while the cursor is over them, or while
-   a keyboard user is on the arrows (styles in index.css, .peek). The owner asked for both.
-   3D: on tablets and desktops the photo card stands turned in space with two more cards stacked
-   behind it (the other photos), and casts a deep shadow. With a mouse it turns toward the cursor and
-   settles back when the cursor leaves; the arrows float in front. The owner wanted it to read as 3D,
-   so the mouse tilt also runs when the system asks for reduced motion. Phones keep a flat card. */
+   a keyboard user is on the arrows (styles in index.css, .peek). The owner asked for both. */
 
 const PHOTOS = ["school21-group", "tashkent-final", "school21-pitch", "regional-winners", "bukhara-build", "fergana-pitch"];
 const EVERY = 6000;
-const MAX_TILT = 14; // degrees either way
 
 export function HeroPhotos() {
   const { t } = useLang();
   const [i, setI] = useState(0);
   const [tick, setTick] = useState(0); // restarts the timer after a manual switch
-  const card = useRef<HTMLDivElement>(null);
-  const [canTilt] = useState(() => window.matchMedia("(hover: hover) and (pointer: fine)").matches);
   const n = PHOTOS.length;
 
   useEffect(() => {
@@ -33,56 +26,29 @@ export function HeroPhotos() {
     setI(((k % n) + n) % n);
     setTick((x) => x + 1);
   };
-
-  // tilt toward the cursor: written straight to the element, no re-render per mouse move
-  const tilt = (e: MouseEvent<HTMLDivElement>) => {
-    const el = card.current;
-    if (!canTilt || !el) return;
-    const r = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width - 0.5; // -0.5 .. 0.5
-    const y = (e.clientY - r.top) / r.height - 0.5;
-    el.style.transition = "transform 0.12s ease-out";
-    el.style.transform = `rotateX(${(-y * MAX_TILT * 2).toFixed(2)}deg) rotateY(${(x * MAX_TILT * 2).toFixed(2)}deg) translateZ(20px)`;
-    el.style.setProperty("--lx", `${(x + 0.5) * 100}%`);
-    el.style.setProperty("--ly", `${(y + 0.5) * 100}%`);
-  };
-  const settle = () => {
-    const el = card.current;
-    if (!el) return;
-    el.style.transition = "transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)";
-    el.style.transform = ""; // back to the resting pose in index.css
-  };
-
   const arrow =
     "absolute top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-line bg-paper/80 text-ink transition-colors hover:bg-paper";
 
   return (
-    <div className="peek tilt-stage" onMouseMove={tilt} onMouseLeave={settle}>
-      <div ref={card} className="tilt-card relative">
-        {/* two cards behind: the deck of photos, set back in depth */}
-        <div aria-hidden className="tilt-back tilt-back-1" />
-        <div aria-hidden className="tilt-back tilt-back-2" />
-        <div role="group" aria-roledescription="carousel" aria-label={t("home.hero.photos")} className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-line bg-cloud md:aspect-[4/5] lg:aspect-square">
-          {PHOTOS.map((p, k) => (
-            <img
-              key={p}
-              src={photo(p, 800)}
-              alt={k === i ? lumora.photos[p] : ""}
-              aria-hidden={k === i ? undefined : true}
-              width={800}
-              height={800}
-              loading={k === 0 ? "eager" : "lazy"}
-              decoding="async"
-              className={`peek-img absolute inset-0 h-full w-full object-cover ${k === i ? "opacity-100" : "opacity-0"}`}
-            />
-          ))}
-          {/* light that moves with the tilt, so the card reads as a solid object */}
-          <div aria-hidden className="tilt-light pointer-events-none absolute inset-0" />
-        </div>
-        <button type="button" onClick={() => go(i - 1)} aria-label={t("home.hero.prev")} className={`${arrow} tilt-front left-3`}>
+    <div className="peek">
+      <div role="group" aria-roledescription="carousel" aria-label={t("home.hero.photos")} className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-line bg-cloud md:aspect-[4/5] lg:aspect-square">
+        {PHOTOS.map((p, k) => (
+          <img
+            key={p}
+            src={photo(p, 800)}
+            alt={k === i ? lumora.photos[p] : ""}
+            aria-hidden={k === i ? undefined : true}
+            width={800}
+            height={800}
+            loading={k === 0 ? "eager" : "lazy"}
+            decoding="async"
+            className={`peek-img absolute inset-0 h-full w-full object-cover ${k === i ? "opacity-100" : "opacity-0"}`}
+          />
+        ))}
+        <button type="button" onClick={() => go(i - 1)} aria-label={t("home.hero.prev")} className={`${arrow} left-3`}>
           <ChevronLeft size={22} aria-hidden />
         </button>
-        <button type="button" onClick={() => go(i + 1)} aria-label={t("home.hero.next")} className={`${arrow} tilt-front right-3`}>
+        <button type="button" onClick={() => go(i + 1)} aria-label={t("home.hero.next")} className={`${arrow} right-3`}>
           <ChevronRight size={22} aria-hidden />
         </button>
       </div>
