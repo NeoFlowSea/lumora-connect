@@ -256,6 +256,53 @@ textarea {
   filter: drop-shadow(0 0 6px rgba(255, 138, 61, 0.55));
 }
 
+/* Liquid glass, in the spirit of iOS (the owner asked for it on the hero photo):
+   a frosted, slightly tinted pane with a bright rim that is strongest at the top-left,
+   and a soft sheen that follows the cursor (--gx, --gy, set in HeroPhotos.tsx). */
+/* in the components layer, so utilities such as absolute and rounded-full on the same element win */
+@layer components {
+  .glass {
+    position: relative;
+    isolation: isolate;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04) 55%, rgba(255, 255, 255, 0.09));
+    -webkit-backdrop-filter: blur(22px) saturate(170%);
+    backdrop-filter: blur(22px) saturate(170%);
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.5),
+      inset 0 -1px 1px rgba(255, 255, 255, 0.12),
+      0 24px 48px -16px rgba(3, 10, 30, 0.7);
+  }
+  /* the rim: a 1px gradient border, bright at the top-left and bottom-right like light through glass */
+  .glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(140deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.1) 30%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0.4));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  /* the sheen */
+  .glass::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: inherit;
+    background: radial-gradient(320px circle at var(--gx, 25%) var(--gy, 0%), rgba(255, 255, 255, 0.18), transparent 60%);
+    pointer-events: none;
+  }
+  /* small glass controls on top of a photo: darker tint so the white icon stays readable */
+  .glass-dark {
+    background: linear-gradient(135deg, rgba(15, 37, 87, 0.45), rgba(15, 37, 87, 0.25));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
