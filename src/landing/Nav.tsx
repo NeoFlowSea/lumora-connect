@@ -1,5 +1,5 @@
 import { useEffect, useState, type MouseEvent } from "react";
-import { Menu, X } from "lucide-react";
+import { Briefcase, Handshake, House, Info, Mail, Menu, Trophy, X } from "lucide-react";
 import { useLang } from "../i18n";
 import { useSession } from "../api/hooks";
 import { LogoTile } from "../components/Logo";
@@ -32,12 +32,12 @@ export function Nav({ onOpenApp }: { onOpenApp: () => void }) {
 
   const page = useRoute().path[0] ?? "";
   const links = [
-    { label: t("home.nav.lumora"), href: "#/", on: page === "" },
-    { label: t("home.nav.about"), href: "#/about", on: page === "about" },
-    { label: t("home.nav.hackathons"), href: "#/hackathons", on: page === "hackathons" },
-    { label: t("home.nav.connect"), href: "#/connect", on: page === "connect" || page === "company" },
-    { label: t("common.nav.jobs"), href: "#/jobs", on: page === "jobs" },
-    { label: t("home.nav.contact"), href: "#/contacts", on: page === "contacts" },
+    { label: t("home.nav.lumora"), href: "#/", icon: House, on: page === "" },
+    { label: t("home.nav.about"), href: "#/about", icon: Info, on: page === "about" },
+    { label: t("home.nav.hackathons"), href: "#/hackathons", icon: Trophy, on: page === "hackathons" },
+    { label: t("home.nav.connect"), href: "#/connect", icon: Handshake, on: page === "connect" || page === "company" },
+    { label: t("common.nav.jobs"), href: "#/jobs", icon: Briefcase, on: page === "jobs" },
+    { label: t("home.nav.contact"), href: "#/contacts", icon: Mail, on: page === "contacts" },
   ];
 
   const signedIn = !!user;
@@ -53,15 +53,17 @@ export function Nav({ onOpenApp }: { onOpenApp: () => void }) {
   return (
     // one solid colour from the first frame; it does not change on scroll
     <header className="fixed inset-x-0 top-0 z-40 border-b border-line bg-paper">
-      <div className={`${wrap} flex h-16 items-center gap-4 md:h-18 xl:gap-6`}>
+      <div className={`${wrap} flex h-16 items-center gap-4 md:h-18 xl:gap-4`}>
         <a href="#/" onClick={(e) => follow(e, "#/")} aria-label={t("common.brand")} className="flex min-h-11 shrink-0 items-center">
           {/* the mark alone: the nav already says "Lumora" next to it */}
           <LogoTile size={32} />
         </a>
 
-        <nav aria-label={t("landing.nav.label")} className="hidden items-center gap-1 xl:flex">
+        <nav aria-label={t("landing.nav.label")} className="hidden items-center gap-2 xl:flex">
           {links.map((l) => (
-            <a key={l.href} href={l.href} onClick={(e) => follow(e, l.href)} aria-current={l.on ? "page" : undefined} className={`whitespace-nowrap rounded-lg px-3 py-2 text-[15px] transition-colors hover:bg-tint hover:text-ink ${l.on ? "bg-tint text-ink" : "text-mist"}`}>
+            // the page you are on lights up in orange (nav-on in index.css)
+            <a key={l.href} href={l.href} onClick={(e) => follow(e, l.href)} aria-current={l.on ? "page" : undefined} className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-[15px] transition-colors ${l.on ? "nav-on font-semibold text-accent" : "text-mist hover:bg-tint hover:text-ink"}`}>
+              <l.icon size={17} aria-hidden className="shrink-0" />
               {l.label}
             </a>
           ))}
@@ -94,7 +96,8 @@ export function Nav({ onOpenApp }: { onOpenApp: () => void }) {
         <div id="site-menu" className="border-t border-line bg-paper xl:hidden">
           <nav aria-label={t("landing.nav.label")} className={`${wrap} grid py-2`}>
             {links.map((l) => (
-              <a key={l.href} href={l.href} onClick={(e) => follow(e, l.href)} aria-current={l.on ? "page" : undefined} className={`flex min-h-12 items-center border-b border-line text-[16px] last:border-b-0 ${l.on ? "font-semibold text-ink" : "text-ink/85"}`}>
+              <a key={l.href} href={l.href} onClick={(e) => follow(e, l.href)} aria-current={l.on ? "page" : undefined} className={`flex min-h-12 items-center gap-3 border-b border-line text-[16px] last:border-b-0 ${l.on ? "nav-on font-semibold text-accent" : "text-ink/85"}`}>
+                <l.icon size={18} aria-hidden className="shrink-0" />
                 {l.label}
               </a>
             ))}

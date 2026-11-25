@@ -247,6 +247,15 @@ textarea {
   }
 }
 
+/* The header link of the page you are on: orange text with a soft orange glow (the owner asked for it,
+   so it overrides "no glow"). */
+.nav-on {
+  text-shadow: 0 0 14px rgba(255, 138, 61, 0.55);
+}
+.nav-on svg {
+  filter: drop-shadow(0 0 6px rgba(255, 138, 61, 0.55));
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
