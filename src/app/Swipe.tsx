@@ -1,6 +1,6 @@
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { motion, useAnimation, useMotionValue, useReducedMotion, useTransform, type PanInfo } from "framer-motion";
-import { Briefcase, Clock, GraduationCap, Heart, Info, MapPin, MessageCircle, RotateCcw, Trophy, X } from "lucide-react";
+import { Briefcase, Clock, GraduationCap, Handshake, Info, Layers, MapPin, MessageCircle, RotateCcw, ThumbsUp, Trophy, X } from "lucide-react";
 import { api } from "../api";
 import { useAction, useApi, useSession } from "../api/hooks";
 import type { CompanyProfile, Match, TalentProfile, User } from "../api/types";
@@ -336,7 +336,7 @@ export function Swipe() {
                 <div className="absolute inset-0 grid place-items-center rounded-2xl border border-dashed border-line p-6 text-center">
                   <div>
                     <div className="mx-auto grid h-12 w-12 place-items-center rounded-lg bg-tint text-sky">
-                      <Heart size={22} />
+                      <Layers size={22} />
                     </div>
                     <h2 className="mt-4 text-[19px]">{t("jobs.swipe.emptyTitle")}</h2>
                     <p className="mt-2 text-[14px] text-mist">{isCompany ? t("jobs.swipe.emptyTextCompany") : t("jobs.swipe.emptyTextTalent")}</p>
@@ -379,7 +379,7 @@ export function Swipe() {
                 aria-label={t("jobs.swipe.likeLabel")}
                 title={t("jobs.swipe.likeKey")}
               >
-                <Heart size={26} />
+                <ThumbsUp size={26} />
               </button>
             </div>
             {(error ?? deck.error) && (
@@ -442,7 +442,7 @@ export function Swipe() {
               transition={{ type: "spring", stiffness: 260, damping: 16 }}
               className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-accent text-paper"
             >
-              <Heart size={36} fill="currentColor" />
+              <Handshake size={36} />
             </motion.div>
             <h2 className="mt-6 text-[28px]">{t("jobs.swipe.matchTitle")}</h2>
             <p className="mt-2 text-[14px] text-mist">{t("jobs.swipe.matchText", { name: match.other.name })}</p>

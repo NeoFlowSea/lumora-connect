@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { motion } from "framer-motion";
-import { Briefcase, Heart, LayoutDashboard, LogOut, MessageCircle, Trophy, User as UserIcon } from "lucide-react";
+import { Briefcase, Layers, LayoutDashboard, LogOut, MessageCircle, Trophy, User as UserIcon } from "lucide-react";
 import { Wordmark } from "../components/Logo";
 import { NotificationBell } from "./Notifications";
 import { api } from "../api";
@@ -10,21 +10,21 @@ import { go } from "../lib/router";
 import { t, useLang } from "../i18n";
 import { LangSwitch } from "../components/LangSwitch";
 
-export type TabDef = { key: string; label: string; icon: typeof Heart };
+export type TabDef = { key: string; label: string; icon: typeof Layers };
 
 /* labels are short on purpose: four of them share a 375px tab bar */
 
 export function tabsFor(user: User): TabDef[] {
   if (user.kind === "company") {
     return [
-      { key: "swipe", label: t("common.nav.swipe"), icon: Heart },
+      { key: "swipe", label: t("common.nav.swipe"), icon: Layers },
       { key: "dashboard", label: t("common.nav.dashboard"), icon: LayoutDashboard },
       { key: "hackathons", label: t("common.nav.events"), icon: Trophy },
       { key: "profile", label: t("common.nav.profile"), icon: UserIcon },
     ];
   }
   return [
-    { key: "swipe", label: t("common.nav.swipe"), icon: Heart },
+    { key: "swipe", label: t("common.nav.swipe"), icon: Layers },
     { key: "opportunities", label: t("common.nav.jobs"), icon: Briefcase },
     { key: "hackathons", label: t("common.nav.events"), icon: Trophy },
     { key: "profile", label: t("common.nav.profile"), icon: UserIcon },
@@ -111,7 +111,7 @@ export function AppShell({ tab, children }: { tab: string; children: ReactNode }
                 className={`flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 px-1 py-2 text-[12px] font-semibold ${on ? "text-accent" : "text-mist"}`}
               >
                 <motion.span animate={{ scale: on ? 1.15 : 1 }} transition={{ type: "spring", stiffness: 400, damping: 20 }}>
-                  <t.icon size={22} fill={on && t.key === "swipe" ? "currentColor" : "none"} />
+                  <t.icon size={22} />
                 </motion.span>
                 <span className="max-w-full truncate">{t.label}</span>
               </button>

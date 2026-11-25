@@ -1,6 +1,6 @@
 /* Talent page for signed-in users, #/app/talent/:id. Owned by the jobs agent (dict: jobs). */
 import { useState } from "react";
-import { ArrowLeft, Check, FileText, Github, Globe, GraduationCap, Heart, Linkedin, Lock, Mail, MapPin, MessageCircle, Pencil, SearchX, Send, Trophy, X } from "lucide-react";
+import { ArrowLeft, Check, FileText, Github, Globe, GraduationCap, Linkedin, Lock, Mail, MapPin, MessageCircle, Pencil, SearchX, Send, ThumbsUp, Trophy, X } from "lucide-react";
 import { api } from "../api";
 import { useAction, useApi, useSession } from "../api/hooks";
 import type { TalentProfile } from "../api/types";
@@ -95,7 +95,7 @@ function TalentView({ p }: { p: TalentProfile }) {
           <X size={16} /> {t("jobs.swipe.pass")}
         </button>
         <button onClick={() => act(1)} disabled={swipe.pending || !approved} className={`${btn.primary} disabled:opacity-50`}>
-          {swipe.pending ? <Spinner /> : <Heart size={16} />} {t("jobs.swipe.like")}
+          {swipe.pending ? <Spinner /> : <ThumbsUp size={16} />} {t("jobs.swipe.like")}
         </button>
       </div>
     );

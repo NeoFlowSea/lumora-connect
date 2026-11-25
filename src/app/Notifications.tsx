@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { BadgeCheck, Bell, Briefcase, Building2, CalendarDays, Heart, Info, Trophy } from "lucide-react";
+import { BadgeCheck, Bell, Briefcase, Building2, CalendarDays, Handshake, Info, Trophy } from "lucide-react";
 import { api } from "../api";
 import { useAction, useApi, useSession, useUnread } from "../api/hooks";
 import type { Notification, NotificationKind } from "../api/types";
@@ -12,7 +12,7 @@ import { go } from "../lib/router";
    Stored titles and bodies were written in the language active when they were created. */
 
 const ICONS: Record<NotificationKind, typeof Bell> = {
-  match: Heart,
+  match: Handshake,
   application: Briefcase,
   company_status: Building2,
   badge: Trophy,

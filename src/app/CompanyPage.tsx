@@ -1,5 +1,5 @@
 /* Public company page, #/company/:id. Owned by the jobs agent (dict: jobs). */
-import { Briefcase, Building2, CalendarDays, Check, Globe, Heart, Linkedin, MapPin, MessageCircle, Pencil, SearchX, Send, Users } from "lucide-react";
+import { Briefcase, Building2, CalendarDays, Check, Globe, Linkedin, ThumbsUp, MapPin, MessageCircle, Pencil, SearchX, Send, Users } from "lucide-react";
 import { api } from "../api";
 import { useAction, useApi, useSession } from "../api/hooks";
 import { Empty, ErrorNote, Skeleton, Spinner } from "../components/form";
@@ -45,7 +45,7 @@ export function CompanyPage({ id }: { id: string }) {
   } else if (!user) {
     action = (
       <button onClick={() => openApp(`#/company/${id}`)} className={btn.primary}>
-        <Heart size={16} /> {t("jobs.company.interested")}
+        <ThumbsUp size={16} /> {t("jobs.company.interested")}
       </button>
     );
   } else if (isTalent) {
@@ -59,7 +59,7 @@ export function CompanyPage({ id }: { id: string }) {
       </span>
     ) : (
       <button onClick={interested} disabled={like.pending} className={`${btn.primary} disabled:opacity-60`}>
-        {like.pending ? <Spinner /> : <Heart size={16} />} {t("jobs.company.interested")}
+        {like.pending ? <Spinner /> : <ThumbsUp size={16} />} {t("jobs.company.interested")}
       </button>
     );
   }

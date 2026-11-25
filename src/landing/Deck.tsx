@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { BadgeCheck, Heart, MapPin, Pause, Play, X } from "lucide-react";
+import { BadgeCheck, MapPin, Pause, Play, ThumbsUp, X } from "lucide-react";
 import { trackLabel, useLang } from "../i18n";
 import { api, listNow } from "../api";
 import { useApi, useDbTick } from "../api/hooks";
@@ -151,7 +151,7 @@ export function Deck() {
           </button>
         )}
         <button type="button" onClick={() => decide(1)} aria-label={t("landing.deck.yes")} className="grid h-12 w-12 place-items-center rounded-full bg-blue text-white transition-colors hover:bg-blue-deep">
-          <Heart size={22} />
+          <ThumbsUp size={22} />
         </button>
       </div>
     </div>
