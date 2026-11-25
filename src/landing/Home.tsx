@@ -11,14 +11,16 @@ import { Faq } from "./Faq";
 import { SitePage } from "./SitePage";
 import { Fade, Rise, Section, SectionHead, isExternal, onAnchor, wrap } from "./parts";
 import { Stable } from "../i18n/Stable";
+import { ScrollIntro } from "./intro/ScrollIntro";
 
 /* Lumora home, #/. About Lumora as an organisation, built from the same pieces as the Connect landing:
-   hero, real numbers and partners, about, how a round works, winning projects, the next round and
+   the scroll intro (the logo assembles as you scroll, src/landing/intro), hero, real numbers and partners, about, how a round works, winning projects, the next round and
    past rounds, Lumora Connect, FAQ, contacts. Each part links to its own page (src/landing/pages.tsx),
    which reuses the sections below. Facts come from src/content/lumora.ts. */
 export function Home({ to }: { to?: string }) {
   return (
     <SitePage to={to}>
+      <ScrollIntro />
       <HomeHero />
       <Proof />
       <About more />
