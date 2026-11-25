@@ -13,7 +13,10 @@ import { Stable } from "../i18n/Stable";
    Links: Lumora (home), About, Hackathons, Connect, Jobs, Contacts; the page you are on is marked.
    Desktop: links, language, sign in and one orange button.
    Phones: logo, the orange button and a menu with the same links as 48px rows. */
-export function Nav({ onOpenApp }: { onOpenApp: () => void }) {
+/** a page's own main action in the header, shown on every screen size; `short` is the phone label */
+export type NavCta = { label: string; short: string; act: () => void };
+
+export function Nav({ onOpenApp, cta }: { onOpenApp: () => void; cta?: NavCta }) {
   const { t } = useLang();
   const user = useSession();
   const [scrolled, setScrolled] = useState(false);
@@ -80,9 +83,16 @@ export function Nav({ onOpenApp }: { onOpenApp: () => void }) {
               <Stable k="common.nav.signIn" />
             </button>
           )}
-          <button onClick={main.act} className={`${btn.primary} !hidden !min-h-11 !px-4 !text-[14px] whitespace-nowrap sm:!inline-flex`}>
-            {main.label}
-          </button>
+          {cta ? (
+            <button onClick={cta.act} className={`${btn.primary} !min-h-11 !px-4 !text-[14px] whitespace-nowrap`}>
+              <span className="sm:hidden">{cta.short}</span>
+              <span className="hidden sm:inline">{cta.label}</span>
+            </button>
+          ) : (
+            <button onClick={main.act} className={`${btn.primary} !hidden !min-h-11 !px-4 !text-[14px] whitespace-nowrap sm:!inline-flex`}>
+              {main.label}
+            </button>
+          )}
           <button
             type="button"
             onClick={() => setOpen((o) => !o)}
@@ -124,7 +134,7 @@ export function Nav({ onOpenApp }: { onOpenApp: () => void }) {
                   setOpen(false);
                   main.act();
                 }}
-                className={`${btn.primary} sm:hidden`}
+                className={`${cta ? btn.ghost : btn.primary} sm:hidden`}
               >
                 {main.label}
               </button>

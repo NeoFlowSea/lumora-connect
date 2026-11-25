@@ -3,7 +3,7 @@ import { Splash } from "./components/Splash";
 import { ToastProvider } from "./components/ui";
 import { Loading } from "./components/form";
 import { Landing } from "./landing/Landing";
-import { Home } from "./landing/Home";
+import { IntroHome } from "./landing/intro/IntroHome";
 import { AboutPage, ContactsPage, HackathonsPage } from "./landing/pages";
 import { AppShell, defaultTab, tabsFor } from "./app/AppShell";
 import { Swipe } from "./app/Swipe";
@@ -29,7 +29,7 @@ import { go, legacyAnchor, useRoute } from "./lib/router";
 const AdminApp = lazy(() => import("./admin/AdminApp").then((m) => ({ default: m.AdminApp })));
 
 /* Routes
-   #/                      Lumora home (about Lumora, rounds, contacts)
+   #/                      Lumora home with the logo intro (src/landing/intro)
    #/about, #/hackathons, #/contacts   Lumora pages
    #/connect               Lumora Connect landing
    ?to=<id> on either      open at that section; old anchors like "#talent" go to the Connect page
@@ -43,10 +43,17 @@ const AdminApp = lazy(() => import("./admin/AdminApp").then((m) => ({ default: m
    #/admin/...             admin (admins only)
    anything else           404 */
 
+/** "", "#", "#/", "#/?to=x" and plain anchors like "#faq" open the home page */
+function isHome(hash: string) {
+  if (!hash.startsWith("#/")) return !legacyAnchor(hash);
+  return hash.slice(2).split("?")[0] === "";
+}
+
 const APP_EXTRA = ["inbox", "notifications", "talent", "jobs", "company"];
 
 export default function App() {
-  const [intro, setIntro] = useState(true); // the launch intro plays on every visit
+  // the launch intro plays on every visit, except when the visit opens on the home page: it has its own logo intro
+  const [intro, setIntro] = useState(() => !isHome(window.location.hash));
   const { path, query } = useRoute();
   const user = useSession();
   const [section, sub, extra] = path;
@@ -80,7 +87,7 @@ export default function App() {
 
   let page;
   if (!section) {
-    page = <Home to={query.to} />;
+    page = <IntroHome to={query.to} />;
   } else if (section === "connect" && !sub) {
     page = <Landing to={query.to} />;
   } else if (section === "about" && !sub) {
