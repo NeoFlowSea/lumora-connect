@@ -52,7 +52,7 @@ export function Proof() {
       </div>
       <div className="border-t border-line">
         <div className={`${wrap} pt-8 md:pt-10`}>
-          <h2 className="text-[15px] font-medium tracking-normal text-mist"><Stable k="landing.proof.partnersTitle" /></h2>
+          <h2 className="text-center text-[15px] font-medium tracking-normal text-mist"><Stable k="landing.proof.partnersTitle" /></h2>
         </div>
           <div className="marquee relative mt-4 overflow-hidden pb-8 md:pb-10 [mask-image:linear-gradient(90deg,transparent,#000_8%,#000_92%,transparent)]">
             <ul className="sr-only">

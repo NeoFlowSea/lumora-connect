@@ -10,7 +10,15 @@ const KEYS = ["what", "who", "verify", "free", "companies", "langs"];
    `area` is the dictionary prefix: "<area>.title", "<area>.lead", "<area>.<key>.q" and ".a". */
 export function Faq({ area = "landing.faq", keys = KEYS }: { area?: string; keys?: string[] }) {
   useLang();
-  const [open, setOpen] = useState<string | null>(keys[0]);
+  // any number of answers can be open at once
+  const [open, setOpen] = useState<Set<string>>(() => new Set([keys[0]]));
+  const toggle = (k: string) =>
+    setOpen((prev) => {
+      const next = new Set(prev);
+      if (next.has(k)) next.delete(k);
+      else next.add(k);
+      return next;
+    });
   const base = useId();
   return (
     <Section id="faq" className="border-t border-line">
@@ -21,7 +29,7 @@ export function Faq({ area = "landing.faq", keys = KEYS }: { area?: string; keys
         </div>
         <ul className="border-t border-line">
           {keys.map((k) => {
-            const isOpen = open === k;
+            const isOpen = open.has(k);
             const id = `${base}-${k}`;
             return (
               <li key={k} className="border-b border-line">
@@ -31,7 +39,7 @@ export function Faq({ area = "landing.faq", keys = KEYS }: { area?: string; keys
                     id={`${id}-q`}
                     aria-expanded={isOpen}
                     aria-controls={`${id}-a`}
-                    onClick={() => setOpen(isOpen ? null : k)}
+                    onClick={() => toggle(k)}
                     className="flex min-h-14 w-full items-center justify-between gap-4 py-3 text-left transition-colors hover:text-sky"
                   >
                     <Stable k={`${area}.${k}.q`} />

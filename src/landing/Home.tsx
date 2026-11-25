@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
-import { Check, ExternalLink } from "lucide-react";
-import { useLang } from "../i18n";
+import { Building2, Check, ExternalLink, GraduationCap, Instagram, Linkedin, Send } from "lucide-react";
+import { LogoTile } from "../components/Logo";
+import { locale, useLang } from "../i18n";
 import { lumora, photo, teamPhoto } from "../content/lumora";
 import { btn } from "../components/ui";
 import { sectionLink } from "../lib/router";
@@ -39,7 +40,7 @@ function HomeHero() {
   const join = sectionLink("hackathons", "hackathons");
   return (
     <section id="top" className="pt-24 md:pt-32">
-      <div className={`${wrap} grid items-center gap-12 md:grid-cols-[1.35fr_0.65fr] md:gap-10`}>
+      <div className={`${wrap} grid items-center gap-12 md:grid-cols-[1.1fr_0.9fr] md:gap-10`}>
         <div>
           <p className="text-[15px] font-medium text-sky"><Stable k="home.hero.kicker" /></p>
           <h1 className="mt-4 select-none text-balance text-[clamp(34px,4.6vw,60px)] font-semibold leading-[1.05] tracking-[-0.035em]"><Stable k="home.hero.title" /></h1>
@@ -75,7 +76,7 @@ function HeroPhoto({ name }: { name: string }) {
 }
 
 /** top of the About, Hackathons and Contacts pages: the hero's type and grid, with a photo */
-export function PageHero({ kicker, title, text, photoName }: { kicker: string; title: ReactNode; text: ReactNode; photoName: string }) {
+export function PageHero({ kicker, title, text, photoName, aside }: { kicker: string; title: ReactNode; text: ReactNode; photoName: string; aside?: ReactNode }) {
   useLang();
   return (
     <section id="top" className="pt-24 md:pt-32">
@@ -85,7 +86,7 @@ export function PageHero({ kicker, title, text, photoName }: { kicker: string; t
           <h1 className="mt-4 select-none text-balance text-[clamp(34px,4.6vw,60px)] font-semibold leading-[1.05] tracking-[-0.035em]">{title}</h1>
           <div className="mt-5 max-w-[68ch] text-[17px] leading-relaxed text-mist md:text-[18px]">{text}</div>
         </div>
-        <HeroPhoto name={photoName} />
+        {aside ?? <HeroPhoto name={photoName} />}
       </div>
     </section>
   );
@@ -114,6 +115,20 @@ export function About({ more = false, team = true, head = true }: { more?: boole
             <h3 className="text-[20px]"><Stable k="home.about.whyTitle" /></h3>
             <p className="mt-4 text-[17px] font-medium leading-snug"><Stable k="home.about.why" /></p>
             <p className="mt-3 text-[15px] leading-relaxed text-mist"><Stable k="home.about.whyMore" /></p>
+            {/* facts from src/content/lumora.ts: the first round, the numbers, how cases and juries work */}
+            <ul className="mt-5 grid gap-3 border-t border-line pt-5 text-[15px] leading-relaxed">
+              {[
+                <Stable key="1" k="home.about.fact1" />,
+                <Stable key="2" k="home.about.fact2" vars={{ rounds: lumora.numbers.hackathons, regions: lumora.numbers.regions, students: lumora.numbers.students.toLocaleString(locale()) }} />,
+                <Stable key="3" k="home.about.fact3" />,
+                <Stable key="4" k="home.about.fact4" />,
+              ].map((f, n) => (
+                <li key={n} className="flex gap-2.5">
+                  <Check size={18} aria-hidden className="mt-0.5 shrink-0 text-accent" />
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
           </div>
 
           {team && (
@@ -261,14 +276,14 @@ export function LumoraFaq() {
 export function Contact({ more = false, head = true }: { more?: boolean; head?: boolean }) {
   useLang();
   const routes = [
-    { key: "students", href: sectionLink("hackathons", "hackathons") },
-    { key: "companies", href: lumora.links.linkedin },
-    { key: "organizers", href: lumora.links.telegram },
+    { key: "students", href: sectionLink("hackathons", "hackathons"), icon: <GraduationCap size={22} aria-hidden /> },
+    { key: "companies", href: lumora.links.linkedin, icon: <Building2 size={22} aria-hidden /> },
+    { key: "organizers", href: lumora.links.telegram, icon: <LogoTile size={28} /> },
   ];
-  const channels: [string, string][] = [
-    ["Telegram", lumora.links.telegram],
-    ["Instagram", lumora.links.instagram],
-    ["LinkedIn", lumora.links.linkedin],
+  const channels: [string, string, ReactNode][] = [
+    ["Telegram", lumora.links.telegram, <Send key="t" size={18} aria-hidden />],
+    ["Instagram", lumora.links.instagram, <Instagram key="i" size={18} aria-hidden />],
+    ["LinkedIn", lumora.links.linkedin, <Linkedin key="l" size={18} aria-hidden />],
   ];
   const ext = (href: string) => (isExternal(href) ? { target: "_blank", rel: "noopener noreferrer" } : {});
   return (
@@ -278,7 +293,10 @@ export function Contact({ more = false, head = true }: { more?: boolean; head?: 
         <ul className="grid gap-4 md:grid-cols-3">
           {routes.map((r, i) => (
             <Rise key={r.key} i={i} className="flex flex-col rounded-xl border border-line bg-surface p-6 transition-colors hover:border-sky md:p-8">
-              <span className="text-[13px] font-medium text-sky"><Stable k={`home.contact.${r.key}`} /></span>
+              <span className="flex items-center gap-2.5 text-[13px] font-medium text-sky">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-tint text-sky">{r.icon}</span>
+                <Stable k={`home.contact.${r.key}`} />
+              </span>
               <h3 className="mt-2 text-[20px]"><Stable k={`home.contact.${r.key}.title`} /></h3>
               <div className="mt-auto pt-6">
                 <a href={r.href} onClick={(e) => onAnchor(e, r.href)} {...ext(r.href)} className={btn.secondary}>
@@ -295,9 +313,10 @@ export function Contact({ more = false, head = true }: { more?: boolean; head?: 
             <p><Stable k="home.contact.channels" /></p>
           </div>
           <ul className="flex flex-wrap gap-2">
-            {channels.map(([label, href]) => (
+            {channels.map(([label, href, icon]) => (
               <li key={label}>
-                <a href={href} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center rounded-lg border border-line px-4 text-[15px] font-medium transition-colors hover:border-sky hover:bg-tint">
+                <a href={href} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-line px-4 text-[15px] font-medium transition-colors hover:border-sky hover:bg-tint">
+                  {icon}
                   {label}
                 </a>
               </li>

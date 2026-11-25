@@ -6,6 +6,7 @@ import { Quotes } from "./Quotes";
 import { SitePage } from "./SitePage";
 import { About, ConnectBand, Contact, FirstMessage, Format, LumoraFaq, PageHero, Team } from "./Home";
 import { Stable } from "../i18n/Stable";
+import { LogoTile } from "../components/Logo";
 
 /* The Lumora pages behind the header links: #/about, #/hackathons, #/contacts.
    Each one is the matching home section in full, plus what only fits on its own page. */
@@ -68,10 +69,15 @@ export function ContactsPage({ to }: { to?: string }) {
           </>
         }
         photoName="school21-hallway"
+        aside={
+          // the Lumora mark instead of a photo
+          <div className="grid aspect-[4/3] w-full place-items-center rounded-xl border border-line bg-surface md:aspect-[4/5]">
+            <LogoTile size={180} />
+          </div>
+        }
       />
       <Contact head={false} />
       <FirstMessage />
-      <LumoraFaq />
     </SitePage>
   );
 }

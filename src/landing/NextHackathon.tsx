@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CalendarDays, MapPin, Users } from "lucide-react";
+import { CalendarDays, MapPin, Trophy, Users } from "lucide-react";
 import { locale, useLang } from "../i18n";
 import { lumora, photo } from "../content/lumora";
 import { Countdown } from "../components/Countdown";
@@ -68,12 +68,12 @@ function NextRound() {
         <div className="mb-2 text-[13px] text-mist"><Stable k="landing.next.startsIn" /></div>
         <Countdown to={r.start} />
       </div>
-      {/* green and square, as the owner asked */}
+      {/* green, across the whole card */}
       <a
         href={lumora.links.telegram}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-7 inline-flex min-h-12 items-center justify-center rounded-none bg-accent px-8 text-[16px] font-semibold text-paper transition-colors hover:bg-accent-deep"
+        className="mt-7 flex min-h-12 w-full items-center justify-center rounded-lg bg-accent px-8 text-[16px] font-semibold text-paper transition-colors hover:bg-accent-deep"
       >
         <Stable k="home.hero.register" />
       </a>
@@ -121,14 +121,26 @@ function PastRounds({ initialAll }: { initialAll: boolean }) {
               r.teams ? tp("landing.rounds.teams", r.teams, { n: n(r.teams) }) : "",
             ].filter(Boolean);
             return (
-              <li key={r.id} className="grid gap-x-6 gap-y-1 py-3.5 md:grid-cols-[130px_1.4fr_1fr_1fr] md:items-baseline">
-                <span className="text-[14px] text-white/90">{date(r.date)}</span>
-                <span className="text-[16px] font-semibold">
-                  {r.city}
-                  {r.venue && <span className="font-normal text-white/90">, {r.venue}</span>}
+              <li key={r.id} className="grid gap-x-6 gap-y-1.5 py-3.5 md:grid-cols-[150px_1.4fr_1fr_1fr] md:items-center">
+                <span className="inline-flex items-center gap-2 text-[14px] text-white">
+                  <CalendarDays size={15} aria-hidden className="shrink-0 text-white/70" />
+                  {date(r.date)}
                 </span>
-                <span className="text-[14px] text-white/90">{facts.join(", ")}</span>
-                <span className="text-[14px] text-white/90">{r.podium[0] ? t("landing.rounds.winner", { team: r.podium[0] }) : ""}</span>
+                <span className="inline-flex items-start gap-2 text-[16px] font-semibold">
+                  <MapPin size={15} aria-hidden className="mt-1 shrink-0 text-white/70" />
+                  <span>
+                    {r.city}
+                    {r.venue && <span className="font-normal text-white">, {r.venue}</span>}
+                  </span>
+                </span>
+                <span className="inline-flex items-center gap-2 text-[14px] text-white">
+                  {facts.length > 0 && <Users size={15} aria-hidden className="shrink-0 text-white/70" />}
+                  {facts.join(", ")}
+                </span>
+                <span className="inline-flex items-center gap-2 text-[14px] text-white">
+                  {r.podium[0] && <Trophy size={15} aria-hidden className="shrink-0 text-accent" />}
+                  {r.podium[0] ? t("landing.rounds.winner", { team: r.podium[0] }) : ""}
+                </span>
               </li>
             );
           })}

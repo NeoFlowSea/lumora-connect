@@ -237,8 +237,9 @@ textarea {
     filter: blur(10px);
     transform: scale(1.05);
   }
+  /* :focus-visible, not :focus-within: a mouse click on a dot must not leave the photo sharp */
   .peek:hover .peek-img,
-  .peek:focus-within .peek-img {
+  .peek:has(:focus-visible) .peek-img {
     filter: none;
     transform: none;
   }
