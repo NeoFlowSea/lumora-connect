@@ -2,7 +2,7 @@ import { useEffect, useState, type MouseEvent } from "react";
 import { Menu, X } from "lucide-react";
 import { useLang } from "../i18n";
 import { useSession } from "../api/hooks";
-import { Wordmark } from "../components/Logo";
+import { LogoTile } from "../components/Logo";
 import { LangSwitch } from "../components/LangSwitch";
 import { btn } from "../components/ui";
 import { go, useRoute } from "../lib/router";
@@ -11,20 +11,12 @@ import { Stable } from "../i18n/Stable";
 
 /* Site header for the Lumora home, Lumora Connect and the public pages.
    Links: Lumora (home), About, Hackathons, Connect, Jobs, Contacts; the page you are on is marked.
-   Desktop: links, language, sign in and one orange button.
-   Phones: logo, the orange button and a menu with the same links as 48px rows. */
+   Desktop: links, language, sign in and one green button.
+   Phones: logo, the green button and a menu with the same links as 48px rows. */
 export function Nav({ onOpenApp }: { onOpenApp: () => void }) {
   const { t } = useLang();
   const user = useSession();
-  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -59,10 +51,12 @@ export function Nav({ onOpenApp }: { onOpenApp: () => void }) {
   };
 
   return (
-    <header className={`fixed inset-x-0 top-0 z-40 border-b transition-colors duration-300 ${scrolled || open ? "border-line bg-paper/95 backdrop-blur-md" : "border-transparent bg-paper/0"}`}>
+    // one solid colour from the first frame; it does not change on scroll
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-line bg-paper">
       <div className={`${wrap} flex h-16 items-center gap-4 md:h-18 xl:gap-6`}>
         <a href="#/" onClick={(e) => follow(e, "#/")} aria-label={t("common.brand")} className="flex min-h-11 shrink-0 items-center">
-          <Wordmark connect={!["", "about", "hackathons", "contacts"].includes(page)} />
+          {/* the mark alone: the nav already says "Lumora" next to it */}
+          <LogoTile size={32} />
         </a>
 
         <nav aria-label={t("landing.nav.label")} className="hidden items-center gap-1 xl:flex">

@@ -1,45 +1,35 @@
 import { useState } from "react";
-import { CalendarDays, Globe, MapPin, Users } from "lucide-react";
+import { CalendarDays, MapPin, Users } from "lucide-react";
 import { locale, useLang } from "../i18n";
-import { api } from "../api";
-import { useApi } from "../api/hooks";
-import type { Hackathon } from "../api/types";
 import { lumora, photo } from "../content/lumora";
 import { Countdown } from "../components/Countdown";
-import { GlitchText } from "../components/GlitchText";
-import { Skeleton, when } from "../components/form";
-import { btn } from "../components/ui";
-import { openApp } from "../pages/PublicFrame";
-import { Fade, SampleTag, wrap } from "./parts";
-import { Stable, trackTexts } from "../i18n/Stable";
+import { Fade, wrap } from "./parts";
+import { Stable } from "../i18n/Stable";
 
 const GALLERY = ["school21-group", "school21-pitch", "tashkent-stage", "andijan-room"];
 
 /* The next round people can register for, the four questions the jury asks,
    and the real history of past rounds underneath. */
 export function NextHackathon({ allRounds = false }: { allRounds?: boolean }) {
-  const { t } = useLang();
-  const list = useApi(() => api.hackathons.list(), []);
-  const upcoming = (list.data ?? []).filter((h) => !["finished", "cancelled", "draft"].includes(h.status));
-  const next = upcoming.filter((h) => h.status === "registration_open").sort((a, b) => a.start.localeCompare(b.start))[0] ?? upcoming[0];
-
+  useLang();
   return (
     <section id="hackathons" className="scroll-mt-16 bg-blue-deep py-16 text-white md:py-24">
       <div className={wrap}>
-        <h2 className="font-glitch text-[clamp(32px,4.6vw,56px)] font-normal leading-[1.05] tracking-normal">
-          <GlitchText text={t("landing.next.title")} />
+        {/* plain bold heading (the glitch style was removed at the owner's request) */}
+        <h2 className="text-[clamp(32px,4.6vw,56px)] font-bold leading-[1.05] tracking-[-0.03em]">
+          <Stable k="landing.next.title" />
         </h2>
-        <p className="mt-3 max-w-[80ch] text-[16px] text-white/90"><Stable k="landing.next.lead" /></p>
+        <p className="mt-3 max-w-[80ch] text-[16px] text-white"><Stable k="landing.next.lead" /></p>
 
         <div className="mt-8 grid gap-4 lg:grid-cols-[1.35fr_1fr]">
-          {next ? <EventCard h={next} /> : list.loading ? <Skeleton rows={1} className="h-[360px]" /> : <NoEvent />}
+          <NextRound />
           <div className="rounded-xl bg-paper/25 p-6 md:p-8">
             <h3 className="text-[19px]"><Stable k="landing.next.juryTitle" /></h3>
-            <p className="mt-1 text-[14px] text-white/90"><Stable k="landing.next.juryLead" /></p>
+            <p className="mt-1 text-[14px] text-white"><Stable k="landing.next.juryLead" /></p>
             <ol className="mt-5 grid gap-4">
               {lumora.judging.map((j, i) => (
                 <li key={j.key} className="grid grid-cols-[28px_1fr] items-baseline gap-3">
-                  <span className="text-[14px] font-semibold text-white/90">{i + 1}</span>
+                  <span className="text-[14px] font-semibold text-white">{i + 1}</span>
                   <span className="text-[17px] font-medium leading-snug"><Stable texts={j.q} /></span>
                 </li>
               ))}
@@ -52,58 +42,40 @@ export function NextHackathon({ allRounds = false }: { allRounds?: boolean }) {
   );
 }
 
-function EventCard({ h }: { h: Hackathon }) {
-  const { t } = useLang();
-  const open = h.status === "registration_open";
+/* The real next round from src/content/lumora.ts (nextRound): date, venue and partner as the team
+   announced them. Registration goes to the Lumora Telegram channel until a form link exists. */
+function NextRound() {
+  const r = lumora.nextRound;
+  const date = new Date(`${r.date}T12:00`).toLocaleDateString(locale(), { day: "numeric", month: "long", year: "numeric" });
   return (
     <div className="rounded-xl bg-surface p-6 text-ink md:p-8">
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-[14px] text-mist">{h.organizerName}</span>
-        {h.demo && <SampleTag />}
+      <div className="text-[14px] text-mist">
+        <Stable k="landing.next.partner" vars={{ partner: r.partner }} />
       </div>
-      <h3 className="mt-2 text-[clamp(22px,2.6vw,30px)] tracking-[-0.02em]">{h.title}</h3>
-      <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-[14px] text-mist">
+      <h3 className="mt-2 text-[clamp(22px,2.6vw,30px)] tracking-[-0.02em]">Lumora × {r.partner}</h3>
+      <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-[15px] text-mist">
         <span className="inline-flex items-center gap-1.5">
-          <CalendarDays size={15} /> {when(h.start)}
+          <CalendarDays size={15} aria-hidden /> {date}
         </span>
         <span className="inline-flex items-center gap-1.5">
-          {h.mode === "online" ? <Globe size={15} /> : <MapPin size={15} />}
-          {h.mode === "online" ? t("landing.next.online") : [h.city, h.venue].filter(Boolean).join(", ")}
+          <MapPin size={15} aria-hidden /> {r.venue}, <Stable k={`home.city.${r.city}`} />
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <Users size={15} /> <Stable k="landing.next.team" vars={{ min: h.teamMin, max: h.teamMax }} />
+          <Users size={15} aria-hidden /> <Stable k="landing.next.team" vars={{ min: r.teamMin, max: r.teamMax }} />
         </span>
-      </div>
-      {h.short && <p className="mt-4 max-w-[80ch] text-[15px] text-ink/90">{h.short}</p>}
-      <div className="mt-4 flex flex-wrap gap-1.5">
-        {h.tracks.map((x) => (
-          <span key={x} className="rounded-md bg-tint px-2 py-0.5 text-[13px] font-medium text-sky">
-            <Stable texts={trackTexts(x)} />
-          </span>
-        ))}
       </div>
       <div className="mt-6">
         <div className="mb-2 text-[13px] text-mist"><Stable k="landing.next.startsIn" /></div>
-        <Countdown to={h.start} />
+        <Countdown to={r.start} />
       </div>
-      <div className="mt-7 flex flex-wrap items-center gap-x-4 gap-y-3">
-        <button onClick={() => openApp(`#/app/hackathons/${h.id}`)} className={btn.primary}>
-          {open ? t("landing.next.register") : t("landing.next.see")}
-        </button>
-        {h.places[0]?.prize && <span className="text-[14px] text-mist">{t("landing.next.prize", { prize: h.places[0].prize })}</span>}
-      </div>
-    </div>
-  );
-}
-
-function NoEvent() {
-  useLang();
-  return (
-    <div className="rounded-xl bg-surface p-6 text-ink md:p-8">
-      <h3 className="text-[20px]"><Stable k="landing.next.noneTitle" /></h3>
-      <p className="mt-2 text-[15px] text-mist"><Stable k="landing.next.noneText" /></p>
-      <a href={lumora.links.telegram} target="_blank" rel="noopener noreferrer" className={`${btn.primary} mt-6`}>
-        <Stable k="landing.next.follow" />
+      {/* green and square, as the owner asked */}
+      <a
+        href={lumora.links.telegram}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-7 inline-flex min-h-12 items-center justify-center rounded-none bg-accent px-8 text-[16px] font-semibold text-paper transition-colors hover:bg-accent-deep"
+      >
+        <Stable k="home.hero.register" />
       </a>
     </div>
   );

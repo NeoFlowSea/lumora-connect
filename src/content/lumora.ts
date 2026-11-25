@@ -27,6 +27,21 @@ export const lumora = {
   /** cities in the city selector of the previous site's About page */
   cities: ["Tashkent", "Fergana", "Samarkand", "Namangan", "Jizzakh", "Nukus", "Qarshi"],
 
+  /** all 14 regions, as listed in the previous site's application form. Names: home.region.<key> */
+  regions: ["karakalpakstan", "khorezm", "navoiy", "bukhara", "samarkand", "kashkadarya", "surkhandarya", "jizzakh", "syrdarya", "tashkentRegion", "tashkent", "namangan", "andijan", "fergana"],
+
+  /** the next round, as announced by the team on 26 Nov 2026. The start time is not announced yet:
+      10:00 Tashkent time is a stand-in for the countdown; the city is assumed from the venue. */
+  nextRound: {
+    date: "2026-12-06",
+    start: "2026-12-06T10:00:00+05:00",
+    venue: "Holiday Inn",
+    city: "Tashkent",
+    partner: "Samsung",
+    teamMin: 2,
+    teamMax: 5,
+  },
+
   /** the four stages of a round, in order (previous site, tournaments page). Texts: home.format.* */
   stages: ["register", "case", "prototype", "pitch"] as const,
 
@@ -42,12 +57,12 @@ export const lumora = {
     postcode: { en: "Talent should not depend on a postcode.", ru: "Талант не должен зависеть от адреса.", uz: "Iqtidor yashash manziliga bog'liq bo'lmasligi kerak." } as L,
   },
 
-  /** judging lens used at every Lumora round */
+  /** what the jury asks at every Lumora round (set by the team on 26 Nov 2026) */
   judging: [
-    { key: "problem", q: { en: "Did you understand the case?", ru: "Поняли ли вы кейс?", uz: "Keysni tushundingizmi?" } as L },
-    { key: "product", q: { en: "Does the solution work?", ru: "Работает ли решение?", uz: "Yechim ishlaydimi?" } as L },
-    { key: "reasoning", q: { en: "Can you defend your choices?", ru: "Можете ли вы защитить свои решения?", uz: "Tanlovlaringizni himoya qila olasizmi?" } as L },
-    { key: "delivery", q: { en: "Can the team explain it clearly?", ru: "Может ли команда ясно это объяснить?", uz: "Jamoa buni aniq tushuntira oladimi?" } as L },
+    { key: "problem", q: { en: "What problem do you solve?", ru: "Какую проблему вы решаете?", uz: "Qaysi muammoni hal qilyapsiz?" } as L },
+    { key: "tech", q: { en: "What technology do you use?", ru: "Какие технологии вы используете?", uz: "Qanday texnologiyalardan foydalanasiz?" } as L },
+    { key: "edge", q: { en: "Why are you better than others?", ru: "Чем вы лучше других?", uz: "Nimasi bilan boshqalardan yaxshiroqsiz?" } as L },
+    { key: "money", q: { en: "Who will pay for it?", ru: "Кто будет за это платить?", uz: "Buning uchun kim pul to'laydi?" } as L },
   ],
 
   /** core team from the previous site's About page; photos in public/photos/team/<photo>.webp, roles in home.about.role.<key> */

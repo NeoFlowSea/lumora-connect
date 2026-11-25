@@ -15,7 +15,6 @@ import "./index.css";
 if (document.fonts?.load) {
   const sample = "Aa Жж Oʻʼ 0";
   for (const w of [400, 500, 600, 700]) document.fonts.load(`${w} 16px Onest`, sample).catch(() => {});
-  document.fonts.load(`400 16px "Rubik Glitch"`, sample).catch(() => {});
 }
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

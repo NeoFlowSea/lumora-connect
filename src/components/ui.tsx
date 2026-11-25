@@ -47,7 +47,7 @@ export function Highlight({ children, delay = 0.2 }: { children: ReactNode; dela
 }
 
 export const btn = {
-  /* orange: only the one main action on a screen */
+  /* green: only the one main action on a screen */
   primary:
     "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-[15px] font-semibold text-paper transition-colors hover:bg-accent-deep active:translate-y-px",
   /* blue: secondary actions */

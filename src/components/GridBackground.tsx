@@ -7,7 +7,7 @@ import { useEffect, useRef } from "react";
 const SP = 28; // grid spacing in px
 const R = 170; // cursor influence radius
 const BLUE = "141,176,255";
-const ORANGE = "255,138,61"; // the accent
+const ORANGE = "34,197,94"; // the accent (green)
 
 type Dir = 0 | 1 | 2 | 3; // right, down, left, up
 const DX = [1, 0, -1, 0];

@@ -2,6 +2,10 @@
 
 Lumora Connect is the talent network of Lumora IT case competitions in Uzbekistan: students and young tech talent find internships, programs and jobs, companies find verified talent, and a mutual right swipe is a match. Lumora runs one-day IT case competitions across Uzbek cities. This repo is the front-end preview: the backend is a mock API that runs in the browser (`src/api`, localStorage). Each visitor has their own data. Demo logins are listed only in README.md, never on the site.
 
+## Priority
+- The owner's direct instructions in chat come first. When the owner asks for something that goes against a rule in this file or in a project skill, do what the owner asked and mention in one line which rule it overrides.
+- The published /v4/ (branch `design/v4`, commit `ecd8daa`) is frozen: never push to `design/v4`. This version lives on `design/v5` and is published at /v5/.
+
 ## Structure
 - Intro splash (`src/components/Splash.tsx`): blue screen with the white shield, then strips wipe right. Shown once per visit; timers sit in a ref with a hard stop.
 - Lumora pages `#/about`, `#/hackathons`, `#/contacts` (`src/landing/pages.tsx`), each a full version of a home section. Core team photos in `public/photos/team`.
@@ -24,7 +28,7 @@ Uzbek (Latin), Russian and English. `src/i18n/index.tsx` has `t("area.key", vars
 Vite + React 18 + TypeScript, Tailwind v4 (`@import "tailwindcss"` in `src/index.css`, tokens in `@theme`), Framer Motion, Lenis, lucide-react, self-hosted fonts via @fontsource. `base: "./"` in vite.config so the build works on GitHub Pages. Deploy workflow in `.github/workflows/deploy.yml`: `main` goes to the site root, every `design/<name>` branch to `/<name>/`.
 
 ## Design rules
-- Palette 60/30/10: navy `#0F2557` page background (60), blue `#3D7BFA` sections, cards, icons (30), orange `#FF8A3D` (hover `#F2752B`) only for the one main action per screen, active tab, key numbers (10). Tokens live in `@theme` in `src/index.css`; text is `ink` `#F4F7FF` and `mist` `#A9B7D8`.
+- Palette 60/30/10: navy `#0F2557` page background (60), blue `#3D7BFA` sections, cards, icons (30), green `#22C55E` (hover `#1DB954`) only for the one main action per screen, active tab, key numbers (10). Tokens live in `@theme` in `src/index.css`; text is `ink` `#F4F7FF` and `mist` `#A9B7D8`.
 - Logo: white shield with a `#3D7BFA` mark on a `#3D7BFA` rounded tile, exactly like `Logo.jpg` (traced paths live in `src/components/Logo.tsx`).
 - Fonts: Onest for all text and headings (`font-display`, `font-body`). Rubik Glitch (`font-glitch`) only on the landing "Next Lumora hackathon" heading. Press Start 2P (`font-pixel`) only for countdown digits. Heading base styles sit in `@layer base` so these utilities win.
 - No glow shadows, blurred blobs, dotted grids or gradient text. Radius scale: controls `rounded-lg`, cards `rounded-xl`, modals `rounded-2xl`, tags `rounded-md`, avatars `rounded-full`.

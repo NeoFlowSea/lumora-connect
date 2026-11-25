@@ -107,8 +107,8 @@ export function Splash({ onDone }: { onDone: () => void }) {
           phase === "logo"
             ? { x: 0, y: 0, scale: 0, opacity: 0, filter: "blur(0px)", color: "#ffffff" }
             : phase === "fade"
-              ? { x: px * 1.3, y: py * 1.3 - 24, scale: 1.5, opacity: 0, filter: "blur(6px)", color: "#ff8a3d" }
-              : { x: px, y: py, scale: 1, opacity: 0.9, filter: "blur(0px)", color: wiping ? "#ff8a3d" : "#ffffff" };
+              ? { x: px * 1.3, y: py * 1.3 - 24, scale: 1.5, opacity: 0, filter: "blur(6px)", color: "#22c55e" }
+              : { x: px, y: py, scale: 1, opacity: 0.9, filter: "blur(0px)", color: wiping ? "#22c55e" : "#ffffff" };
         return (
           <motion.span
             key={i}

@@ -9,6 +9,7 @@ import { Projects } from "./Projects";
 import { NextHackathon } from "./NextHackathon";
 import { Faq } from "./Faq";
 import { SitePage } from "./SitePage";
+import { HeroPhotos } from "./HeroPhotos";
 import { Fade, Rise, Section, SectionHead, isExternal, onAnchor, spotMove, wrap } from "./parts";
 import { Stable } from "../i18n/Stable";
 
@@ -41,22 +42,20 @@ function HomeHero() {
       <div className={`${wrap} grid items-center gap-12 md:grid-cols-[1.35fr_0.65fr] md:gap-10`}>
         <div>
           <p className="text-[15px] font-medium text-sky"><Stable k="home.hero.kicker" /></p>
-          <h1 className="mt-4 select-none text-balance text-[clamp(34px,4.6vw,60px)] font-semibold leading-[1.05] tracking-[-0.035em]"><Stable texts={lumora.slogans.hero} /></h1>
-          <p className="mt-5 max-w-[68ch] text-[17px] leading-relaxed text-mist md:text-[18px]"><Stable k="home.hero.text" /></p>
+          <h1 className="mt-4 select-none text-balance text-[clamp(34px,4.6vw,60px)] font-semibold leading-[1.05] tracking-[-0.035em]"><Stable k="home.hero.title" /></h1>
+          <p className="mt-5 max-w-[68ch] text-[18px] font-medium leading-relaxed text-ink/85 md:text-[20px]"><Stable k="home.hero.steps" /></p>
 
-          <div className="mt-8 grid gap-3 sm:grid-cols-2 sm:max-w-[560px]">
-            <a href={join} className="group flex min-h-16 flex-col justify-center rounded-lg bg-accent px-5 py-3 text-paper transition-colors hover:bg-accent-deep">
-              <span className="text-[17px] font-semibold"><Stable k="home.hero.join" /></span>
-              <span className="text-[13px] text-paper/75"><Stable k="home.hero.joinSub" /></span>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a href={join} className="inline-flex min-h-14 items-center justify-center rounded-lg bg-accent px-8 text-[17px] font-semibold text-paper transition-colors hover:bg-accent-deep">
+              <Stable k="home.hero.register" />
             </a>
-            <a href="#/connect" className="group flex min-h-16 flex-col justify-center rounded-lg border border-line px-5 py-3 transition-colors hover:border-sky hover:bg-tint">
-              <span className="text-[17px] font-semibold"><Stable k="home.hero.connect" /></span>
-              <span className="text-[13px] text-mist"><Stable k="home.hero.connectSub" /></span>
+            <a href="#/connect" className="inline-flex min-h-14 items-center justify-center rounded-lg border border-line px-8 text-[17px] font-semibold transition-colors hover:border-sky hover:bg-tint">
+              <Stable k="home.hero.connect" />
             </a>
           </div>
         </div>
 
-        <HeroPhoto name="school21-group" />
+        <HeroPhotos />
       </div>
     </section>
   );
@@ -134,16 +133,14 @@ export function About({ more = false, team = true, head = true }: { more?: boole
 
           <div onMouseMove={spotMove} className={card}>
             <h3 className="text-[20px]"><Stable k="home.about.citiesTitle" /></h3>
+            {/* every region by name, instead of "14 regions connected" */}
             <ul className="mt-5 flex flex-wrap gap-2">
-              {lumora.cities.map((c) => (
-                <li key={c} className="rounded-md border border-line px-2.5 py-1 text-[14px]">
-                  <Stable k={`home.city.${c}`} />
+              {lumora.regions.map((r) => (
+                <li key={r} className="rounded-md border border-line px-2.5 py-1 text-[14px]">
+                  <Stable k={`home.region.${r}`} />
                 </li>
               ))}
             </ul>
-            <p className="mt-5 text-[15px] leading-relaxed text-mist">
-              <Stable k="home.about.regions" vars={{ n: lumora.numbers.regions }} />
-            </p>
           </div>
         </div>
       </Fade>
