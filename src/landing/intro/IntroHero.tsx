@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { locale, useLang } from "../../i18n";
+import { useLang } from "../../i18n";
 import { Stable } from "../../i18n/Stable";
 import { lumora } from "../../content/lumora";
 import { btn } from "../../components/ui";
 import { onAnchor, wrap } from "../parts";
 import { LogoPath, STEPS } from "./LogoPath";
-import { NEXT_ROUND } from "./content";
+import { NEXT_ROUND, dayMonth } from "./content";
 import type { LogoScene } from "./LogoScene";
 import { registerTeam } from "./register";
 
@@ -31,7 +31,7 @@ function canRun3D(): boolean {
    About 6 seconds, once per visit (sessionStorage), skippable, finished at once with reduced motion. */
 export function IntroHero() {
   const { t } = useLang();
-  const date = new Date(NEXT_ROUND.start).toLocaleDateString(locale(), { day: "numeric", month: "long" });
+  const date = dayMonth(new Date(NEXT_ROUND.start));
 
   return (
     <section id="top" className="relative overflow-hidden pb-14 pt-24 md:pb-20 md:pt-32">

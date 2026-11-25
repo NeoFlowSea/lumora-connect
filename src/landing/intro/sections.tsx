@@ -1,19 +1,19 @@
 import { useState, type FormEvent } from "react";
 import { ExternalLink } from "lucide-react";
-import { locale, useLang } from "../../i18n";
+import { useLang } from "../../i18n";
 import { Stable } from "../../i18n/Stable";
 import { lumora, photo } from "../../content/lumora";
 import { btn } from "../../components/ui";
 import { Countdown } from "../../components/Countdown";
 import { Fade, Rise, Section, SectionHead } from "../parts";
-import { CASE_PARTNERS, NEXT_ROUND, NUMBERS, PARTNERS, REGIONS, WINNERS, latestRound } from "./content";
+import { CASE_PARTNERS, NEXT_ROUND, NUMBERS, PARTNERS, REGIONS, WINNERS, bigDate, latestRound, monthYearShort } from "./content";
 import { registerTeam } from "./register";
 
 /* Sections of the intro home, in the order of the brief: numbers, how a round works, regions,
    cases and winners, partners, Lumora Connect, for companies, next round. Each one is laid out
    differently on purpose (see the anti-slop skill). */
 
-const shortDate = (iso: string) => new Date(`${iso}T12:00`).toLocaleDateString(locale(), { month: "short", year: "numeric" });
+const shortDate = monthYearShort;
 
 /* ---------- numbers: four cards, the first one carries the colour ---------- */
 export function Numbers() {
@@ -341,12 +341,7 @@ export function ForCompanies() {
 export function NextRound() {
   const { t } = useLang();
   const start = new Date(NEXT_ROUND.start);
-  // parts of a full date, so the month keeps its case ("6 декабря", not "декабрь")
-  const parts = new Intl.DateTimeFormat(locale(), { day: "numeric", month: "long", year: "numeric" }).formatToParts(start);
-  const part = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
-  const day = part("day");
-  const month = `${part("month")} ${part("year")}`;
-  const weekday = start.toLocaleDateString(locale(), { weekday: "long" });
+  const { day, month, weekday } = bigDate(start);
   return (
     <Section id="next" className="bg-cloud">
       <Fade className="grid gap-10 lg:grid-cols-[auto_1fr] lg:gap-16">
