@@ -29,7 +29,7 @@ import type {
      which the interface shows as a "Demo profile" / "Sample" tag.
    - Demo badges come from a separate sample event, never from real rounds. */
 
-export const SCHEMA = 4;
+export const SCHEMA = 5;
 
 const DAY = 86400000;
 const ago = (days: number, hours = 0) => new Date(Date.now() - days * DAY - hours * 3600000).toISOString();
@@ -568,8 +568,42 @@ function hackathons(): Hackathon[] {
     updatedAt: `${DEMO_CUP.date}T18:00:00.000Z`,
   };
 
+  /* the real next round, announced by the team on 25 Nov 2026: 6 December, Holiday Inn Tashkent City.
+     Start time follows the usual format (case at 10:00, 8 hours); prizes, judges and capacity are not announced yet. */
+  const nextRound: Hackathon = {
+    ...baseEvent,
+    id: "r-tashkent-2026-12",
+    title: "Lumora IT Case · Tashkent, Holiday Inn Tashkent City",
+    organizerId: "lumora",
+    organizerName: "Lumora",
+    eventType: "case",
+    short: "One day, a real company case, a working prototype in 8 hours and a defence in front of the company's judges.",
+    description:
+      "Teams of 2 to 5 school students get a real case from a partner company, build a working prototype in 8 hours and defend it in front of judges from that company. Judges look at four things: problem, product, logic and presentation.",
+    caseBrief: "Announced on the day.",
+    city: "Tashkent",
+    venue: "Holiday Inn Tashkent City",
+    address: "3 Ukchi Street, Tashkent City",
+    mode: "offline",
+    start: "2026-12-06T10:00",
+    end: "2026-12-06T18:00",
+    regOpen: "2026-11-25T09:00",
+    regClose: "2026-12-05T23:59",
+    tracks: ["Frontend", "Backend", "UI/UX Design", "Product & Startup"],
+    teamMin: 2,
+    teamMax: 5,
+    maxTeams: 30,
+    places: places3("", "", ""),
+    eligibility: "School students in Uzbekistan.",
+    status: "registration_open",
+    photo: "school21-teams",
+    createdAt: "2026-11-25T09:00:00.000Z",
+    updatedAt: "2026-11-25T09:00:00.000Z",
+  };
+
   /* upcoming sample events, editable by admins */
   const upcoming: Hackathon[] = [
+    nextRound,
     {
       ...baseEvent,
       id: "h1",
