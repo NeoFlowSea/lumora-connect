@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
-import { ArrowLeft, ExternalLink, Heart, MessageCircle, Send } from "lucide-react";
+import { ArrowLeft, ExternalLink, MessageCircle, Send } from "lucide-react";
 import { api } from "../api";
 import { useAction, useApi, useSession } from "../api/hooks";
 import type { Match, Message, User } from "../api/types";
@@ -55,7 +55,6 @@ export function Inbox({ matchId }: { matchId?: string }) {
       <div className="mx-auto max-w-[620px]">
         <h1 className="mb-6 text-[clamp(26px,3vw,34px)]">{t("app.inbox.title")}</h1>
         <Empty
-          icon={<Heart size={20} />}
           title={t("app.inbox.emptyTitle")}
           text={t(me.kind === "company" ? "app.inbox.emptyCompany" : "app.inbox.emptyTalent")}
           action={
@@ -192,9 +191,6 @@ function Conversation({ match, meId }: { match: MatchRow; meId: string }) {
         ) : !count ? (
           <div className="grid h-full place-items-center text-center">
             <div className="px-2">
-              <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full bg-tint text-sky">
-                <Heart size={20} />
-              </div>
               <div className="font-semibold">{t("app.inbox.matchedAgo", { when: ago(match.at) })}</div>
               <p className="mx-auto mt-1 max-w-[56ch] text-[13px] text-mist">{t(other.kind === "company" ? "app.inbox.hintToCompany" : "app.inbox.hintToTalent")}</p>
             </div>
