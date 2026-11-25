@@ -1,21 +1,15 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import Lenis from "lenis";
 import { Nav } from "./Nav";
 import { Footer } from "./Footer";
 import { SiteTabs } from "./SiteTabs";
 import { openApp } from "../pages/PublicFrame";
 import { scrollToId, setLenis } from "./parts";
-import { GridBackground } from "../components/GridBackground";
-import { TouchGlow } from "../components/TouchGlow";
-
-const isTouch = () => window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768;
 
 /* Frame of the two site pages, the Lumora home and Lumora Connect: background, header,
    smooth scroll on desktop, footer and the bottom tab bar on phones.
    `to` is the section to open at ("#/?to=about"), or a plain anchor ("#faq"). */
 export function SitePage({ to, children }: { to?: string; children: ReactNode }) {
-  const [touch] = useState(isTouch);
-
   useEffect(() => {
     // smooth scroll only on desktop with a fine pointer; phones keep native scrolling
     const desktop = window.matchMedia("(pointer: fine) and (min-width: 1024px)").matches;
@@ -54,8 +48,6 @@ export function SitePage({ to, children }: { to?: string; children: ReactNode })
 
   return (
     <>
-      {/* interactive grid on desktop, a soft glow that follows the finger on phones */}
-      {touch ? <TouchGlow /> : <GridBackground />}
       <div className="min-h-[100svh] pb-16 md:pb-0">
         <Nav onOpenApp={() => openApp()} />
         <main>{children}</main>

@@ -9,7 +9,7 @@ import { Projects } from "./Projects";
 import { NextHackathon } from "./NextHackathon";
 import { Faq } from "./Faq";
 import { SitePage } from "./SitePage";
-import { Fade, Rise, Section, SectionHead, isExternal, onAnchor, spotMove, wrap } from "./parts";
+import { Fade, Rise, Section, SectionHead, isExternal, onAnchor, wrap } from "./parts";
 import { Stable } from "../i18n/Stable";
 
 /* Lumora home, #/. About Lumora as an organisation, built from the same pieces as the Connect landing:
@@ -101,7 +101,7 @@ function More({ href }: { href: string }) {
   );
 }
 
-const card = "spot rounded-xl border border-line bg-surface p-6 transition-colors hover:border-sky md:p-8";
+const card = "rounded-xl border border-line bg-surface p-6 transition-colors hover:border-sky md:p-8";
 
 /** why Lumora, the team in short and the cities. On the About page the team gets its own section, so `team` is off. */
 export function About({ more = false, team = true, head = true }: { more?: boolean; team?: boolean; head?: boolean }) {
@@ -111,14 +111,14 @@ export function About({ more = false, team = true, head = true }: { more?: boole
       <Fade>
         {head && <SectionHead title={<Stable k="home.about.title" />} lead={<Stable k="home.about.lead" />} aside={more ? <More href="#/about" /> : undefined} />}
         <div className={`grid gap-4 ${team ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
-          <div onMouseMove={spotMove} className={card}>
+          <div className={card}>
             <h3 className="text-[20px]"><Stable k="home.about.whyTitle" /></h3>
             <p className="mt-4 text-[17px] font-medium leading-snug"><Stable k="home.about.why" /></p>
             <p className="mt-3 text-[15px] leading-relaxed text-mist"><Stable k="home.about.whyMore" /></p>
           </div>
 
           {team && (
-            <div onMouseMove={spotMove} className={card}>
+            <div className={card}>
               <h3 className="text-[20px]"><Stable k="home.about.teamTitle" /></h3>
               <p className="mt-1 text-[15px] text-mist"><Stable k="home.about.teamText" /></p>
               <ul className="mt-5 grid gap-3">
@@ -132,7 +132,7 @@ export function About({ more = false, team = true, head = true }: { more?: boole
             </div>
           )}
 
-          <div onMouseMove={spotMove} className={card}>
+          <div className={card}>
             <h3 className="text-[20px]"><Stable k="home.about.citiesTitle" /></h3>
             <ul className="mt-5 flex flex-wrap gap-2">
               {lumora.cities.map((c) => (

@@ -81,13 +81,6 @@ export function Rise({ i, children, className = "" }: { i: number; children: Rea
   );
 }
 
-/** spotlight that follows the cursor on cards with the "spot" class */
-export function spotMove(e: MouseEvent<HTMLElement>) {
-  const r = e.currentTarget.getBoundingClientRect();
-  e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`);
-  e.currentTarget.style.setProperty("--my", `${e.clientY - r.top}px`);
-}
-
 export function SectionHead({ title, lead, aside }: { title: ReactNode; lead?: ReactNode; aside?: ReactNode }) {
   return (
     <div className="mb-8 flex flex-wrap items-end justify-between gap-x-8 gap-y-4 md:mb-10">

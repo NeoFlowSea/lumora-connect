@@ -3,7 +3,7 @@ import { locale, t as tr, useLang } from "../i18n";
 import { listNow, statsNow, type OpportunityWithCompany } from "../api";
 import { useDbTick } from "../api/hooks";
 import { ago } from "../components/form";
-import { Fade, Monogram, Rise, SampleTag, Section, SectionHead, spotMove } from "./parts";
+import { Fade, Monogram, Rise, SampleTag, Section, SectionHead } from "./parts";
 import { Stable } from "../i18n/Stable";
 
 /* Six open postings, Wellfound style: role first, company, place, pay up front. */
@@ -49,7 +49,7 @@ function JobCard({ o }: { o: OpportunityWithCompany }) {
   const { t } = useLang();
   const place = o.format === "remote" ? t("common.format.remote") : o.city;
   return (
-    <a href={`#/jobs/${o.id}`} onMouseMove={spotMove} className="spot group flex h-full flex-col rounded-xl border border-line bg-surface p-5 transition-colors hover:border-sky">
+    <a href={`#/jobs/${o.id}`} className="group flex h-full flex-col rounded-xl border border-line bg-surface p-5 transition-colors hover:border-sky">
       <div className="flex items-center gap-3">
         <Monogram name={o.company.name} hue={o.company.hue} logo={o.company.logo} />
         <div className="min-w-0 flex-1">

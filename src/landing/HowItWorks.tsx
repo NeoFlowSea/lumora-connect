@@ -1,5 +1,5 @@
 import { useLang } from "../i18n";
-import { Fade, Section, SectionHead, spotMove } from "./parts";
+import { Fade, Section, SectionHead } from "./parts";
 import { Stable } from "../i18n/Stable";
 
 /* Three steps for each side, next to each other so both sides see the whole deal. */
@@ -15,7 +15,7 @@ export function HowItWorks() {
         <SectionHead title={<Stable k="landing.how.title" />} lead={<Stable k="landing.how.lead" />} />
         <div className="grid gap-4 md:grid-cols-2">
           {sides.map((s) => (
-            <div key={s.id} id={s.id} onMouseMove={spotMove} className="spot scroll-mt-24 rounded-xl border border-line bg-surface p-6 transition-colors hover:border-sky md:p-8">
+            <div key={s.id} id={s.id} className="scroll-mt-24 rounded-xl border border-line bg-surface p-6 transition-colors hover:border-sky md:p-8">
               <h3 className="text-[20px]">{s.title}</h3>
               <ol className="mt-6 grid gap-6">
                 {[1, 2, 3].map((n) => (

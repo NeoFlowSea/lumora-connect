@@ -31,5 +31,14 @@ Vite + React 18 + TypeScript, Tailwind v4 (`@import "tailwindcss"` in `src/index
 - Sentence case, no all-caps labels, no arrows in button text. Text at least 12px, tap targets at least 44px on phones.
 - Respect `prefers-reduced-motion`. Keep everything usable at 375px with no horizontal scroll (bottom tab bar on phones).
 
+## Looking hand-made, not generated
+Before shipping any new section or screen, run the `anti-slop` skill (`.claude/skills/anti-slop/SKILL.md`). Short version:
+- Specifics over decoration: real photos, real numbers, real names from `src/content/lumora.ts`. Never stock-style filler, invented stats or invented quotes.
+- Do not repeat one layout. No run of identical "icon, bold title, grey sentence" cards; vary the grid, scale and density between sections, and let one section be plain text or one big photo.
+- No purple-blue gradients, glassmorphism, cards nested in cards, coloured left-edge stripes on cards, emoji as icons, or "Welcome to / Unlock / Seamless / Elevate / Empower" copy.
+- Cursor spotlights, glowing orbs and animated grids count as glow: keep them out of new work.
+- Copy is short, concrete and written the way a Lumora organiser would say it. Check ru and uz in a real sentence, not a translation of the English.
+- One idea per screen, one orange action per screen, generous but uneven spacing; align to a real grid instead of centring everything.
+
 ## Commands
 `npm run dev` starts the dev server on http://localhost:5173. `npm run build` type-checks and builds into `dist`.
