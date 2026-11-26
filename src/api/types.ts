@@ -372,7 +372,39 @@ export interface TeamRegistration {
   motivation: string;
   phone: string;
   createdAt: string;
+  /** the team's confirmation link code for the bot (t.me/Lumora_connect_bot?start=t_<code>) */
+  confirmCode?: string;
+  /** when the organizers asked the team to confirm */
+  confirmRequestedAt?: string | null;
+  /** when at least teamMin people confirmed */
+  confirmedAt?: string | null;
+  /** a small team agreed to be merged with another one */
+  mergeOk?: boolean;
 }
+
+/** a person in a team, listed by the lead by name and Telegram username; needs no account */
+export interface TeamMember {
+  id: string;
+  teamId: string;
+  hackathonId: string;
+  name: string;
+  /** lowercase, without @; null when the person has no Telegram username */
+  username: string | null;
+  isLead: boolean;
+  /** the account, once the person connects Telegram or signs in with it */
+  userId: string | null;
+  confirmedAt: string | null;
+  declinedAt: string | null;
+}
+
+/** a Telegram account connected through the Lumora bot */
+export interface TelegramLink {
+  userId: string;
+  username: string | null;
+  at: string;
+}
+
+export type TeamMemberInput = { name: string; username: string };
 
 export interface AuditEntry {
   id: string;
@@ -413,4 +445,7 @@ export type HackathonInput = Omit<Hackathon, "id" | "createdAt" | "updatedAt" | 
 
 export type OpportunityInput = Omit<Opportunity, "id" | "companyId" | "postedAt" | "hidden" | "hiddenReason" | "demo">;
 
-export type TeamInput = Omit<TeamRegistration, "id" | "hackathonId" | "leadId" | "createdAt">;
+export type TeamInput = Omit<TeamRegistration, "id" | "hackathonId" | "leadId" | "createdAt" | "members" | "confirmCode" | "confirmRequestedAt" | "confirmedAt" | "mergeOk"> & {
+  members: TeamMemberInput[];
+  consent: boolean;
+};

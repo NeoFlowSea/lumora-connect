@@ -25,6 +25,9 @@ import type {
   User,
   Verification,
   VerificationProof,
+  TeamMember,
+  TeamMemberInput,
+  TelegramLink,
 } from "./types";
 
 /* Lumora Connect API on Supabase. The screens call the same functions they called on the
@@ -45,9 +48,11 @@ const fail = (code: string, vars?: Record<string, string | number>): never => {
 /** turn a database or sign-in error into a message in the interface language */
 function apiError(message: string): ApiError {
   const m = message.trim();
-  const known = (code: string) => {
+  // database errors are codes, optionally with one value: "usernameTaken|alice"
+  const known = (msg: string) => {
+    const [code, arg] = msg.split("|");
     const k = `api.${code}`;
-    const s = t(k);
+    const s = t(k, { v: arg ?? "" });
     return s === k ? null : s;
   };
   if (/invalid login credentials/i.test(m)) return new ApiError(t("api.wrongLogin"));
@@ -581,7 +586,7 @@ function validateOpportunity(o: OpportunityInput) {
 
 /* ---------- hackathons ---------- */
 
-export type TeamWithLead = TeamRegistration & { lead: TalentProfile | undefined };
+export type TeamWithLead = TeamRegistration & { lead: TalentProfile | undefined; people: TeamMember[] };
 
 const PUBLIC_STATUSES: Hackathon["status"][] = ["published", "registration_open", "registration_closed", "in_progress", "finished", "cancelled"];
 
@@ -641,14 +646,20 @@ const hackathons = {
     const d0 = getDb();
     const h = d0.hackathons.find((x) => x.id === hackathonId) ?? fail("eventNotFound");
     if (h.status !== "registration_open") fail("regNotOpen");
-    if (!tal.channelOkAt) fail("channelRequired");
+    if (!getDb().tgLinks.some((l) => l.userId === tal.id)) fail("telegramRequired");
     const nowLocal = localNow();
     if (h.regOpen && nowLocal < h.regOpen) fail("regOpensOn", { date: h.regOpen.replace("T", " ") });
     if (h.regClose && nowLocal > h.regClose) fail("regClosed");
     if (d0.teams.some((x) => x.hackathonId === hackathonId && x.leadId === tal.id)) fail("alreadyRegistered");
     if (h.maxTeams && (d0.teamCounts[hackathonId] ?? 0) >= h.maxTeams) fail("eventFull");
     if (!input.teamName.trim()) fail("noTeamName");
-    const size = input.members.filter((m) => m.trim()).length;
+    if (!input.consent) fail("noConsent");
+    const listed = input.members.filter((m) => m.name.trim() || m.username.trim());
+    for (const m of listed) {
+      const u = normUsername(m.username);
+      if (u && !/^[a-z][a-z0-9_]{3,31}$/.test(u)) fail("badUsername", { v: u });
+    }
+    const size = listed.length + 1;
     if (size === 1 && !h.soloAllowed && h.teamMin > 1) fail("noSolo", { n: h.teamMin });
     if (size > 1 && size < h.teamMin) fail("teamMin", { n: h.teamMin });
     if (size > h.teamMax) fail("teamMax", { n: h.teamMax });
@@ -661,22 +672,58 @@ const hackathons = {
     return getDb().teams.find((x) => x.id === id)!;
   },
 
+  /** people in a team, the lead first */
+  async members(teamId: string): Promise<TeamMember[]> {
+    return getDb().teamMembers.filter((m) => m.teamId === teamId);
+  },
+
+  /** the lead fixes the list; people who already confirmed stay */
+  async setMembers(teamId: string, members: TeamMemberInput[]): Promise<void> {
+    meTalent();
+    for (const m of members) {
+      const u = normUsername(m.username);
+      if (u && !/^[a-z][a-z0-9_]{3,31}$/.test(u)) fail("badUsername", { v: u });
+    }
+    await rpc("team_set_members", { tid: teamId, members });
+  },
+
+  /** "this is not me": the signed-in person was listed in a team by mistake */
+  async declineMember(memberId: string): Promise<void> {
+    await rpc("team_member_decline", { mid: memberId });
+  },
+
+  /** a small team agrees that the organizers merge it with another one */
+  async setMergeOk(teamId: string, ok: boolean): Promise<void> {
+    await rpc("team_merge_ok", { tid: teamId, ok });
+  },
+
+  /** admin: the bot asks every team of the event to confirm */
+  async requestConfirm(hackathonId: string): Promise<{ sent: number; failed: string[] }> {
+    meAdmin();
+    const { data, error } = await supabase.functions.invoke("tg-bot", { body: { action: "request_confirm", hid: hackathonId } });
+    await reload();
+    if (error || !data || (data as { error?: string }).error) throw new ApiError(t("api.botUnavailable"));
+    return data as { sent: number; failed: string[] };
+  },
+
   async cancelMyTeam(hackathonId: string): Promise<void> {
     meTalent();
     await rpc("team_cancel", { hid: hackathonId });
   },
 
+  /** teams the person leads or is listed in */
   async myTeams(): Promise<TeamRegistration[]> {
     const u = currentUser();
     if (!u || u.kind !== "talent") return [];
-    return getDb().teams.filter((x) => x.leadId === u.id);
+    const listed = new Set(myMemberRows(u.id).map((m) => m.teamId));
+    return getDb().teams.filter((x) => x.leadId === u.id || listed.has(x.id));
   },
 
   async teams(hackathonId: string): Promise<TeamWithLead[]> {
     meAdmin();
     return getDb()
       .teams.filter((x) => x.hackathonId === hackathonId)
-      .map((x) => ({ ...x, lead: findUser(x.leadId) as TalentProfile | undefined }));
+      .map((x) => ({ ...x, lead: findUser(x.leadId) as TalentProfile | undefined, people: getDb().teamMembers.filter((m) => m.teamId === x.id && !m.declinedAt) }));
   },
 
   async teamCounts(): Promise<Record<string, number>> {
@@ -845,5 +892,33 @@ const admin = {
   },
 };
 
-export const api = { auth, users, swipe, opportunities, hackathons, notifications, admin };
+/* Telegram connected through the Lumora bot (supabase/functions/tg-bot) */
+const telegram = {
+  /** the signed-in person's connected Telegram, if any */
+  link(): TelegramLink | null {
+    const u = currentUser();
+    return u ? (getDb().tgLinks.find((l) => l.userId === u.id) ?? null) : null;
+  },
+  /** one-time code: t.me/Lumora_connect_bot?start=<code> connects Telegram to this account */
+  async code(): Promise<string> {
+    if (!currentUser()) fail("signInFirst");
+    const { data, error } = await supabase.rpc("channel_code");
+    if (error) throw new ApiError(t("api.serverError"));
+    return data as string;
+  },
+};
+
+/** "@Name", "t.me/name" or "name" -> "name" */
+export function normUsername(v: string): string {
+  return v.trim().replace(/^(https?:\/\/)?(t\.me\/|telegram\.me\/)?@?/i, "").toLowerCase();
+}
+
+/** rows in other people's teams that are this person: by account or Telegram username */
+export function myMemberRows(userId: string): TeamMember[] {
+  const d = getDb();
+  const names = new Set(d.myTgUsernames);
+  return d.teamMembers.filter((m) => !m.declinedAt && !m.isLead && (m.userId === userId || (!!m.username && names.has(m.username))));
+}
+
+export const api = { auth, users, swipe, opportunities, hackathons, notifications, admin, telegram };
 export type Api = typeof api;

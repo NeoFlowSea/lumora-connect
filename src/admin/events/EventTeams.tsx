@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { BadgeCheck, Pencil, Search, Trophy, Users } from "lucide-react";
+import { BadgeCheck, Check, Copy, Pencil, Search, Send, Trophy, Users } from "lucide-react";
 import { api, statusLabel } from "../../api";
 import { useAction, useApi } from "../../api/hooks";
 import type { Result } from "../../api/types";
@@ -8,6 +8,7 @@ import { Pill, btn, useToast } from "../../components/ui";
 import { t, tp, trackLabel } from "../../i18n";
 import { go } from "../../lib/router";
 import { placeTitle } from "../../app/HackathonsTab";
+import { lumora } from "../../content/lumora";
 import { statusTone } from "./shared";
 
 const smallBtn = `${btn.sm} min-h-11 border border-line hover:border-sky hover:bg-tint md:min-h-9`;
@@ -25,6 +26,8 @@ export function EventTeams({ id }: { id: string }) {
     await api.hackathons.setResults(id, results);
     return true;
   });
+  const ask = useAction(async () => api.hackathons.requestConfirm(id));
+  const [asked, setAsked] = useState<{ sent: number; failed: string[] } | null>(null);
   const finish = useAction(async () => {
     await api.hackathons.update(id, { status: "finished" });
     return true;
@@ -116,6 +119,32 @@ export function EventTeams({ id }: { id: string }) {
         </button>
       </div>
 
+      {ev.status !== "finished" && ev.status !== "cancelled" && (
+        <div className="grid gap-3 rounded-lg border border-line bg-paper/40 p-4 text-[14px]">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="min-w-0 flex-1">{t("admin.teams.askNote", { min: ev.teamMin })}</span>
+            <button
+              onClick={async () => {
+                if (!window.confirm(t("admin.teams.askConfirm", { n: allTeams.length }))) return;
+                const r = await ask.run();
+                if (r) setAsked(r);
+              }}
+              disabled={ask.pending || allTeams.length === 0}
+              className={`${smallBtn} disabled:opacity-60`}
+            >
+              {ask.pending ? <Spinner /> : <Send size={14} />} {t("admin.teams.ask")}
+            </button>
+          </div>
+          {asked && (
+            <p className="text-[13px] text-mist">
+              {t("admin.teams.askSent", { n: asked.sent })}
+              {asked.failed.length > 0 && ` ${t("admin.teams.askFailed", { list: asked.failed.join(", ") })}`}
+            </p>
+          )}
+          <ErrorNote>{ask.error}</ErrorNote>
+        </div>
+      )}
+
       {ev.status !== "finished" && (
         <div className="flex flex-wrap items-center gap-3 rounded-lg border border-line bg-tint p-4 text-[14px]">
           <span className="min-w-0 flex-1">{t("admin.teams.finishNote")}</span>
@@ -169,10 +198,43 @@ export function EventTeams({ id }: { id: string }) {
                           )}
                         </div>
                       </div>
-                      {x.track && <Pill tone="tint">{trackLabel(x.track)}</Pill>}
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        {x.confirmedAt ? (
+                          <Pill tone="good">{t("admin.teams.stConfirmed")}</Pill>
+                        ) : x.confirmRequestedAt ? (
+                          <Pill tone="line">{t("admin.teams.stWaiting", { n: x.people.filter((m) => m.confirmedAt).length, min: ev.teamMin })}</Pill>
+                        ) : null}
+                        {x.mergeOk && <Pill tone="blue">{t("admin.teams.stMerge")}</Pill>}
+                        {x.track && <Pill tone="tint">{trackLabel(x.track)}</Pill>}
+                      </div>
                     </div>
+                    <ul className="mt-3 grid gap-1 text-[13px]">
+                      {x.people.map((m) => (
+                        <li key={m.id} className="flex min-w-0 flex-wrap items-center gap-x-2">
+                          {m.confirmedAt ? <Check size={13} className="text-good" aria-label={t("admin.teams.stConfirmed")} /> : <span className="w-[13px]" aria-hidden />}
+                          <span className="break-words">{m.name || `@${m.username}`}</span>
+                          {m.name && m.username && <span className="text-mist">@{m.username}</span>}
+                          {m.isLead && <span className="text-[12px] text-sky">{t("admin.teams.lead")}</span>}
+                        </li>
+                      ))}
+                    </ul>
+                    {x.confirmCode && (
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(`${lumora.links.bot}?start=t_${x.confirmCode}`);
+                            toast(t("app.team.copied"));
+                          } catch {
+                            /* clipboard blocked */
+                          }
+                        }}
+                        className="mt-2 inline-flex min-h-11 items-center gap-1.5 text-[13px] font-semibold text-sky hover:underline md:min-h-8"
+                      >
+                        <Copy size={13} /> {t("admin.teams.copyLink")}
+                      </button>
+                    )}
                     <div className="mt-3 grid gap-1 text-[13px]">
-                      {extra(t("app.hack.members"), x.members.filter(Boolean).join(", ") || t("admin.teams.leadOnly"))}
                       {extra(t("app.hack.contact"), x.contact)}
                       {extra("GitHub", x.github)}
                       {extra(t("app.hack.portfolio"), x.portfolio)}

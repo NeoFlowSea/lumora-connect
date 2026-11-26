@@ -9,6 +9,7 @@ import { btn, useToast } from "../../components/ui";
 import { go } from "../../lib/router";
 import { PasswordInput, StrengthHint } from "../../auth/parts";
 import { Row, Section } from "./kit";
+import { TelegramStatus } from "../parts/telegram";
 
 /* Account: email and its state, password change, sign out. */
 
@@ -31,6 +32,11 @@ export function AccountCard({ user }: { user: TalentProfile | CompanyProfile }) 
           </Row>
         )}
         <Row label={t("profile.account.type")}>{type}</Row>
+        <div className="sm:col-span-2">
+          <Row label="Telegram">
+            <TelegramStatus />
+          </Row>
+        </div>
         <Row label={t("profile.account.since")}>{new Date(user.createdAt).toLocaleDateString(locale(), { day: "numeric", month: "long", year: "numeric" })}</Row>
       </div>
 

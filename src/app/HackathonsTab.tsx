@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
-import { ArrowLeft, CalendarDays, Check, Clock, ExternalLink, Globe, MapPin, Plus, Trophy, Users, X } from "lucide-react";
-import { api, localNow, statusLabel } from "../api";
+import { ArrowLeft, CalendarDays, Check, Clock, Copy, ExternalLink, Globe, MapPin, Plus, Trophy, Users, X } from "lucide-react";
+import { api, localNow, myMemberRows, statusLabel } from "../api";
 import { useAction, useApi, useSession } from "../api/hooks";
-import type { Badge, Hackathon, TalentProfile, TeamRegistration } from "../api/types";
+import type { Badge, Hackathon, TalentProfile, TeamMember, TeamMemberInput, TeamRegistration } from "../api/types";
+import { ConnectTelegramButton, useTelegramLink } from "./parts/telegram";
 import { Empty, ErrorNote, Field, Input, Select, Skeleton, Spinner, Textarea, when } from "../components/form";
 import { Modal, Pill, btn, useToast } from "../components/ui";
 import { lumora, photo } from "../content/lumora";
@@ -675,22 +676,7 @@ function EventDetail({ h, team, teams, isTalent, onRegister }: { h: Hackathon; t
                     </a>
                   </p>
                 ) : team ? (
-                  <div className="rounded-lg border border-good/40 bg-good/10 p-4">
-                    <div className="flex items-center gap-2 text-[14px] font-semibold text-good">
-                      <Check size={16} /> {t("app.hack.youreIn")}
-                    </div>
-                    <dl className="mt-2 text-[14px]">
-                      <Row k={t("app.hack.teamName")} v={team.teamName} />
-                      <Row k={t("app.hack.track")} v={team.track ? trackLabel(team.track) : ""} />
-                      <Row k={t("app.hack.members")} v={team.members.join(", ")} />
-                      <Row k={t("app.hack.contact")} v={team.contact} />
-                    </dl>
-                    {(state === "open" || state === "full") && (
-                      <button onClick={() => setConfirmCancel(true)} className={`${btn.ghost} mt-3 w-full sm:w-auto`}>
-                        {t("app.hack.cancelReg")}
-                      </button>
-                    )}
-                  </div>
+                  <TeamPanel team={team} h={h} canCancel={state === "open" || state === "full"} onCancel={() => setConfirmCancel(true)} />
                 ) : state === "open" ? (
                   <button onClick={onRegister} className={`${btn.primary} w-full`}>
                     {t("app.hack.register")}
@@ -806,26 +792,22 @@ function RegisterModal({ h, onClose }: { h: Hackathon | null; onClose: () => voi
 function RegisterForm({ h, onClose }: { h: Hackathon; onClose: () => void }) {
   const user = useSession();
   const toast = useToast();
+  const link = useTelegramLink();
   const reg = useAction(api.hackathons.registerTeam);
   const [done, setDone] = useState(false);
   const me = user?.kind === "talent" ? user : null;
-  const [f, setF] = useState({
-    teamName: "",
-    track: h.tracks[0] ?? "",
-    members: [me?.name ?? "", ...Array(Math.max(0, Math.min(h.teamMin, h.teamMax) - 1)).fill("")] as string[],
-    contact: me?.contact ?? "",
-    github: me?.github ?? "",
-    portfolio: me?.portfolio ?? "",
-    motivation: "",
-    phone: "",
-  });
+  const [f, setF] = useState({ teamName: "", track: h.tracks[0] ?? "", contact: "", github: me?.github ?? "", portfolio: me?.portfolio ?? "", motivation: "", phone: "" });
+  const [rows, setRows] = useState<TeamMemberInput[]>(() => Array.from({ length: Math.max(0, Math.min(h.teamMin, h.teamMax) - 1) }, () => ({ name: "", username: "" })));
+  const [consent, setConsent] = useState(false);
   const set = (k: keyof typeof f) => (v: string) => setF((s) => ({ ...s, [k]: v }));
-  const filled = f.members.filter((m) => m.trim()).length;
-  if (me && !me.channelOkAt) return <ChannelGate onClose={onClose} />;
+  const filled = 1 + rows.filter((m) => m.name.trim() || m.username.trim()).length;
+
+  // the lead needs Telegram connected: the bot writes to the lead before the event
+  if (me && !link) return <TelegramGate onClose={onClose} />;
 
   async function submit(e: FormEvent) {
     e.preventDefault();
-    const r = await reg.run(h.id, { ...f, members: f.members.map((m) => m.trim()).filter(Boolean) });
+    const r = await reg.run(h.id, { ...f, members: rows, consent });
     if (r) {
       setDone(true);
       toast(t("app.hack.toastRegistered"));
@@ -840,6 +822,7 @@ function RegisterForm({ h, onClose }: { h: Hackathon; onClose: () => void }) {
         </div>
         <h2 className="mt-5 text-[24px]">{t("app.hack.doneTitle")}</h2>
         <p className="mt-2 text-[14px] text-mist">{t("app.hack.doneText", { title: h.title, date: when(h.start) })}</p>
+        <p className="mt-2 text-[14px] text-mist">{t("app.team.doneNext")}</p>
         <button onClick={onClose} className={`${btn.primary} mt-6`}>
           {t("app.hack.done")}
         </button>
@@ -866,36 +849,13 @@ function RegisterForm({ h, onClose }: { h: Hackathon; onClose: () => void }) {
       )}
       <div className="grid gap-2">
         <span className="text-[13px] font-medium text-mist">{t("app.hack.membersCount", { n: filled, max: h.teamMax })}</span>
-        {f.members.map((m, i) => (
-          <div key={i} className="flex gap-2">
-            <Input
-              value={m}
-              disabled={i === 0}
-              aria-label={i === 0 ? t("app.hack.you") : t("app.hack.memberN", { n: i + 1 })}
-              onChange={(e) => setF((s) => ({ ...s, members: s.members.map((x, j) => (j === i ? e.target.value : x)) }))}
-              placeholder={i === 0 ? t("app.hack.you") : t("app.hack.memberN", { n: i + 1 })}
-            />
-            {i > 0 && (
-              <button
-                type="button"
-                onClick={() => setF((s) => ({ ...s, members: s.members.filter((_, j) => j !== i) }))}
-                aria-label={t("app.hack.removeMember")}
-                className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-line text-mist hover:border-sky hover:text-ink"
-              >
-                <X size={16} />
-              </button>
-            )}
-          </div>
-        ))}
-        {f.members.length < h.teamMax && (
-          <button type="button" onClick={() => setF((s) => ({ ...s, members: [...s.members, ""] }))} className="inline-flex min-h-11 w-fit items-center gap-1.5 text-[14px] font-semibold text-sky hover:underline">
-            <Plus size={15} /> {t("app.hack.addMember")}
-          </button>
-        )}
+        <p className="text-[13px] text-mist">{t("app.team.formHint")}</p>
+        <div className="flex gap-2">
+          <Input disabled value={`${me?.name ?? ""}${link?.username ? ` · @${link.username}` : ""}`} aria-label={t("app.hack.you")} />
+          <span className="w-11 shrink-0" aria-hidden />
+        </div>
+        <MemberRows rows={rows} setRows={setRows} max={h.teamMax - 1} />
       </div>
-      <Field label={t("app.hack.leadContact")} hint={t("app.hack.leadContactHint")}>
-        <Input required value={f.contact} onChange={(e) => set("contact")(e.target.value)} placeholder="@username" />
-      </Field>
       {h.registrationFields.github && (
         <Field label="GitHub">
           <Input value={f.github} onChange={(e) => set("github")(e.target.value)} placeholder="github.com/your-team" />
@@ -916,6 +876,10 @@ function RegisterForm({ h, onClose }: { h: Hackathon; onClose: () => void }) {
           <Textarea value={f.motivation} onChange={(e) => set("motivation")(e.target.value)} />
         </Field>
       )}
+      <label className="flex min-h-11 cursor-pointer items-start gap-3 text-[14px] leading-relaxed text-mist">
+        <input type="checkbox" required checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer accent-[#3d7bfa]" />
+        <span>{t("app.team.consent")}</span>
+      </label>
       <ErrorNote>{reg.error}</ErrorNote>
       <div className="flex flex-wrap gap-3">
         <button type="submit" disabled={reg.pending} className={`${btn.primary} disabled:opacity-60`}>
@@ -929,59 +893,225 @@ function RegisterForm({ h, onClose }: { h: Hackathon; onClose: () => void }) {
   );
 }
 
-/* Registration needs the Lumora Telegram channel. The bot checks it (supabase/functions/tg-bot):
-   the button opens the bot with a one-time code, the bot stamps the profile, and Realtime
-   reloads this page, so the form appears without a refresh. */
-function ChannelGate({ onClose }: { onClose: () => void }) {
+/** name + Telegram username rows; people need no account */
+function MemberRows({ rows, setRows, max }: { rows: TeamMemberInput[]; setRows: (f: (r: TeamMemberInput[]) => TeamMemberInput[]) => void; max: number }) {
+  const set = (i: number, k: keyof TeamMemberInput, v: string) => setRows((r) => r.map((x, j) => (j === i ? { ...x, [k]: v } : x)));
+  return (
+    <>
+      {rows.map((m, i) => (
+        <div key={i} className="flex gap-2">
+          <div className="grid min-w-0 flex-1 gap-2 sm:grid-cols-2">
+            <Input value={m.name} onChange={(e) => set(i, "name", e.target.value)} placeholder={t("app.team.namePh")} aria-label={t("app.hack.memberN", { n: i + 2 })} maxLength={80} />
+            <Input
+              value={m.username}
+              onChange={(e) => set(i, "username", e.target.value)}
+              placeholder="@username"
+              aria-label={t("app.team.username", { n: i + 2 })}
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
+              maxLength={40}
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => setRows((r) => r.filter((_, j) => j !== i))}
+            aria-label={t("app.hack.removeMember")}
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-line text-mist hover:border-sky hover:text-ink"
+          >
+            <X size={16} />
+          </button>
+        </div>
+      ))}
+      {rows.length < max && (
+        <button type="button" onClick={() => setRows((r) => [...r, { name: "", username: "" }])} className="inline-flex min-h-11 w-fit items-center gap-1.5 text-[14px] font-semibold text-sky hover:underline">
+          <Plus size={15} /> {t("app.hack.addMember")}
+        </button>
+      )}
+    </>
+  );
+}
+
+/* Registering a team needs Telegram connected to the lead's account (src/app/parts/telegram.tsx). */
+function TelegramGate({ onClose }: { onClose: () => void }) {
   useLang();
-  const [code, setCode] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [opened, setOpened] = useState(false);
-  useEffect(() => {
-    let live = true;
-    api.hackathons
-      .channelCode()
-      .then((c) => live && setCode(c))
-      .catch((e: Error) => live && setError(e.message));
-    return () => {
-      live = false;
-    };
-  }, []);
-  const step = "grid h-7 w-7 shrink-0 place-items-center rounded-full bg-blue text-[13px] font-semibold text-white";
   return (
     <div className="grid gap-5">
       <div>
-        <h2 className="text-[22px] leading-tight">{t("app.hack.ch.title")}</h2>
-        <p className="mt-2 text-[14px] leading-relaxed text-mist">{t("app.hack.ch.text")}</p>
+        <h2 className="text-[22px] leading-tight">{t("app.tg.gateTitle")}</h2>
+        <p className="mt-2 text-[14px] leading-relaxed text-mist">{t("app.tg.gateText")}</p>
       </div>
-      <ol className="grid gap-4">
-        <li className="grid gap-2">
-          <span className="flex items-center gap-3 text-[15px] font-semibold"><span className={step}>1</span>{t("app.hack.ch.step1")}</span>
-          <a href={lumora.links.telegram} target="_blank" rel="noopener noreferrer" className={`${btn.ghost} ml-10 w-fit`}>
-            {t("app.hack.ch.open")} <ExternalLink size={14} />
-          </a>
-        </li>
-        <li className="grid gap-2">
-          <span className="flex items-center gap-3 text-[15px] font-semibold"><span className={step}>2</span>{t("app.hack.ch.step2")}</span>
-          <a
-            href={code ? `${lumora.links.bot}?start=${code}` : undefined}
-            aria-disabled={!code}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => setOpened(true)}
-            className={`${btn.primary} ml-10 w-fit ${code ? "" : "pointer-events-none opacity-60"}`}
-          >
-            {!code && !error && <Spinner />} {t("app.hack.ch.confirm")}
-          </a>
-          <p className="ml-10 text-[13px] text-mist">{opened ? t("app.hack.ch.waiting") : t("app.hack.ch.hint")}</p>
-        </li>
-      </ol>
-      <ErrorNote>{error}</ErrorNote>
+      <ConnectTelegramButton />
       <div>
         <button type="button" onClick={onClose} className={btn.ghost}>
           {t("common.action.cancel")}
         </button>
       </div>
     </div>
+  );
+}
+
+/* ---------- a registered team: members and confirmation ---------- */
+
+function TeamPanel({ team, h, canCancel, onCancel }: { team: TeamRegistration; h: Hackathon; canCancel: boolean; onCancel: () => void }) {
+  useLang();
+  const user = useSession();
+  const toast = useToast();
+  const members = useApi(() => api.hackathons.members(team.id), [team.id]);
+  const [editing, setEditing] = useState(false);
+  const merge = useAction(async (ok: boolean) => {
+    await api.hackathons.setMergeOk(team.id, ok);
+    return true;
+  });
+  const decline = useAction(async (id: string) => {
+    await api.hackathons.declineMember(id);
+    return true;
+  });
+  if (!user) return null;
+
+  const isLead = team.leadId === user.id;
+  const list = (members.data ?? []).filter((m) => !m.declinedAt);
+  const mine = isLead ? null : (myMemberRows(user.id).find((m) => m.teamId === team.id) ?? null);
+  const confirmed = list.filter((m) => m.confirmedAt).length;
+  const min = Math.max(1, h.teamMin);
+  const asked = !!team.confirmRequestedAt;
+  const link = team.confirmCode ? `${lumora.links.bot}?start=t_${team.confirmCode}` : "";
+  const open = h.status !== "finished" && h.status !== "cancelled";
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(link);
+      toast(t("app.team.copied"));
+    } catch {
+      /* the link is printed under the buttons */
+    }
+  }
+
+  return (
+    <div className={`rounded-lg border p-4 ${team.confirmedAt ? "border-good/40 bg-good/10" : "border-line bg-paper/40"}`}>
+      <div className="flex items-center gap-2 text-[14px] font-semibold text-good">
+        <Check size={16} /> {team.confirmedAt ? t("app.team.confirmed") : isLead ? t("app.hack.youreIn") : t("app.team.listed")}
+      </div>
+      <dl className="mt-2 text-[14px]">
+        <Row k={t("app.hack.teamName")} v={team.teamName} />
+        <Row k={t("app.hack.track")} v={team.track ? trackLabel(team.track) : ""} />
+      </dl>
+
+      <ul className="mt-3 grid gap-1.5" aria-label={t("app.hack.members")}>
+        {list.map((m) => (
+          <MemberLine key={m.id} m={m} asked={asked} />
+        ))}
+      </ul>
+
+      {asked && !team.confirmedAt && open && (
+        <div className="mt-4 grid gap-2 border-t border-line pt-4">
+          <p className="text-[14px] font-semibold">{t("app.team.progress", { n: confirmed, min })}</p>
+          <p className="text-[13px] text-mist">{t("app.team.howTo")}</p>
+          <div className="flex flex-wrap gap-2">
+            <a href={link} target="_blank" rel="noopener noreferrer" className={btn.primary}>
+              {t("app.team.confirmMe")} <ExternalLink size={14} />
+            </a>
+            <button type="button" onClick={copy} className={btn.ghost}>
+              <Copy size={15} /> {t("app.team.copy")}
+            </button>
+          </div>
+          <p className="break-all text-[12px] text-mist">{link}</p>
+          {isLead && confirmed < min && (
+            <label className="mt-1 flex min-h-11 cursor-pointer items-start gap-3 text-[14px]">
+              <input
+                type="checkbox"
+                checked={!!team.mergeOk}
+                disabled={merge.pending}
+                onChange={(e) => merge.run(e.target.checked)}
+                className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer accent-[#3d7bfa]"
+              />
+              <span>{t("app.team.mergeOk", { min })}</span>
+            </label>
+          )}
+          <ErrorNote>{merge.error}</ErrorNote>
+        </div>
+      )}
+
+      {editing && <MembersEditor team={team} h={h} members={list} onDone={() => setEditing(false)} />}
+
+      <div className="mt-3 flex flex-wrap gap-2">
+        {isLead && open && !editing && !team.confirmedAt && (
+          <button type="button" onClick={() => setEditing(true)} className={btn.ghost}>
+            {t("app.team.edit")}
+          </button>
+        )}
+        {isLead && canCancel && (
+          <button type="button" onClick={onCancel} className={btn.ghost}>
+            {t("app.hack.cancelReg")}
+          </button>
+        )}
+        {mine && !mine.confirmedAt && (
+          <button
+            type="button"
+            disabled={decline.pending}
+            onClick={() => window.confirm(t("app.team.notMeAsk", { team: team.teamName })) && decline.run(mine.id)}
+            className={btn.ghost}
+          >
+            {t("app.team.notMe")}
+          </button>
+        )}
+      </div>
+      <ErrorNote>{decline.error}</ErrorNote>
+    </div>
+  );
+}
+
+function MemberLine({ m, asked }: { m: TeamMember; asked: boolean }) {
+  return (
+    <li className="flex min-w-0 items-center justify-between gap-3 text-[14px]">
+      <span className="min-w-0 break-words">
+        {m.name || `@${m.username}`}
+        {m.name && m.username && <span className="text-mist"> @{m.username}</span>}
+        {m.isLead && <span className="ml-1.5 text-[12px] text-sky">{t("app.team.lead")}</span>}
+      </span>
+      {asked &&
+        (m.confirmedAt ? (
+          <span className="flex shrink-0 items-center gap-1 text-[12px] font-semibold text-good">
+            <Check size={13} /> {t("app.team.memberOk")}
+          </span>
+        ) : (
+          <span className="shrink-0 text-[12px] text-mist">{t("app.team.memberWait")}</span>
+        ))}
+    </li>
+  );
+}
+
+/** the lead fixes names and usernames; people who already confirmed stay as they are */
+function MembersEditor({ team, h, members, onDone }: { team: TeamRegistration; h: Hackathon; members: TeamMember[]; onDone: () => void }) {
+  const toast = useToast();
+  const fixed = members.filter((m) => m.isLead || m.confirmedAt).length;
+  const [rows, setRows] = useState<TeamMemberInput[]>(() => members.filter((m) => !m.isLead && !m.confirmedAt).map((m) => ({ name: m.name, username: m.username ?? "" })));
+  const save = useAction(async () => {
+    await api.hackathons.setMembers(team.id, rows);
+    return true;
+  });
+  return (
+    <form
+      onSubmit={async (e) => {
+        e.preventDefault();
+        if (await save.run()) {
+          toast(t("app.team.saved"));
+          onDone();
+        }
+      }}
+      className="mt-4 grid gap-2 border-t border-line pt-4"
+    >
+      <p className="text-[13px] text-mist">{t("app.team.editHint")}</p>
+      <MemberRows rows={rows} setRows={setRows} max={Math.max(0, h.teamMax - fixed)} />
+      <ErrorNote>{save.error}</ErrorNote>
+      <div className="mt-1 flex flex-wrap gap-2">
+        <button type="submit" disabled={save.pending} className={`${btn.primary} disabled:opacity-60`}>
+          {save.pending && <Spinner />} {t("app.team.save")}
+        </button>
+        <button type="button" onClick={onDone} className={btn.ghost}>
+          {t("common.action.cancel")}
+        </button>
+      </div>
+    </form>
   );
 }

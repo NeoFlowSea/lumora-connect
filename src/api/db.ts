@@ -1,7 +1,7 @@
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { supabase } from "./supabase";
 import { finishSocialSignIn } from "./social";
-import type { Application, AuditEntry, DB, Hackathon, Message, Notification, Opportunity, Swipe, TeamRegistration, User } from "./types";
+import type { Application, AuditEntry, DB, Hackathon, Message, Notification, Opportunity, Swipe, TeamMember, TeamRegistration, TelegramLink, User } from "./types";
 
 /* What this visitor is allowed to see, kept in memory and fresh.
    The screens read it synchronously (getDb), exactly like they read the old browser mock.
@@ -19,6 +19,12 @@ export type Cache = DB & {
   /** registered teams per event, counted by the database */
   teamCounts: Record<string, number>;
   notifications: RawNotification[];
+  /** people in the teams this visitor may see (own teams, or teams that list the visitor) */
+  teamMembers: TeamMember[];
+  /** Telegram connected through the bot: the visitor's own (admins see all) */
+  tgLinks: TelegramLink[];
+  /** the visitor's Telegram usernames, used to find teams that list them */
+  myTgUsernames: string[];
 };
 
 const empty = (): Cache => ({
@@ -38,6 +44,9 @@ const empty = (): Cache => ({
   outbox: [],
   appCounts: {},
   teamCounts: {},
+  teamMembers: [],
+  tgLinks: [],
+  myTgUsernames: [],
 });
 
 let db: Cache = empty();
@@ -114,7 +123,7 @@ export function reload(): Promise<void> {
       again = false;
       const signedIn = !!session;
       const none = Promise.resolve([] as never[]);
-      const [profiles, privs, opps, apps, swipes, msgs, notes, events, teams, audit] = await Promise.all([
+      const [profiles, privs, opps, apps, swipes, msgs, notes, events, teams, audit, members, links, usernames] = await Promise.all([
         all<Row>("profiles"),
         signedIn ? all<{ id: string; data: Record<string, unknown> }>("profile_private") : none,
         all<Row>("opportunities"),
@@ -125,6 +134,9 @@ export function reload(): Promise<void> {
         all<Row>("hackathons"),
         signedIn ? all<Row>("teams") : none,
         signedIn ? all<Row>("audit") : none,
+        signedIn ? all<Record<string, unknown>>("team_members") : none,
+        signedIn ? all<{ user_id: string; username: string | null; at: string }>("tg_links") : none,
+        signedIn ? supabase.rpc("my_tg_usernames").then((r) => (r.data ?? []) as string[]) : Promise.resolve([] as string[]),
       ]);
       const privById = new Map(privs.map((x) => [x.id, x.data]));
       const next = empty();
@@ -141,7 +153,35 @@ export function reload(): Promise<void> {
         .sort((a, b) => b.at.localeCompare(a.at));
       next.hackathons = events.map((h) => ({ ...(h.data as object), id: h.id, status: h.status }) as Hackathon);
       next.teamCounts = Object.fromEntries(events.map((h) => [h.id as string, h.team_count as number]));
-      next.teams = teams.map((x) => x.data as unknown as TeamRegistration);
+      next.teams = teams.map(
+        (x) =>
+          ({
+            ...(x.data as object),
+            confirmCode: x.confirm_code,
+            confirmRequestedAt: x.confirm_requested_at ?? null,
+            confirmedAt: x.confirmed_at ?? null,
+            mergeOk: !!x.merge_ok,
+          }) as unknown as TeamRegistration,
+      );
+      next.teamMembers = members
+        .map(
+          (m) =>
+            ({
+              id: m.id,
+              teamId: m.team_id,
+              hackathonId: m.hackathon_id,
+              name: m.name ?? "",
+              username: m.username ?? null,
+              isLead: !!m.is_lead,
+              userId: m.user_id ?? null,
+              confirmedAt: m.confirmed_at ?? null,
+              declinedAt: m.declined_at ?? null,
+              createdAt: m.created_at,
+            }) as TeamMember & { createdAt: string },
+        )
+        .sort((a, b) => Number(b.isLead) - Number(a.isLead) || a.createdAt.localeCompare(b.createdAt));
+      next.tgLinks = links.map((l) => ({ userId: l.user_id, username: l.username, at: l.at }));
+      next.myTgUsernames = usernames;
       next.audit = audit.map((x) => x.data as unknown as AuditEntry).sort((a, b) => b.at.localeCompare(a.at));
       next.version = db.version + 1;
       db = next;
@@ -166,7 +206,7 @@ function listen() {
     timer = window.setTimeout(() => void reload(), 250);
   };
   channel = supabase.channel(`lumora-live-${session ?? "guest"}`);
-  for (const table of ["profiles", "profile_private", "opportunities", "applications", "swipes", "messages", "notifications", "hackathons", "teams", "audit"]) {
+  for (const table of ["profiles", "profile_private", "opportunities", "applications", "swipes", "messages", "notifications", "hackathons", "teams", "audit", "team_members", "tg_links"]) {
     channel.on("postgres_changes", { event: "*", schema: "public", table }, soon);
   }
   channel.subscribe();
