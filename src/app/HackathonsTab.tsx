@@ -1074,14 +1074,15 @@ function TeamPanel({ team, h, canCancel, onCancel }: { team: TeamRegistration; h
             {t("app.hack.cancelReg")}
           </button>
         )}
-        {mine && !mine.confirmedAt && (
+        {/* any member can leave, also after confirming: to join another team or register their own */}
+        {mine && open && (
           <button
             type="button"
             disabled={decline.pending}
-            onClick={() => window.confirm(t("app.team.notMeAsk", { team: team.teamName })) && decline.run(mine.id)}
+            onClick={() => window.confirm(t("app.team.leaveAsk", { team: team.teamName })) && decline.run(mine.id)}
             className={btn.ghost}
           >
-            {t("app.team.notMe")}
+            {decline.pending && <Spinner />} {t("app.team.leave")}
           </button>
         )}
       </div>
