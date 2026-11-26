@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { motion } from "framer-motion";
 import { Stable } from "../i18n/Stable";
-import { Briefcase, Layers, LayoutDashboard, LogOut, MessageCircle, Trophy, User as UserIcon } from "lucide-react";
+import { Briefcase, Home, Layers, LayoutDashboard, LogOut, MessageCircle, Trophy, User as UserIcon } from "lucide-react";
 import { Wordmark } from "../components/Logo";
 import { NotificationBell } from "./Notifications";
 import { api } from "../api";
@@ -56,6 +56,15 @@ export function AppShell({ tab, children }: { tab: string; children: ReactNode }
             <Wordmark size={30} />
           </button>
           <nav className="ml-2 hidden items-center gap-1 md:flex">
+            <button
+              onClick={() => go("#/")}
+              title={t("common.nav.lumoraHome")}
+              className="flex items-center gap-2 rounded-lg px-3.5 py-2 text-[14px] font-semibold text-mist transition-colors hover:bg-tint hover:text-ink"
+            >
+              <Home size={16} />
+              Lumora
+            </button>
+            <span aria-hidden className="mx-1 h-5 w-px bg-line" />
             {tabs.map((t) => {
               const on = t.key === tab;
               return (
@@ -66,12 +75,20 @@ export function AppShell({ tab, children }: { tab: string; children: ReactNode }
                 >
                   {on && <motion.span layoutId="tab-pill" className="absolute inset-0 rounded-lg bg-tint" transition={{ type: "spring", stiffness: 400, damping: 32 }} />}
                   <t.icon size={16} className="relative" />
-                  <span className="relative"><Stable k={t.k} /></span>
+                  <span className="relative text-left"><Stable k={t.k} /></span>
                 </button>
               );
             })}
           </nav>
           <div className="ml-auto flex items-center gap-1.5 md:gap-2">
+            <button
+              onClick={() => go("#/")}
+              aria-label={t("common.nav.lumoraHome")}
+              title={t("common.nav.lumoraHome")}
+              className="grid h-10 w-10 place-items-center rounded-full text-mist transition-colors hover:bg-tint hover:text-ink md:hidden"
+            >
+              <Home size={19} />
+            </button>
             <button
               onClick={() => go("#/app/inbox")}
               aria-label={t("common.nav.inbox")}
