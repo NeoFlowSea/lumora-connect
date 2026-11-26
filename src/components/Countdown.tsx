@@ -15,15 +15,16 @@ function parts(to: string) {
   ];
 }
 
-function DropNumber({ value }: { value: string }) {
+function DropNumber({ value, big = false }: { value: string; big?: boolean }) {
   const reduce = useReducedMotion();
-  if (reduce) return <div className="h-[17px] font-pixel text-[17px] leading-none">{value}</div>;
+  const size = big ? "h-[20px] text-[20px] sm:h-[32px] sm:text-[32px]" : "h-[17px] text-[17px]";
+  if (reduce) return <div className={`font-pixel leading-none ${size}`}>{value}</div>;
   return (
-    <div className="relative h-[17px] overflow-hidden">
+    <div className={`relative overflow-hidden ${size.split(" ").filter((c) => c.includes("h-")).join(" ")}`}>
       <AnimatePresence initial={false} mode="popLayout">
         <motion.div
           key={value}
-          className="font-pixel text-[17px] leading-none"
+          className={`font-pixel leading-none ${size.split(" ").filter((c) => c.includes("text-")).join(" ")}`}
           initial={{ y: "-110%", opacity: 0 }}
           animate={{ y: "0%", opacity: 1 }}
           exit={{ y: "110%", opacity: 0 }}
@@ -36,7 +37,8 @@ function DropNumber({ value }: { value: string }) {
   );
 }
 
-export function Countdown({ to, dark }: { to: string; dark?: boolean }) {
+/** `big`: larger digits and boxes, for the next round on the site pages */
+export function Countdown({ to, dark, big = false }: { to: string; dark?: boolean; big?: boolean }) {
   const { t } = useLang();
   const [p, setP] = useState(() => parts(to));
   useEffect(() => {
@@ -46,11 +48,11 @@ export function Countdown({ to, dark }: { to: string; dark?: boolean }) {
   }, [to]);
   const label = p.map((x) => `${x.v} ${t(`landing.cd.${x.k}`)}`).join(", ");
   return (
-    <div className="flex flex-wrap gap-2" role="timer" aria-label={label}>
+    <div className={big ? "grid grid-cols-4 gap-2 sm:flex sm:flex-wrap sm:gap-3" : "flex flex-wrap gap-2"} role="timer" aria-label={label}>
       {p.map((x) => (
-        <div key={x.k} aria-hidden className={`min-w-[64px] rounded-lg px-3 py-2 text-center ${dark ? "bg-white/15 text-current" : "bg-tint text-sky"}`}>
-          <DropNumber value={String(x.v).padStart(2, "0")} />
-          <div className={`mt-1.5 text-[12px] ${dark ? "opacity-80" : "text-mist"}`}>{t(`landing.cd.${x.k}`)}</div>
+        <div key={x.k} aria-hidden className={`rounded-lg text-center ${big ? "min-w-0 px-1 py-3 sm:min-w-[92px] sm:px-4 sm:py-4" : "min-w-[64px] px-3 py-2"} ${dark ? "bg-white/15 text-current" : "bg-tint text-sky"}`}>
+          <DropNumber value={String(x.v).padStart(2, "0")} big={big} />
+          <div className={`${big ? "mt-2 text-[13px]" : "mt-1.5 text-[12px]"} ${dark ? "opacity-80" : "text-mist"}`}>{t(`landing.cd.${x.k}`)}</div>
         </div>
       ))}
     </div>

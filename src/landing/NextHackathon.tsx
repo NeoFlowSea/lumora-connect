@@ -21,7 +21,7 @@ export function NextHackathon({ allRounds = false }: { allRounds?: boolean }) {
         </h2>
         <p className="mt-3 max-w-[80ch] text-[16px] text-white"><Stable k="landing.next.lead" /></p>
 
-        <div className="mt-8 grid gap-4 lg:grid-cols-[1.35fr_1fr]">
+        <div className="mt-8 grid gap-4 lg:grid-cols-[1.7fr_1fr]">
           <NextRound />
           <div className="rounded-xl bg-paper/25 p-6 md:p-8">
             <h3 className="text-[19px]"><Stable k="landing.next.juryTitle" /></h3>
@@ -48,32 +48,33 @@ function NextRound() {
   const r = lumora.nextRound;
   const date = new Date(`${r.date}T12:00`).toLocaleDateString(locale(), { day: "numeric", month: "long", year: "numeric" });
   return (
-    <div className="rounded-xl bg-surface p-6 text-ink md:p-8">
-      <div className="text-[14px] text-mist">
+    // the one card on the page that is about something still to come: larger, with an orange outline
+    <div className="rounded-xl bg-surface p-6 text-ink shadow-[0_24px_60px_-20px_rgba(3,10,30,0.75)] ring-2 ring-accent md:p-10">
+      <span className="inline-flex items-center rounded-md bg-accent/15 px-2.5 py-1 text-[14px] font-semibold text-accent">
         <Stable k="landing.next.partner" vars={{ partner: r.partner }} />
+      </span>
+      <h3 className="mt-4 text-[clamp(32px,4.4vw,54px)] font-bold leading-[1.05] tracking-[-0.03em]">Lumora × {r.partner}</h3>
+      <div className="mt-5 flex flex-wrap gap-2.5 text-[16px] font-medium md:text-[17px]">
+        <span className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-white/5 px-3.5">
+          <CalendarDays size={18} aria-hidden className="text-sky" /> {date}
+        </span>
+        <span className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-white/5 px-3.5">
+          <MapPin size={18} aria-hidden className="text-sky" /> {r.venue}, <Stable k={`home.city.${r.city}`} />
+        </span>
+        <span className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-white/5 px-3.5">
+          <Users size={18} aria-hidden className="text-sky" /> <Stable k="landing.next.team" vars={{ min: r.teamMin, max: r.teamMax }} />
+        </span>
       </div>
-      <h3 className="mt-2 text-[clamp(22px,2.6vw,30px)] tracking-[-0.02em]">Lumora × {r.partner}</h3>
-      <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-[15px] text-mist">
-        <span className="inline-flex items-center gap-1.5">
-          <CalendarDays size={15} aria-hidden /> {date}
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <MapPin size={15} aria-hidden /> {r.venue}, <Stable k={`home.city.${r.city}`} />
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <Users size={15} aria-hidden /> <Stable k="landing.next.team" vars={{ min: r.teamMin, max: r.teamMax }} />
-        </span>
-      </div>
-      <div className="mt-6">
-        <div className="mb-2 text-[13px] text-mist"><Stable k="landing.next.startsIn" /></div>
-        <Countdown to={r.start} />
+      <div className="mt-8">
+        <div className="mb-3 text-[14px] font-medium text-mist"><Stable k="landing.next.startsIn" /></div>
+        <Countdown to={r.start} big />
       </div>
       {/* dark green, across the whole card */}
       <a
         href={lumora.links.telegram}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-7 flex min-h-12 w-full items-center justify-center rounded-lg bg-go px-8 text-[16px] font-semibold text-white transition-colors hover:bg-go-deep"
+        className="mt-8 flex min-h-14 w-full items-center justify-center rounded-lg bg-go px-8 text-[18px] font-semibold text-white transition-colors hover:bg-go-deep"
       >
         <Stable k="home.hero.register" />
       </a>
