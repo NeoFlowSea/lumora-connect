@@ -32,12 +32,13 @@ export function Nav({ onOpenApp }: { onOpenApp: () => void }) {
 
   const page = useRoute().path[0] ?? "";
   const links = [
-    // k: dictionary key; labels render with Stable, so switching language does not move the links
+    // natural width, so the links sit close together in every language; the labels are short in all
+    // three, so switching language moves them only a little
     { k: "home.nav.lumora", href: "#/", icon: House, on: page === "" },
     { k: "home.nav.about", href: "#/about", icon: Info, on: page === "about" },
     { k: "home.nav.hackathons", href: "#/hackathons", icon: Trophy, on: page === "hackathons" },
     { k: "home.nav.connect", href: "#/connect", icon: Handshake, on: page === "connect" || page === "company" },
-    { k: "common.nav.jobs", href: "#/jobs", icon: Briefcase, on: page === "jobs" },
+    { k: "home.tabs.jobs", href: "#/jobs", icon: Briefcase, on: page === "jobs" },
     { k: "home.nav.contact", href: "#/contacts", icon: Mail, on: page === "contacts" },
   ];
 
@@ -65,7 +66,7 @@ export function Nav({ onOpenApp }: { onOpenApp: () => void }) {
             // the page you are on lights up in orange (nav-on in index.css)
             <a key={l.href} href={l.href} onClick={(e) => follow(e, l.href)} aria-current={l.on ? "page" : undefined} className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-[15px] transition-colors ${l.on ? "nav-on font-semibold text-accent" : "text-mist hover:bg-tint hover:text-ink"}`}>
               <l.icon size={17} aria-hidden className="shrink-0" />
-              <Stable k={l.k} />
+              {t(l.k)}
             </a>
           ))}
         </nav>
@@ -99,7 +100,7 @@ export function Nav({ onOpenApp }: { onOpenApp: () => void }) {
             {links.map((l) => (
               <a key={l.href} href={l.href} onClick={(e) => follow(e, l.href)} aria-current={l.on ? "page" : undefined} className={`flex min-h-12 items-center gap-3 border-b border-line text-[16px] last:border-b-0 ${l.on ? "nav-on font-semibold text-accent" : "text-ink/85"}`}>
                 <l.icon size={18} aria-hidden className="shrink-0" />
-                <Stable k={l.k} />
+                {t(l.k)}
               </a>
             ))}
           </nav>

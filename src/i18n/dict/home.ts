@@ -270,7 +270,7 @@ export const home = {
 
   uz: {
     "nav.lumora": "Lumora",
-    "nav.about": "Biz haqimizda",
+    "nav.about": "Haqimizda",
     "nav.hackathons": "Xakatonlar",
     "nav.connect": "Connect",
     "nav.contact": "Aloqa",
