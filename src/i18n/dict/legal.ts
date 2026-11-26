@@ -5,7 +5,7 @@ export const legal = {
   en: {
     updated: "Last updated {date}",
     preview:
-      "This is a preview of Lumora Connect. Everything you enter here, including your account and messages, is stored only in this browser on this device. Nothing is sent to Lumora or anyone else, and clearing this site's data in your browser deletes it. The rest of this page describes how the full service will work.",
+      "This is an early version of Lumora Connect. You sign in with Telegram or Google, and your profile, applications and messages are stored on the Lumora Connect server (Supabase, data centre in Frankfurt, Germany). Your email, contacts and CV are never shown publicly.",
     "see.privacy": "See also:",
     "see.terms": "See also:",
 
@@ -26,7 +26,7 @@ export const legal = {
       "- Approved companies and Lumora admins can see your student profile.\n- Anyone, even without an account, can see public postings and company pages.\n- A company sees your application only for its own posting, with your answers and your CV if you chose to attach it.\n- Messages are visible to the two sides of a match. Admins open them only to deal with a complaint.\n- Results of Lumora events, such as team names and places, are public.\n\nWe share data with providers who host the service for us only as far as they need it for that work, and with state bodies only when the law requires it.",
     "privacy.5.h": "Where data is stored",
     "privacy.5.b":
-      "In the full service, personal data of citizens of Uzbekistan will be stored and processed in line with the Law of the Republic of Uzbekistan \"On personal data\", including its rules on where such data is kept. In this preview, data stays in your browser.",
+      "In this early version, data is stored with Supabase in a data centre in Frankfurt, Germany. Personal data of citizens of Uzbekistan will be stored and processed in line with the Law of the Republic of Uzbekistan \"On personal data\", including its rules on where such data is kept.",
     "privacy.6.h": "How long we keep it",
     "privacy.6.b":
       "We keep your data while your account exists. When you delete your account, we delete your profile, swipes and messages within 30 days, unless the law requires us to keep something longer. Public event results and team names stay in the history of Lumora rounds.",
@@ -87,7 +87,7 @@ export const legal = {
   ru: {
     updated: "Последнее обновление: {date}",
     preview:
-      "Это тестовая версия Lumora Connect. Всё, что вы здесь вводите, включая аккаунт и сообщения, хранится только в этом браузере на этом устройстве. Ничего не отправляется ни в Lumora, ни кому-либо ещё, а очистка данных сайта в браузере всё удаляет. Ниже описано, как будет работать полная версия сервиса.",
+      "Это ранняя версия Lumora Connect. Вы входите через Telegram или Google, а профиль, отклики и сообщения хранятся на сервере Lumora Connect (Supabase, дата-центр во Франкфурте, Германия). Почта, контакты и резюме никогда не показываются публично.",
     "see.privacy": "См. также:",
     "see.terms": "См. также:",
 
@@ -108,7 +108,7 @@ export const legal = {
       "- Профиль студента видят одобренные компании и администраторы Lumora.\n- Публичные вакансии и страницы компаний может открыть любой, даже без аккаунта.\n- Компания видит ваш отклик только на свою вакансию, вместе с ответами и резюме, если вы решили его приложить.\n- Сообщения видят две стороны мэтча. Администраторы открывают их, только чтобы разобрать жалобу.\n- Результаты событий Lumora, например названия команд и места, публичны.\n\nМы передаём данные компаниям, которые размещают сервис для нас, только в объёме, нужном для этой работы, и государственным органам, только когда этого требует закон.",
     "privacy.5.h": "Где хранятся данные",
     "privacy.5.b":
-      "В полной версии сервиса персональные данные граждан Узбекистана будут храниться и обрабатываться в соответствии с Законом Республики Узбекистан «О персональных данных», включая его требования к месту хранения таких данных. В этой тестовой версии данные остаются в вашем браузере.",
+      "В этой ранней версии данные хранятся у Supabase, в дата-центре во Франкфурте (Германия). Персональные данные граждан Узбекистана будут храниться и обрабатываться в соответствии с Законом Республики Узбекистан «О персональных данных», включая его требования к месту хранения таких данных.",
     "privacy.6.h": "Как долго мы храним данные",
     "privacy.6.b":
       "Мы храним данные, пока существует ваш аккаунт. Когда вы удаляете аккаунт, мы удаляем профиль, свайпы и сообщения в течение 30 дней, если закон не требует хранить что-то дольше. Публичные результаты событий и названия команд остаются в истории раундов Lumora.",
@@ -169,7 +169,7 @@ export const legal = {
   uz: {
     updated: "Oxirgi yangilanish: {date}",
     preview:
-      "Bu Lumora Connect'ning sinov versiyasi. Bu yerda kiritgan hamma narsangiz, jumladan akkaunt va xabarlar, faqat shu qurilmadagi shu brauzerda saqlanadi. Hech narsa Lumora'ga ham, boshqa hech kimga ham yuborilmaydi, brauzerda sayt ma'lumotlarini tozalasangiz, hammasi o'chadi. Quyida xizmatning to'liq versiyasi qanday ishlashi yozilgan.",
+      "Bu Lumora Connect'ning dastlabki versiyasi. Siz Telegram yoki Google orqali kirasiz, profilingiz, arizalaringiz va xabarlaringiz esa Lumora Connect serverida saqlanadi (Supabase, Germaniyaning Frankfurt shahridagi data-markaz). Pochta, kontaktlar va rezyume hech qachon ochiq ko'rsatilmaydi.",
     "see.privacy": "Shuningdek:",
     "see.terms": "Shuningdek:",
 
@@ -190,7 +190,7 @@ export const legal = {
       "- Talaba profilini tasdiqlangan kompaniyalar va Lumora administratorlari ko'radi.\n- Ochiq e'lonlar va kompaniya sahifalarini istalgan kishi, akkauntsiz ham ko'ra oladi.\n- Kompaniya arizangizni faqat o'z e'loni uchun, javoblaringiz va ilova qilgan bo'lsangiz, rezyumengiz bilan birga ko'radi.\n- Xabarlarni moslikning ikki tomoni ko'radi. Administratorlar ularni faqat shikoyatni ko'rib chiqish uchun ochadi.\n- Lumora tadbirlari natijalari, masalan jamoa nomlari va o'rinlar, ochiq.\n\nMa'lumotlarni xizmatni biz uchun joylashtiradigan provayderlarga faqat shu ish uchun kerakli hajmda, davlat organlariga esa faqat qonun talab qilganda beramiz.",
     "privacy.5.h": "Ma'lumotlar qayerda saqlanadi",
     "privacy.5.b":
-      "Xizmatning to'liq versiyasida O'zbekiston fuqarolarining shaxsiy ma'lumotlari O'zbekiston Respublikasining \"Shaxsga doir ma'lumotlar to'g'risida\"gi Qonuniga, jumladan bunday ma'lumotlarni saqlash joyiga oid talablariga muvofiq saqlanadi va qayta ishlanadi. Bu sinov versiyasida ma'lumotlar brauzeringizda qoladi.",
+      "Bu dastlabki versiyada ma'lumotlar Supabase'da, Germaniyaning Frankfurt shahridagi data-markazda saqlanadi. O'zbekiston fuqarolarining shaxsiy ma'lumotlari O'zbekiston Respublikasining \"Shaxsga doir ma'lumotlar to'g'risida\"gi Qonuniga, jumladan bunday ma'lumotlarni saqlash joyiga oid talablariga muvofiq saqlanadi va qayta ishlanadi.",
     "privacy.6.h": "Qancha vaqt saqlaymiz",
     "privacy.6.b":
       "Akkauntingiz mavjud ekan, ma'lumotlaringizni saqlaymiz. Akkauntni o'chirsangiz, qonun biror narsani uzoqroq saqlashni talab qilmasa, profil, svayplar va xabarlarni 30 kun ichida o'chiramiz. Tadbirlarning ochiq natijalari va jamoa nomlari Lumora bosqichlari tarixida qoladi.",

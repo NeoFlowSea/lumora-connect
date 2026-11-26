@@ -104,7 +104,6 @@ export function AdminShell({ section, children }: { section: AdminSection; child
               );
             })}
           </nav>
-          <p className="mt-6 px-3.5 text-[12px] leading-relaxed text-mist">{t("admin.shell.localNote")}</p>
         </aside>
         <main className="min-w-0 flex-1">{children}</main>
       </div>
