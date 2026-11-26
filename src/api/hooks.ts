@@ -1,11 +1,17 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { getTick, subscribe } from "./db";
+import { getTick, isReady, subscribe } from "./db";
 import { currentUser, unreadCount } from "./index";
 import type { User } from "./types";
 
-/** Re-render whenever the mock DB or the session changes. */
+/** Re-render whenever the data in memory or the session changes. */
 export function useDbTick(): number {
   return useSyncExternalStore(subscribe, getTick);
+}
+
+/** false until the first load from the database after the page opens */
+export function useReady(): boolean {
+  useDbTick();
+  return isReady();
 }
 
 export function useSession(): User | null {

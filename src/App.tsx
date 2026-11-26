@@ -22,7 +22,7 @@ import { Onboarding } from "./onboarding/Onboarding";
 import { PublicFrame } from "./pages/PublicFrame";
 import { NotFound } from "./pages/NotFound";
 import { Legal } from "./pages/Legal";
-import { useSession } from "./api/hooks";
+import { useReady, useSession } from "./api/hooks";
 import { go, legacyAnchor, useRoute } from "./lib/router";
 
 // admin is a separate chunk: visitors never download it
@@ -49,6 +49,7 @@ export default function App() {
   const [intro, setIntro] = useState(true); // the launch intro plays on every visit
   const { path, query } = useRoute();
   const user = useSession();
+  const ready = useReady();
   const [section, sub, extra] = path;
 
   // anchors from the old single landing now live on the Connect page
@@ -58,8 +59,9 @@ export default function App() {
     if (moved) window.location.replace(moved);
   }, [section]);
 
-  // route guards
+  // route guards: wait for the first load from the database, so a signed-in visitor is not sent to the sign-in page
   useEffect(() => {
+    if (!ready) return;
     if (section === "app" || section === "admin" || section === "onboarding") {
       if (!user) go(`#/login?next=${encodeURIComponent(window.location.hash)}`);
       else if ((section === "app" || section === "onboarding") && user.kind === "admin" && !(sub === "talent" && extra)) go("#/admin");
@@ -76,7 +78,7 @@ export default function App() {
       else if (!user.onboarded) go("#/onboarding");
       else go(next ?? `#/app/${defaultTab(user)}`);
     }
-  }, [section, sub, extra, user, query.next]);
+  }, [ready, section, sub, extra, user, query.next]);
 
   let page;
   if (!section) {
