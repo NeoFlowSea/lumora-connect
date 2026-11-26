@@ -17,7 +17,6 @@ import { JobPage } from "./app/JobPage";
 import { CompanyPage } from "./app/CompanyPage";
 import { TalentPage } from "./app/TalentPage";
 import { AuthScreen } from "./auth/AuthScreen";
-import { ConfirmScreen, ForgotScreen, ResetScreen } from "./auth/Recover";
 import { Onboarding } from "./onboarding/Onboarding";
 import { PublicFrame } from "./pages/PublicFrame";
 import { NotFound } from "./pages/NotFound";
@@ -92,13 +91,14 @@ export default function App() {
   } else if (section === "contacts" && !sub) {
     page = <ContactsPage to={query.to} />;
   } else if (section === "login" || section === "register") {
-    page = <AuthScreen mode={section} initialType={query.type === "company" ? "company" : query.type === "talent" ? "talent" : undefined} />;
+    page = <AuthScreen mode={section} next={query.next} initialType={query.type === "company" ? "company" : query.type === "talent" ? "talent" : undefined} />;
   } else if (section === "forgot") {
-    page = <ForgotScreen />;
+    // sign-in is through Telegram or Google: there are no passwords to reset or emails to confirm
+    page = <AuthScreen mode="login" />;
   } else if (section === "reset") {
-    page = <ResetScreen token={query.token ?? ""} />;
+    page = <AuthScreen mode="login" />;
   } else if (section === "confirm") {
-    page = <ConfirmScreen token={query.token ?? ""} />;
+    page = <AuthScreen mode="login" />;
   } else if (section === "onboarding" && user && user.kind !== "admin") {
     page = <Onboarding />;
   } else if (section === "jobs") {

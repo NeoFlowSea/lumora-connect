@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { KeyRound, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { api } from "../../api";
 import { useAction } from "../../api/hooks";
 import type { CompanyProfile, TalentProfile } from "../../api/types";
@@ -8,7 +8,7 @@ import { ErrorNote, Spinner } from "../../components/form";
 import { btn, useToast } from "../../components/ui";
 import { go } from "../../lib/router";
 import { PasswordInput, StrengthHint } from "../../auth/parts";
-import { Row, Section, Tag } from "./kit";
+import { Row, Section } from "./kit";
 
 /* Account: email and its state, password change, sign out. */
 
@@ -24,10 +24,12 @@ export function AccountCard({ user }: { user: TalentProfile | CompanyProfile }) 
   return (
     <Section id="account" title={t("profile.sec.account")}>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Row label={t("profile.account.email")}>
-          <span className="break-all">{user.email}</span>{" "}
-          {user.emailConfirmed ? <Tag tone="good">{t("profile.account.confirmed")}</Tag> : <Tag>{t("profile.account.notConfirmed")}</Tag>}
-        </Row>
+        {/* sign-in is through Telegram or Google: show the email when the provider gave one, nothing to confirm */}
+        {user.email && (
+          <Row label={t("profile.account.email")}>
+            <span className="break-all">{user.email}</span>
+          </Row>
+        )}
         <Row label={t("profile.account.type")}>{type}</Row>
         <Row label={t("profile.account.since")}>{new Date(user.createdAt).toLocaleDateString(locale(), { day: "numeric", month: "long", year: "numeric" })}</Row>
       </div>
@@ -37,9 +39,6 @@ export function AccountCard({ user }: { user: TalentProfile | CompanyProfile }) 
           <PasswordForm onDone={() => setOpen(false)} />
         ) : (
           <div className="flex flex-wrap gap-2">
-            <button type="button" onClick={() => setOpen(true)} className={btn.ghost}>
-              <KeyRound size={16} /> {t("profile.account.changePassword")}
-            </button>
             <button
               type="button"
               disabled={logout.pending}

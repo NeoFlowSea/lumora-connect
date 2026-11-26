@@ -1,5 +1,6 @@
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { supabase } from "./supabase";
+import { finishSocialSignIn } from "./social";
 import type { Application, AuditEntry, DB, Hackathon, Message, Notification, Opportunity, Swipe, TeamRegistration, User } from "./types";
 
 /* What this visitor is allowed to see, kept in memory and fresh.
@@ -84,6 +85,8 @@ function toUser(p: Row, priv: Record<string, unknown> | undefined): User {
   const base = { ...(p.data as object), ...(priv ?? {}), id: p.id as string, kind, email: (priv?.email as string) ?? "" } as Record<string, unknown>;
   if (kind === "company") Object.assign(base, { status: p.status, statusNote: (p.data.statusNote as string) ?? "", onboarded: p.onboarded, contact: (priv?.contact as string) ?? "" });
   if (kind === "talent") Object.assign(base, { onboarded: p.onboarded, contact: (priv?.contact as string) ?? "", cv: (priv?.cv as unknown) ?? null });
+  // sign-in is through Telegram or Google, so there is no email to confirm; Telegram gives no email at all
+  if (kind !== "admin") base.emailConfirmed = true;
   if (kind === "admin") Object.assign(base, { level: p.level });
   return base as unknown as User;
 }
@@ -177,8 +180,10 @@ supabase.auth.onAuthStateChange((event, s) => {
   const changed = id !== session;
   session = id;
   if (event === "INITIAL_SESSION" || changed) {
-    // auth callbacks must not await other Supabase calls directly, so the load runs right after
-    window.setTimeout(() => {
+    // auth callbacks must not await other Supabase calls directly, so the work runs right after
+    window.setTimeout(async () => {
+      // coming back from Telegram or Google: apply the sign-up choices first, then load
+      if (id && (event === "SIGNED_IN" || event === "INITIAL_SESSION")) await finishSocialSignIn();
       void reload();
       listen();
     }, 0);
