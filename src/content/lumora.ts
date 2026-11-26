@@ -67,12 +67,15 @@ export const lumora = {
     { key: "money", q: { en: "Who will pay for it?", ru: "Кто будет за это платить?", uz: "Buning uchun kim pul to'laydi?" } as L },
   ],
 
-  /** core team from the previous site's About page; photos in public/photos/team/<photo>.webp, roles in home.about.role.<key> */
+  /** core team: the four from the previous site's About page, plus Diyorbek (added by the owner,
+      26 Nov 2026). Photos in public/photos/team/<photo> (.webp unless the name has an extension),
+      roles in home.about.role.<key> */
   team: [
-    { name: "Kamron Sobirjonov", role: "Chief Executive Officer", key: "ceo", photo: "kamron-sobirjonov" },
+    { name: "Komron Sobirjonov", role: "Chief Executive Officer", key: "ceo", photo: "kamron-sobirjonov" },
     { name: "Anvarjon Sobirov", role: "Chief Operating Officer", key: "coo", photo: "anvarjon-sobirov" },
     { name: "Nuriddin Mukhiddinjonov", role: "Chief Financial Officer", key: "cfo", photo: "nuriddin-mukhiddinjonov" },
     { name: "Nurulloxon Valixonov", role: "Chief Technology Officer", key: "cto", photo: "nurulloxon-valixonov" },
+    { name: "Diyorbek Qahhorov", role: "Lumora Ambassador, Tashkent", key: "ambassadorTashkent", photo: "diyorbek-qahhorov.jpg" },
   ],
 
   /** organizations named on the previous site and in channel posts */
@@ -241,7 +244,7 @@ export const lumora = {
 
 /** URL of a core team photo */
 export function teamPhoto(name: string): string {
-  return `${import.meta.env.BASE_URL}photos/team/${name}.webp`;
+  return `${import.meta.env.BASE_URL}photos/team/${name.includes(".") ? name : `${name}.webp`}`;
 }
 
 /** URL of an exported event photo that works under any base path */

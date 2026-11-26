@@ -64,6 +64,7 @@ export const home = {
     "about.role.coo": "Chief Operating Officer",
     "about.role.cfo": "Chief Financial Officer",
     "about.role.cto": "Chief Technology Officer",
+    "about.role.ambassadorTashkent": "Lumora Ambassador, Tashkent",
 
     // format
     "format.title": "How a case competition works", // [new]
@@ -198,6 +199,7 @@ export const home = {
     "about.role.coo": "Операционный директор (COO)",
     "about.role.cfo": "Финансовый директор (CFO)",
     "about.role.cto": "Технический директор (CTO)",
+    "about.role.ambassadorTashkent": "Амбассадор Lumora в Ташкенте",
 
     "format.title": "Как проходит кейс-чемпионат",
     "format.lead": "Команда берёт настоящий кейс компании, делает работающее решение и защищает его перед жюри.",
@@ -326,6 +328,7 @@ export const home = {
     "about.role.coo": "Operatsion direktor (COO)",
     "about.role.cfo": "Moliya direktori (CFO)",
     "about.role.cto": "Texnologiya direktori (CTO)",
+    "about.role.ambassadorTashkent": "Lumora'ning Toshkentdagi elchisi",
 
     "format.title": "Keys musobaqasi qanday o'tadi",
     "format.lead": "Jamoa haqiqiy kompaniya keysini oladi, ishlaydigan yechim yaratadi va uni hakamlar oldida himoya qiladi.",

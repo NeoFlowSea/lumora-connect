@@ -182,7 +182,7 @@ export function Team() {
             <h3 className="text-[clamp(22px,2.6vw,30px)] tracking-[-0.02em]"><Stable k="home.about.core" /></h3>
             <p className="text-[15px] text-mist"><Stable k="home.about.coreLine" /></p>
           </div>
-          <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
             {lumora.team.map((m, i) => (
               <Rise key={m.name} i={i} className="min-w-0 rounded-xl border border-line bg-surface p-2 transition-colors hover:border-accent sm:p-3">
                 <img
