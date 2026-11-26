@@ -840,7 +840,7 @@ function RegisterForm({ h, onClose }: { h: Hackathon; onClose: () => void }) {
         </p>
       </div>
       <Field label={t("app.hack.teamName")}>
-        <Input required value={f.teamName} onChange={(e) => set("teamName")(e.target.value)} placeholder={t("app.hack.teamNamePh")} />
+        <Input required value={f.teamName} onChange={(e) => set("teamName")(e.target.value)} maxLength={60} />
       </Field>
       {h.tracks.length > 0 && (
         <Field label={t("app.hack.track")}>
@@ -872,9 +872,29 @@ function RegisterForm({ h, onClose }: { h: Hackathon; onClose: () => void }) {
         </Field>
       )}
       {h.registrationFields.motivation && (
-        <Field label={t("app.hack.motivation")}>
-          <Textarea value={f.motivation} onChange={(e) => set("motivation")(e.target.value)} />
-        </Field>
+        <div className="grid gap-2">
+          <Field label={t("app.hack.motivation")}>
+            <Textarea value={f.motivation} onChange={(e) => set("motivation")(e.target.value)} placeholder={t("app.team.motivationPh")} maxLength={600} />
+          </Field>
+          {/* tap a reason to add it to the answer */}
+          <div className="flex flex-wrap gap-1.5">
+            {MOTIVES.map((k) => {
+              const phrase = t(`app.team.motive.${k}`);
+              const used = f.motivation.toLowerCase().includes(phrase.toLowerCase());
+              return (
+                <button
+                  key={k}
+                  type="button"
+                  aria-pressed={used}
+                  onClick={() => !used && set("motivation")(addMotive(f.motivation, phrase))}
+                  className={`min-h-11 rounded-md border px-3 text-[13px] transition-colors md:min-h-9 ${used ? "border-sky bg-tint text-sky" : "border-line text-mist hover:border-sky hover:text-ink"}`}
+                >
+                  {phrase}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       )}
       <label className="flex min-h-11 cursor-pointer items-start gap-3 text-[14px] leading-relaxed text-mist">
         <input type="checkbox" required checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer accent-[#3d7bfa]" />
@@ -891,6 +911,15 @@ function RegisterForm({ h, onClose }: { h: Hackathon; onClose: () => void }) {
       </div>
     </form>
   );
+}
+
+/* reasons people come to a Lumora hackathon, offered as one-tap answers */
+const MOTIVES = ["experience", "prizes", "food", "friends", "skills", "companies"] as const;
+
+/** "" + "За опытом" -> "За опытом"; "За опытом" + "За призами" -> "За опытом, за призами" */
+function addMotive(text: string, phrase: string): string {
+  const s = text.trim().replace(/[.,;]+$/, "");
+  return s ? `${s}, ${phrase.charAt(0).toLowerCase()}${phrase.slice(1)}` : phrase;
 }
 
 /** name + Telegram username rows; people need no account */

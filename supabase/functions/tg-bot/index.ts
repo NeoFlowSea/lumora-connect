@@ -131,6 +131,18 @@ const TEXT: Record<string, Record<Lang, string>> = {
     uz: "Salom! {title} ga bir necha kun qoldi ({when}). «{team}» jamoasining qatnashishini tasdiqlang.\n\n1. «Qatnashishni tasdiqlash» tugmasini bosing.\n2. Bu havolani a'zolarga yuboring: {link}\nHar kim uni o'z Telegramida ochadi va @thelumoraa ga obuna bo'ladi.\n\nKamida {min} kishi kerak. Kamroq bo'lsangiz, «Bizdan {min} kishidan kam» tugmasini bosing, tashkilotchilar sizni boshqa kichik jamoa bilan birlashtiradi.",
     en: "Hi! {title} is in a few days ({when}). Please confirm team \"{team}\".\n\n1. Tap \"Confirm our place\".\n2. Send this link to your members: {link}\nEach of them opens it in their own Telegram and subscribes to @thelumoraa.\n\nYou need at least {min} people. If you'll be fewer, tap \"We're fewer than {min}\" and the organizers will merge you with another small team.",
   },
+  mergeAsk: {
+    ru: "Вас будет меньше {min}? Организаторы могут объединить вас с другой небольшой командой, чтобы вы всё равно участвовали. Вы и ваши участники согласны?",
+    uz: "Sizdan {min} kishidan kam bo'ladimi? Tashkilotchilar sizni boshqa kichik jamoa bilan birlashtirishi mumkin, shunda baribir qatnashasiz. Siz va a'zolaringiz rozimisiz?",
+    en: "Will you be fewer than {min}? The organizers can merge you with another small team so you still take part. Do you and your members agree?",
+  },
+  mergeNo: {
+    ru: "Хорошо, не объединяем. Чтобы участвовать, до дедлайна должны подтвердиться минимум {min} человек из команды.",
+    uz: "Yaxshi, birlashtirmaymiz. Qatnashish uchun muddatgacha jamoadan kamida {min} kishi tasdiqlashi kerak.",
+    en: "OK, we won't merge you. To take part, at least {min} people from your team need to confirm before the deadline.",
+  },
+  yesMerge: { ru: "Да, согласны", uz: "Ha, rozimiz", en: "Yes, we agree" },
+  noMerge: { ru: "Нет, соберём команду сами", uz: "Yo'q, jamoani o'zimiz yig'amiz", en: "No, we'll gather the team ourselves" },
   mergeOk: {
     ru: "Записали: вы согласны, чтобы организаторы объединили вас с другой командой. Мы напишем, когда подберём.",
     uz: "Yozib oldik: tashkilotchilar sizni boshqa jamoa bilan birlashtirishiga rozisiz. Topganimizda yozamiz.",
@@ -284,14 +296,19 @@ async function confirmMember(code: string, from: From, chatId: number) {
   return say(chatId, inviteText(team, event, lang));
 }
 
-async function mergeOk(code: string, from: From, chatId: number) {
+/** "We're fewer than N": first ask, and record the answer only after "yes" */
+async function merge(step: "ask" | "yes" | "no", code: string, from: From, chatId: number) {
   const lang = pickLang(from.language_code);
   const found = await teamByCode(code);
   if (!found) return say(chatId, tx("expired", lang));
   const { data: lead } = await db.from("team_members").select("tg_id").eq("team_id", found.team.id).eq("is_lead", true).maybeSingle();
   if (!lead || lead.tg_id !== from.id) return say(chatId, tx("onlyLead", lang));
-  await db.from("teams").update({ merge_ok: true }).eq("id", found.team.id);
-  return say(chatId, tx("mergeOk", lang));
+  const min = Math.max(1, Number(found.event.data.teamMin) || 1);
+  if (step === "ask") {
+    return say(chatId, tx("mergeAsk", lang, { min }), [[{ text: tx("yesMerge", lang), callback_data: `my:${code}` }], [{ text: tx("noMerge", lang), callback_data: `mn:${code}` }]]);
+  }
+  await db.from("teams").update({ merge_ok: step === "yes" }).eq("id", found.team.id);
+  return say(chatId, step === "yes" ? tx("mergeOk", lang) : tx("mergeNo", lang, { min }));
 }
 
 /** admin: ask every team of an event to confirm; the bot writes to each lead */
@@ -357,7 +374,9 @@ Deno.serve(async (req) => {
         await tg("answerCallbackQuery", { callback_query_id: cb.id });
         const [kind, code] = String(cb.data).split(":");
         if (kind === "t") await confirmMember(code, cb.from, cb.message.chat.id);
-        if (kind === "m") await mergeOk(code, cb.from, cb.message.chat.id);
+        if (kind === "m") await merge("ask", code, cb.from, cb.message.chat.id);
+        if (kind === "my") await merge("yes", code, cb.from, cb.message.chat.id);
+        if (kind === "mn") await merge("no", code, cb.from, cb.message.chat.id);
       }
     } catch (e) {
       console.error(e);
