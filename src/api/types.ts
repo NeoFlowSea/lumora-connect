@@ -69,6 +69,8 @@ export interface TalentProfile {
   email: string;
   name: string;
   cat: string;
+  /** when the Lumora bot confirmed the Telegram channel subscription; needed to register for events */
+  channelOkAt?: string | null;
   city: string;
   age: number | null;
   bio: string;

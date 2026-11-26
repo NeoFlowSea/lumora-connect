@@ -84,7 +84,7 @@ function toUser(p: Row, priv: Record<string, unknown> | undefined): User {
   const kind = p.kind as User["kind"];
   const base = { ...(p.data as object), ...(priv ?? {}), id: p.id as string, kind, email: (priv?.email as string) ?? "" } as Record<string, unknown>;
   if (kind === "company") Object.assign(base, { status: p.status, statusNote: (p.data.statusNote as string) ?? "", onboarded: p.onboarded, contact: (priv?.contact as string) ?? "" });
-  if (kind === "talent") Object.assign(base, { onboarded: p.onboarded, contact: (priv?.contact as string) ?? "", cv: (priv?.cv as unknown) ?? null });
+  if (kind === "talent") Object.assign(base, { channelOkAt: (p.channel_ok_at as string | null) ?? null, onboarded: p.onboarded, contact: (priv?.contact as string) ?? "", cv: (priv?.cv as unknown) ?? null });
   // sign-in is through Telegram or Google, so there is no email to confirm; Telegram gives no email at all
   if (kind !== "admin") base.emailConfirmed = true;
   if (kind === "admin") Object.assign(base, { level: p.level });

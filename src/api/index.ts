@@ -619,11 +619,29 @@ const hackathons = {
     await rpc("ev_remove", { hid: id });
   },
 
+  /** one-time code for the Lumora bot, which confirms the Telegram channel subscription */
+  async channelCode(): Promise<string> {
+    meTalent();
+    const { data, error } = await supabase.rpc("channel_code");
+    if (error) throw new ApiError(t("api.serverError"));
+    return data as string;
+  },
+
+  /** ask the bot to check again with the Telegram account that confirmed before */
+  async recheckChannel(): Promise<"member" | "not_member" | "no_link" | "broken"> {
+    meTalent();
+    const { data, error } = await supabase.functions.invoke("tg-bot", { body: { action: "recheck" } });
+    await reload();
+    if (error) return "broken";
+    return (data as { status: "member" | "not_member" | "no_link" | "broken" }).status;
+  },
+
   async registerTeam(hackathonId: string, input: TeamInput): Promise<TeamRegistration> {
     const tal = meTalent();
     const d0 = getDb();
     const h = d0.hackathons.find((x) => x.id === hackathonId) ?? fail("eventNotFound");
     if (h.status !== "registration_open") fail("regNotOpen");
+    if (!tal.channelOkAt) fail("channelRequired");
     const nowLocal = localNow();
     if (h.regOpen && nowLocal < h.regOpen) fail("regOpensOn", { date: h.regOpen.replace("T", " ") });
     if (h.regClose && nowLocal > h.regClose) fail("regClosed");

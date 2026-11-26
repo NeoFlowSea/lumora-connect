@@ -71,9 +71,7 @@ function NextRound() {
       </div>
       {/* dark green, across the whole card */}
       <a
-        href={lumora.links.telegram}
-        target="_blank"
-        rel="noopener noreferrer"
+        href={`#/app/hackathons/${r.id}`}
         className="mt-8 flex min-h-14 w-full items-center justify-center rounded-lg bg-go px-8 text-[18px] font-semibold text-white transition-colors hover:bg-go-deep"
       >
         <Stable k="home.hero.register" />

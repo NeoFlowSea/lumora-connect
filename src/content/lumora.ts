@@ -10,6 +10,7 @@ type L = Record<Lang, string>;
 export const lumora = {
   links: {
     telegram: "https://t.me/thelumoraa",
+    bot: "https://t.me/Lumora_connect_bot",
     instagram: "https://www.instagram.com/lumora2025_/",
     linkedin: "https://www.linkedin.com/company/lumora-uz/",
     /** personal Telegram for partnership and team questions (set by the owner, 26 Nov 2026) */
@@ -35,6 +36,8 @@ export const lumora = {
   /** the next round, as announced by the team on 26 Nov 2026. The start time is not announced yet:
       10:00 Tashkent time is a stand-in for the countdown; the city is assumed from the venue. */
   nextRound: {
+    /** the same event in the database, where people register (supabase/migrations/0002) */
+    id: "r-tashkent-2026-12",
     date: "2026-12-06",
     start: "2026-12-06T10:00:00+05:00",
     venue: "Holiday Inn",

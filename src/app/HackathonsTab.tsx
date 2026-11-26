@@ -821,6 +821,7 @@ function RegisterForm({ h, onClose }: { h: Hackathon; onClose: () => void }) {
   });
   const set = (k: keyof typeof f) => (v: string) => setF((s) => ({ ...s, [k]: v }));
   const filled = f.members.filter((m) => m.trim()).length;
+  if (me && !me.channelOkAt) return <ChannelGate onClose={onClose} />;
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -925,5 +926,62 @@ function RegisterForm({ h, onClose }: { h: Hackathon; onClose: () => void }) {
         </button>
       </div>
     </form>
+  );
+}
+
+/* Registration needs the Lumora Telegram channel. The bot checks it (supabase/functions/tg-bot):
+   the button opens the bot with a one-time code, the bot stamps the profile, and Realtime
+   reloads this page, so the form appears without a refresh. */
+function ChannelGate({ onClose }: { onClose: () => void }) {
+  useLang();
+  const [code, setCode] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [opened, setOpened] = useState(false);
+  useEffect(() => {
+    let live = true;
+    api.hackathons
+      .channelCode()
+      .then((c) => live && setCode(c))
+      .catch((e: Error) => live && setError(e.message));
+    return () => {
+      live = false;
+    };
+  }, []);
+  const step = "grid h-7 w-7 shrink-0 place-items-center rounded-full bg-blue text-[13px] font-semibold text-white";
+  return (
+    <div className="grid gap-5">
+      <div>
+        <h2 className="text-[22px] leading-tight">{t("app.hack.ch.title")}</h2>
+        <p className="mt-2 text-[14px] leading-relaxed text-mist">{t("app.hack.ch.text")}</p>
+      </div>
+      <ol className="grid gap-4">
+        <li className="grid gap-2">
+          <span className="flex items-center gap-3 text-[15px] font-semibold"><span className={step}>1</span>{t("app.hack.ch.step1")}</span>
+          <a href={lumora.links.telegram} target="_blank" rel="noopener noreferrer" className={`${btn.ghost} ml-10 w-fit`}>
+            {t("app.hack.ch.open")} <ExternalLink size={14} />
+          </a>
+        </li>
+        <li className="grid gap-2">
+          <span className="flex items-center gap-3 text-[15px] font-semibold"><span className={step}>2</span>{t("app.hack.ch.step2")}</span>
+          <a
+            href={code ? `${lumora.links.bot}?start=${code}` : undefined}
+            aria-disabled={!code}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setOpened(true)}
+            className={`${btn.primary} ml-10 w-fit ${code ? "" : "pointer-events-none opacity-60"}`}
+          >
+            {!code && !error && <Spinner />} {t("app.hack.ch.confirm")}
+          </a>
+          <p className="ml-10 text-[13px] text-mist">{opened ? t("app.hack.ch.waiting") : t("app.hack.ch.hint")}</p>
+        </li>
+      </ol>
+      <ErrorNote>{error}</ErrorNote>
+      <div>
+        <button type="button" onClick={onClose} className={btn.ghost}>
+          {t("common.action.cancel")}
+        </button>
+      </div>
+    </div>
   );
 }

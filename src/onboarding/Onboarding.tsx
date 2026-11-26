@@ -155,11 +155,16 @@ function Counter({ value, min }: { value: string; min: number }) {
 
 function TalentAbout({ u, ...nav }: Nav & { u: TalentProfile }) {
   const { t } = useLang();
+  const [name, setName] = useState(u.name);
   const [photo, setPhoto] = useState(u.photo);
   const [headline, setHeadline] = useState(u.headline);
   const [bio, setBio] = useState(u.bio);
   return (
-    <StepForm {...nav} patch={() => ({ photo, headline: headline.trim(), bio: bio.trim() })}>
+    <StepForm {...nav} patch={() => ({ ...(name.trim() ? { name: name.trim() } : {}), photo, headline: headline.trim(), bio: bio.trim() })}>
+      {/* Telegram and Google often give a nickname, so the real name is asked here */}
+      <Field label={t("auth.field.fullName")} hint={t("profile.field.realNameHint")}>
+        <Input required autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} placeholder={t("auth.field.fullNamePh")} maxLength={80} />
+      </Field>
       <div className="grid gap-1.5">
         <span className="text-[13px] font-medium text-mist">{t("profile.field.photo")}</span>
         <PhotoPicker value={photo} onChange={setPhoto} name={u.name} />
@@ -305,10 +310,14 @@ function TalentProject({ u, ...nav }: Nav & { u: TalentProfile }) {
 
 function CompanyBrand({ c, ...nav }: Nav & { c: CompanyProfile }) {
   const { t } = useLang();
+  const [name, setName] = useState(c.name);
   const [logo, setLogo] = useState(c.logo);
   const [tagline, setTagline] = useState(c.tagline);
   return (
-    <StepForm {...nav} patch={() => ({ logo, tagline: tagline.trim() })}>
+    <StepForm {...nav} patch={() => ({ ...(name.trim() ? { name: name.trim() } : {}), logo, tagline: tagline.trim() })}>
+      <Field label={c.orgKind === "organization" ? t("auth.field.orgName") : t("auth.field.companyName")}>
+        <Input required autoComplete="organization" value={name} onChange={(e) => setName(e.target.value)} maxLength={80} />
+      </Field>
       <div className="grid gap-1.5">
         <span className="text-[13px] font-medium text-mist">{t("profile.field.logo")}</span>
         <PhotoPicker value={logo} onChange={setLogo} name={c.name} square />

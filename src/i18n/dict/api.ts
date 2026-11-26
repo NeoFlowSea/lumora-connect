@@ -3,6 +3,7 @@ export const api = {
   en: {
     signInFirst: "Please sign in first.",
     talentOnly: "Only talent accounts can do this.",
+    channelRequired: "Subscribe to the Lumora Telegram channel and confirm it with the bot first.",
     companyOnly: "Only company accounts can do this.",
     companyPending: "Your company is waiting for admin approval.",
     adminOnly: "Admins only.",
@@ -133,6 +134,7 @@ export const api = {
   ru: {
     signInFirst: "Сначала войдите в аккаунт.",
     talentOnly: "Это доступно только аккаунтам талантов.",
+    channelRequired: "Сначала подпишитесь на Telegram-канал Lumora и подтвердите это через бота.",
     companyOnly: "Это доступно только аккаунтам компаний.",
     companyPending: "Ваша компания ждёт одобрения администратора.",
     adminOnly: "Только для администраторов.",
@@ -263,6 +265,7 @@ export const api = {
   uz: {
     signInFirst: "Avval akkauntga kiring.",
     talentOnly: "Bu faqat iqtidor akkauntlari uchun.",
+    channelRequired: "Avval Lumora Telegram kanaliga obuna bo'ling va buni bot orqali tasdiqlang.",
     companyOnly: "Bu faqat kompaniya akkauntlari uchun.",
     companyPending: "Kompaniyangiz administrator tasdig'ini kutmoqda.",
     adminOnly: "Faqat administratorlar uchun.",
