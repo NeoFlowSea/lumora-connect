@@ -125,6 +125,8 @@ export const home = {
     "hackathons.kicker": "Lumora hackathons", // [new]
     "hackathons.title": "IT case competitions across Uzbekistan", // [new]
     "contacts.kicker": "Contacts", // [new]
+    "contacts.write": "Write to us on Telegram",
+    "contacts.channelsTitle": "Official channels",
     "contacts.firstTitle": "Keep the first message useful.", // [site]
     "contacts.firstText": "Include who you are, your city or organization, and what you want to discuss. For tournament questions, name the competition announcement you are referring to.", // [site]
     "contacts.first1": "Your name and role", // [site]
@@ -251,6 +253,8 @@ export const home = {
     "hackathons.kicker": "Хакатоны Lumora",
     "hackathons.title": "IT кейс-чемпионаты по всему Узбекистану",
     "contacts.kicker": "Контакты",
+    "contacts.write": "Написать нам в Telegram",
+    "contacts.channelsTitle": "Официальные каналы",
     "contacts.firstTitle": "Пусть первое сообщение будет полезным.",
     "contacts.firstText": "Напишите, кто вы, ваш город или организацию и что хотите обсудить. Если вопрос о турнире, укажите, о каком анонсе речь.",
     "contacts.first1": "Ваше имя и роль",
@@ -377,6 +381,8 @@ export const home = {
     "hackathons.kicker": "Lumora xakatonlari",
     "hackathons.title": "O'zbekiston bo'ylab IT keys musobaqalari",
     "contacts.kicker": "Aloqa",
+    "contacts.write": "Telegram'da bizga yozing",
+    "contacts.channelsTitle": "Rasmiy kanallar",
     "contacts.firstTitle": "Birinchi xabaringiz foydali bo'lsin.",
     "contacts.firstText": "Kim ekaningiz, shahringiz yoki tashkilotingiz va nimani muhokama qilmoqchi ekaningizni yozing. Turnir haqidagi savolda qaysi e'lonni nazarda tutayotganingizni ayting.",
     "contacts.first1": "Ismingiz va rolingiz",
