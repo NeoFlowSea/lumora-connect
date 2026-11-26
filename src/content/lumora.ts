@@ -12,6 +12,8 @@ export const lumora = {
     telegram: "https://t.me/thelumoraa",
     instagram: "https://www.instagram.com/lumora2025_/",
     linkedin: "https://www.linkedin.com/company/lumora-uz/",
+    /** personal Telegram for partnership and team questions (set by the owner, 26 Nov 2026) */
+    contact: "https://t.me/ahrorjonzoda",
   },
 
   /** headline numbers from the previous site */

@@ -277,8 +277,8 @@ export function Contact({ more = false, head = true }: { more?: boolean; head?: 
   useLang();
   const routes = [
     { key: "students", href: sectionLink("hackathons", "hackathons"), icon: <GraduationCap size={22} aria-hidden /> },
-    { key: "companies", href: lumora.links.linkedin, icon: <Building2 size={22} aria-hidden /> },
-    { key: "organizers", href: lumora.links.telegram, icon: <LogoTile size={28} /> },
+    { key: "companies", href: lumora.links.contact, icon: <Building2 size={22} aria-hidden /> },
+    { key: "organizers", href: lumora.links.contact, icon: <LogoTile size={28} /> },
   ];
   const channels: [string, string, ReactNode][] = [
     ["Telegram", lumora.links.telegram, <Send key="t" size={18} aria-hidden />],
